@@ -1,6 +1,7 @@
 import { FC } from 'react'
 
 interface NoteProps {
+  id: number
   title: string
   date: string
   additionalText?: string
