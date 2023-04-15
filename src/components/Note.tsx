@@ -1,17 +1,15 @@
 import { FC } from 'react'
+import { NoteProps } from '../interfaces/NoteProps'
 
-interface NoteProps {
-  id: number
-  title: string
-  date: string
-  additionalText?: string
-  active?: boolean
-  onClick?: () => void
-}
-
-const Note: FC<NoteProps> = ({ title, date, additionalText, active }) => {
+const Note: FC<NoteProps> = ({
+  title,
+  date,
+  additionalText,
+  active,
+  onClick,
+}) => {
   return (
-    <div className={` ${active ? 'note-active' : ''}`}>
+    <div onClick={onClick} className={` ${active ? 'note-active' : ''}`}>
       <div className="note">
         <span>
           <b>{title}</b>

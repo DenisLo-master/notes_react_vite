@@ -1,6 +1,6 @@
 import { createContext, useState } from 'react'
 import './App.css'
-import Layout from './components/Layout'
+import Layout from './components/Workspace'
 import { LayoutContext } from './hooks/useLayoutContext'
 
 function App() {

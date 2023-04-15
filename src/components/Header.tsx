@@ -26,12 +26,7 @@ const Header = () => {
       children: (
         <>
           <Input placeholder="Note title" />{' '}
-          <Textarea
-            placeholder="Text"
-            label="Autosize with no rows limit"
-            autosize
-            minRows={20}
-          />
+          <Textarea placeholder="Text" label="Text" autosize minRows={20} />
         </>
       ),
       labels: { confirm: 'Create note', cancel: 'Cansel' },

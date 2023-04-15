@@ -1,6 +1,6 @@
 import { Container, Box } from '@mantine/core'
 import Header from './Header'
-import Sidebar from './Sidebar'
+import ListItem from './ListItem'
 import MainArea from './MainArea'
 import { useLayoutContext } from '../hooks/useLayoutContext'
 
@@ -19,7 +19,7 @@ const Layout = () => {
             justifyItems: 'flex-start',
           }}
         >
-          <Sidebar visible={visible} />
+          <ListItem visible={visible} />
           <MainArea visible={visible} />
         </Box>
       </div>
