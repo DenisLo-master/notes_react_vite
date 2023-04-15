@@ -1,35 +1,26 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { TextEditor } from './components/TextEditor'
+import { Container } from '@mantine/core'
+import parse from 'html-react-parser'
 import './App.css'
 
-function App() {
-  const [count, setCount] = useState(0)
+//инициалицазия фэйкового контента
+const initContent =
+  '<p>This is a FAKE TEXT<code>RichTextEditor</code> component focuses on usability and is designed to be as simple as possible to bring a familiar editing experience to regular users. <code>RichTextEditor</code> is based on <a target="_blank" rel="noopener noreferrer nofollow" href="https://tiptap.dev/">Tiptap.dev</a> and supports all of its features:</p>'
+
+export function App() {
+  const [content, setContent] = useState(initContent)
+
+  // выводит данные вместе с тегами
+  console.log('### content #', content)
+
+  //выводит данные в виде объекта. Можно вывести на страницу браузера как {parse(content)}
+  console.log('### parse #', parse(content))
 
   return (
-    <div className="App">
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://reactjs.org" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </div>
+    <Container mt={'md'}>
+      {/*В текстовый редактор передаем контент из базы данных и обратно получаем обновленные данные*/}
+      <TextEditor content={content} updatedContent={setContent} />
+    </Container>
   )
 }
-
-export default App
