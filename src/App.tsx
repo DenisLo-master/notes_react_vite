@@ -15,8 +15,8 @@ export function App() {
   const [content, setContent] = useState(initContent)
   const [showMarkdownEditor, setShowMarkdownEditor] = useState<boolean>(false)
   const [markdownText, setMarkdownText] = useState<string>("");
-  
-  
+
+
 
   // выводит данные вместе с тегами
   console.log('### content #', content)
@@ -29,7 +29,8 @@ export function App() {
       {/*В текстовый редактор передаем контент из базы данных и обратно получаем обновленные данные*/}
       <TextEditor content={content} updatedContent={setContent} />
     </Container>
-    {showMarkdownEditor &&
+      <button onClick={() => setShowMarkdownEditor(true)}>Edit</button>
+      {showMarkdownEditor &&
         <MarkdownEditor
           value={markdownText}
           setMarkdownText={(value) => {
@@ -38,6 +39,6 @@ export function App() {
           }}
         />
       }
-      </div>
+    </div>
   )
 }
