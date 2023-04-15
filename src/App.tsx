@@ -1,11 +1,15 @@
-
+import { createContext, useState } from 'react'
 import { useState } from 'react'
 import { TextEditor } from './components/TextEditor'
 import { Container } from '@mantine/core'
 import parse from 'html-react-parser'
 import MarkdownEditor from "./components/MarkdownEditor";
 
+
 import './App.css'
+import Workspace from './components/Workspace'
+import { LayoutContext } from './hooks/useLayoutContext'
+
 
 //инициалицазия фэйкового контента
 const initContent =
@@ -16,7 +20,10 @@ export function App() {
   const [showMarkdownEditor, setShowMarkdownEditor] = useState<boolean>(false)
   const [markdownText, setMarkdownText] = useState<string>("");
 
-
+const [visible, setVisible] = useState<boolean>(true)
+  const toggleVisibleSidebar = () => {
+    setVisible((prev) => !prev)
+  }
 
   // выводит данные вместе с тегами
   console.log('### content #', content)
@@ -39,6 +46,11 @@ export function App() {
           }}
         />
       }
+     //Внешний вид программы
+     <LayoutContext.Provider value={{ visible, toggleVisibleSidebar }}>
+      <Layout />
+    </LayoutContext.Provider>
     </div>
+
   )
 }

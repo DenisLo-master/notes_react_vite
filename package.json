@@ -9,6 +9,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@mantine/form": "^6.0.7",
+    "@mantine/modals": "^6.0.7",
+    "@mantine/tiptap": "^6.0.7",
     "@emotion/react": "11.10.6",
     "@mantine/core": "6.0.7",
     "@mantine/hooks": "6.0.7",
@@ -22,6 +25,7 @@
     "@tiptap/starter-kit": "2.0.3",
     "html-react-parser": "3.0.15",
     "moment": "2.29.4",
+
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-markdown": "^8.0.7"
