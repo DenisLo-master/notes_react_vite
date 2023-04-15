@@ -1,35 +1,38 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React, { useState } from "react";
+import MarkdownEditor from "./components/MarkdownEditor";
+import ReactMarkdown from "react-markdown";
 
-function App() {
-  const [count, setCount] = useState(0)
+const App: React.FC = () => {
+  const [showMarkdownEditor, setShowMarkdownEditor] = useState<boolean>(false)
+  const [markdownText, setMarkdownText] = useState<string>("");
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setMarkdownText(e.target.value);
+  };
+
 
   return (
-    <div className="App">
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://reactjs.org" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </div>
-  )
-}
+    <div className="">
+      <h1>Markdown Editor</h1>
+      <textarea
+        className="flex border-2-grayborder-solid border-2 border-sky-500 w-1/6"
+        value={markdownText}
+        onChange={handleInputChange}
+      />
 
-export default App
+      <button onClick={() => setShowMarkdownEditor(true)}>Редактировать</button>
+
+      {showMarkdownEditor &&
+        <MarkdownEditor
+          value={markdownText}
+          setMarkdownText={(value) => {
+            setShowMarkdownEditor(false)
+            setMarkdownText(value)
+          }}
+        />
+      }
+    </div>
+  );
+};
+
+export default App;
