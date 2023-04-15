@@ -28,7 +28,11 @@ export const TextEditor: FC<TextEditorProps> = ({ content, updatedContent }) => 
 
   //инициализация редактора Mantine
   const editor = useEditor({
-    extensions: [StarterKit, Image, Placeholder.configure({ placeholder: 'Новая заметка' })],
+    extensions: [
+      StarterKit,
+      Image.configure({ HTMLAttributes: { class: 'my-editor-image' } }),
+      Placeholder.configure({ placeholder: 'Новая заметка' }),
+    ],
 
     //получение данных от родителя
     content: content,

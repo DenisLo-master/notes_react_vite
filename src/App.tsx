@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { TextEditor } from './components/TextEditor'
 import { Container } from '@mantine/core'
 import parse from 'html-react-parser'
+import './App.css'
 
 //инициалицазия фэйкового контента
 const initContent =
