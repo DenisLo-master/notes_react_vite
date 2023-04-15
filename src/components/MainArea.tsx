@@ -1,8 +1,8 @@
 import { FC } from 'react'
 import { createContext, useState } from 'react'
-
+import { Modal, Button, Text } from '@mantine/core'
 import { Container } from '@mantine/core'
-import parse from 'html-react-parser'
+import { useDisclosure } from '@mantine/hooks';
 import { TextEditor } from './TextEditor'
 import MarkdownEditor from './MarkdownEditor'
 
@@ -18,35 +18,38 @@ const MainArea: FC<MainbarProps> = ({ visible }) => {
   const style = {
     width: visible ? '70vw' : '90vw',
   }
-  const [content, setContent] = useState(initContent)
-  const [showMarkdownEditor, setShowMarkdownEditor] = useState<boolean>(false)
-  const [markdownText, setMarkdownText] = useState<string>('')
+  const [content, setContent] = useState<string>(initContent)
+  const [opened, { open, close }] = useDisclosure(false);
 
-  // выводит данные вместе с тегами
-  console.log('### content #', content)
-
-  //выводит данные в виде объекта. Можно вывести на страницу браузера как {parse(content)}
-  console.log('### parse #', parse(content))
   return (
     <div className="mainArea" style={style}>
+      <Button variant='light' m={10} onClick={open}>
+        Редактировать Markdown
+      </Button>
       <div className="mainArea-date">
         <span>14.04.2023 г.</span>
       </div>
       <div>
+
         <Container mt={'md'}>
-          {/*В текстовый редактор передаем контент из базы данных и обратно получаем обновленные данные*/}
           <TextEditor content={content} updatedContent={setContent} />
         </Container>
-        <button onClick={() => setShowMarkdownEditor(true)}>Edit</button>
-        {showMarkdownEditor && (
+
+        <Modal
+          opened={opened}
+          onClose={close}
+          title="Markdown Editor"
+          centered
+          size="70%"
+        >
           <MarkdownEditor
-            value={markdownText}
+            value={content}
             setMarkdownText={(value) => {
-              setShowMarkdownEditor(false)
-              setMarkdownText(value)
+              close()
+              setContent(value)
             }}
           />
-        )}
+        </Modal>
       </div>
     </div>
   )

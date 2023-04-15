@@ -5,15 +5,9 @@ import { ModalsProvider } from '@mantine/modals'
 import { App } from './App'
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
-  <React.StrictMode>
-    <MantineProvider
-      theme={{ colorScheme: 'light' }}
-      withGlobalStyles
-      withNormalizeCSS
-    >
-      <ModalsProvider>
-        <App />
-      </ModalsProvider>
-    </MantineProvider>
-  </React.StrictMode>,
+  // <React.StrictMode>
+  <MantineProvider theme={{ colorScheme: 'light' }} withGlobalStyles withNormalizeCSS>
+    <App />
+  </MantineProvider>
+  //</React.StrictMode>
 )
