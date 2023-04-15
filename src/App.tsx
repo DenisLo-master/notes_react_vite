@@ -1,7 +1,10 @@
+
 import { useState } from 'react'
 import { TextEditor } from './components/TextEditor'
 import { Container } from '@mantine/core'
 import parse from 'html-react-parser'
+import MarkdownEditor from "./components/MarkdownEditor";
+
 import './App.css'
 
 //инициалицазия фэйкового контента
@@ -10,6 +13,10 @@ const initContent =
 
 export function App() {
   const [content, setContent] = useState(initContent)
+  const [showMarkdownEditor, setShowMarkdownEditor] = useState<boolean>(false)
+  const [markdownText, setMarkdownText] = useState<string>("");
+  
+  
 
   // выводит данные вместе с тегами
   console.log('### content #', content)
@@ -18,9 +25,19 @@ export function App() {
   console.log('### parse #', parse(content))
 
   return (
-    <Container mt={'md'}>
+    <div><Container mt={'md'}>
       {/*В текстовый редактор передаем контент из базы данных и обратно получаем обновленные данные*/}
       <TextEditor content={content} updatedContent={setContent} />
     </Container>
+    {showMarkdownEditor &&
+        <MarkdownEditor
+          value={markdownText}
+          setMarkdownText={(value) => {
+            setShowMarkdownEditor(false)
+            setMarkdownText(value)
+          }}
+        />
+      }
+      </div>
   )
 }
