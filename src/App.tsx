@@ -3,12 +3,14 @@ import { useState } from 'react'
 import './App.css'
 import Workspace from './components/Workspace'
 import { LayoutContext } from './hooks/useLayoutContext'
+import { firebaseApp } from './store/firebase.config'
 
 export function App() {
   const [visible, setVisible] = useState<boolean>(true)
   const toggleVisibleSidebar = () => {
     setVisible((prev) => !prev)
   }
+  firebaseApp.auth()
 
   return (
     //Внешний вид программы
