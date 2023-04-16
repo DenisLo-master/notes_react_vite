@@ -5,6 +5,8 @@ import Workspace from './components/Workspace'
 import { LayoutContext } from './hooks/useLayoutContext'
 import { firebaseApp } from './store/firebase.config'
 import { Note } from './interfaces/NoteProps'
+import { Route, Routes } from 'react-router'
+import { AuthComponent } from './components/AuthComponent'
 
 export function App() {
   const [visible, setVisible] = useState<boolean>(true)
@@ -25,8 +27,14 @@ export function App() {
 
   return (
     //Внешний вид программы
-    <LayoutContext.Provider value={{ visible, toggleVisibleSidebar, activeNote, setCurrentNote }}>
-      <Workspace />
-    </LayoutContext.Provider>
+
+    <>
+      <Routes>
+        <Route path='/auth' element={<AuthComponent />} />
+      </Routes>
+      <LayoutContext.Provider value={{ visible, toggleVisibleSidebar, activeNote, setCurrentNote }}>
+        <Workspace />
+      </LayoutContext.Provider>
+    </>
   )
 }
