@@ -6,7 +6,7 @@ import { LayoutContext } from './hooks/useLayoutContext'
 import { firebaseApp } from './store/firebase.config'
 import { Note } from './interfaces/NoteProps'
 import { Route, Routes } from 'react-router'
-import { AuthComponent } from './components/AuthComponent'
+import { AuthLayout } from './layouts/AuthLayout'
 
 export function App() {
   const [visible, setVisible] = useState<boolean>(true)
@@ -30,7 +30,7 @@ export function App() {
 
     <>
       <Routes>
-        <Route path='/auth' element={<AuthComponent />} />
+        <Route path='/auth' element={<AuthLayout />} />
       </Routes>
       <LayoutContext.Provider value={{ visible, toggleVisibleSidebar, activeNote, setCurrentNote }}>
         <Workspace />

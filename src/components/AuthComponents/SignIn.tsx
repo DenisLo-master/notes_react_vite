@@ -3,8 +3,8 @@ import { FC, useState } from 'react'
 import * as Yup from 'yup'
 import { useForm, yupResolver } from '@mantine/form'
 import { TextInput, Button, Box, Group } from '@mantine/core'
-import { ISignUp } from '../interfaces/LoginTypes'
-import { IAuthValues, useAuth } from '../context/AuthProvider'
+import { AuthProps, ISignUp } from '../../interfaces/LoginTypes'
+import { IAuthValues, useAuth } from '../../context/AuthProvider'
 
 const schema = Yup.object().shape({
   email: Yup.string()
@@ -16,8 +16,7 @@ const schema = Yup.object().shape({
   password: Yup.string().min(2, 'Password should have at least 2 letters'),
 })
 
-export const AuthComponent: FC = () => {
-  const [register, setRegister] = useState(false)
+export const SignIn: FC<AuthProps> = ({ setRegister }) => {
   const { signUp, signIn }: IAuthValues = useAuth()
   const theme = useMantineTheme()
 
@@ -30,7 +29,7 @@ export const AuthComponent: FC = () => {
   })
 
   const handleSignUp = (values: ISignUp) => {
-    register ? signIn(values) : signUp(values)
+    signIn(values)
   }
 
   const toggleRegister = () => {
@@ -57,24 +56,21 @@ export const AuthComponent: FC = () => {
           <Text fz='1.5rem' align='center'>
             Добро пожаловать!
           </Text>
-          <Text align='center'>
-            Если Вы {`${!register ? 'уже' : 'еще не'}`} зарегистрированы
-            {`${!register ? ', войдите в свою учетную запись' : ''}`}
-          </Text>
+          <Text align='center'>Если Вы еще не зарегистрированы</Text>
           <Button onClick={toggleRegister} type='submit'>
-            {`${!register ? 'Войти' : 'Зарегистрироваться'}`}
+            Зарегистрироваться
           </Button>
         </Stack>
         <Stack style={{ flex: '1 1 50%' }}>
           <Text align='center' fz='1.2rem' fw='600'>
-            {`${register ? 'Войти' : 'Зарегистрироваться'}`}
+            Войти
           </Text>
           <form onSubmit={form.onSubmit((values) => handleSignUp(values))}>
             <TextInput withAsterisk label='Email' placeholder='example@mail.com' {...form.getInputProps('email')} />
             <PasswordInput withAsterisk label='Password' placeholder='Password' {...form.getInputProps('password')} />
 
             <Group position='right' mt='xl'>
-              <Button type='submit'>{`${register ? 'Войти' : 'Зарегистрироваться'}`} </Button>
+              <Button type='submit'>Войти</Button>
             </Group>
           </form>
         </Stack>
