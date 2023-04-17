@@ -7,6 +7,7 @@ import { AuthProps, ISignUp } from '../../interfaces/LoginTypes'
 import { IAuthValues, useAuth } from '../../context/AuthProvider'
 
 const schema = Yup.object().shape({
+  name: Yup.string().min(2, 'Name should have at least 2 letters'),
   email: Yup.string()
     .matches(
       /^((([0-9A-Za-z]{1}[-0-9A-z.]{1,}[0-9A-Za-z]{1})|([0-9А-Яа-я]{1}[-0-9А-я.]{1,}[0-9А-Яа-я]{1}))@([-A-Za-z]{1,})\.{1,2}[-A-Za-z]{2,})$/u,
@@ -17,12 +18,13 @@ const schema = Yup.object().shape({
 })
 
 export const SignUp: FC<AuthProps> = ({ setRegister }) => {
-  const { signUp }: IAuthValues = useAuth()
+  const { user, signUp }: IAuthValues = useAuth()
   const theme = useMantineTheme()
 
   const form = useForm({
     validate: yupResolver(schema),
     initialValues: {
+      name: '',
       email: '',
       password: '',
     },
@@ -66,6 +68,7 @@ export const SignUp: FC<AuthProps> = ({ setRegister }) => {
             Зарегистрироваться
           </Text>
           <form onSubmit={form.onSubmit((values) => handleSignUp(values))}>
+            <TextInput withAsterisk label='Name' placeholder='John Doe' mt='sm' {...form.getInputProps('name')} />
             <TextInput withAsterisk label='Email' placeholder='example@mail.com' {...form.getInputProps('email')} />
             <PasswordInput withAsterisk label='Password' placeholder='Password' {...form.getInputProps('password')} />
 
@@ -75,6 +78,7 @@ export const SignUp: FC<AuthProps> = ({ setRegister }) => {
           </form>
         </Stack>
       </Flex>
+      {/* {JSON.stringify(user)} */}
     </Container>
   )
 }
