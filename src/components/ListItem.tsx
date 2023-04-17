@@ -2,6 +2,7 @@ import { FC, useEffect, useState } from 'react'
 import Note from './Note'
 import { NoteProps } from '../interfaces/NoteProps'
 import { useLayoutContext } from '../hooks/useLayoutContext'
+import moment from 'moment'
 
 interface SidebarProps {
   visible: boolean
@@ -41,7 +42,7 @@ const ListItem: FC<SidebarProps> = ({ visible, notesList }) => {
             <Note
               key={note.id}
               id={note.id}
-              created_at={note.created_at}
+              created_at={moment(note.updated_at).format('DD.MM.YYYY')}
               title={note.title}
               additionalText={note.additionalText}
               active={note.active}

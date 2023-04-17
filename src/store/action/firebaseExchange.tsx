@@ -21,7 +21,7 @@ export async function setNotesToFirebase({ user, notes }: UserNotes) {
     if (!newHashKey) return
     const updates: Updates = {}
     updates[newHashKey] = notes
-    console.log(updates)
+    // console.log(updates)
     //await set(ref(db, `/notes_data/${uid}/notes/`), updates)
   } catch (err) {
     console.error('Error setNotesToFirebase', user, err)
@@ -38,7 +38,7 @@ export async function getNotesFromFirebase(user: string) {
     if (snapshot.exists()) {
       const hash = Object.keys(snapshot.val())[0]
       const notes = snapshot.val()[hash]
-      console.log('Notes', notes)
+      // console.log('Notes', notes)
       return notes
     }
   } catch (err) {

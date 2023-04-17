@@ -9,8 +9,15 @@ import {
 import { useLayoutContext } from '../hooks/useLayoutContext'
 import { modals } from '@mantine/modals'
 import { IconSearch } from '@tabler/icons-react'
+import { Dispatch, SetStateAction } from 'react'
+import { NoteProps } from '../interfaces/NoteProps'
+import moment from 'moment'
 
-const Header = () => {
+type HeaderType = {
+  addItem: Dispatch<SetStateAction<NoteProps[]>>
+}
+
+const Header = ({ addItem }: HeaderType) => {
   const { visible, toggleVisibleSidebar } = useLayoutContext()
 
   const toggleVisibleHandle = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -19,8 +26,17 @@ const Header = () => {
   }
   const createNoteHandle = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault()
-
-    modals.openConfirmModal({
+    addItem((prev) => [
+      ...prev,
+      {
+        id: new Date().getTime(),
+        body: 'Новая заметка',
+        created_at: moment(new Date().getTime()).format('DD.MM.YYYY'),
+        title: 'Новая заметка',
+        additionalText: 'текст',
+      },
+    ])
+    /* modals.openConfirmModal({
       title: 'Create note',
       centered: true,
       children: (
@@ -33,7 +49,7 @@ const Header = () => {
       confirmProps: { color: 'green' },
       onCancel: () => console.log('Cancel'),
       onConfirm: () => console.log('Confirmed'),
-    })
+    }) */
   }
   const changeNoteHandle = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault()
@@ -103,7 +119,7 @@ const Header = () => {
       <div className="searchNode">
         <TextInput
           onChange={searchHandle}
-          placeholder="Find node"
+          placeholder="Find note"
           rightSection={<IconSearch size="0.8rem" />}
         />
       </div>
