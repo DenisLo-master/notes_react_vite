@@ -1,52 +1,24 @@
-import { FC, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 import Note from './Note'
 import { NoteProps } from '../interfaces/NoteProps'
 
 interface SidebarProps {
   visible: boolean
+  notesList: NoteProps[]
 }
 
-const ListItem: FC<SidebarProps> = ({ visible }) => {
-  const notesList: NoteProps[] = [
-    {
-      id: 1,
-      date: '01.01.1970',
-      title: 'Note 1',
-      additionalText: 'text',
-      active: false,
-      text: 'Text 1',
-    },
-    {
-      id: 2,
-      date: '01.01.1970',
-      title: 'Note 1',
-      additionalText: 'text',
-      active: false,
-      text: 'Text 2',
-    },
-    {
-      id: 3,
-      date: '01.01.1970',
-      title: 'Note 1',
-      additionalText: 'text',
-      active: true,
-      text: 'Text 3',
-    },
-    {
-      id: 4,
-      date: '01.01.1970',
-      title: 'Note 1',
-      additionalText: 'text',
-      active: false,
-      text: 'Text 4',
-    },
-  ]
+const ListItem: FC<SidebarProps> = ({ visible, notesList }) => {
   const [notes, setNotes] = useState<NoteProps[]>(notesList)
+  useEffect(() => {
+    setNotes(notesList)
+  }, [notesList])
+
   const style = {
     width: visible ? '20vw' : '0',
   }
-  const nodeClickHandle = (id: number) => {
+  const noteClickHandle = (id: number) => {
     const updateNote: NoteProps[] = []
+
     notesList.map((note) => {
       note.active = false
       note.id === id ? (note.active = true) : note.active
@@ -56,16 +28,16 @@ const ListItem: FC<SidebarProps> = ({ visible }) => {
   }
   return visible ? (
     <div className="sidebarArea" style={style}>
-      {notes.map((node) => (
+      {notes.map((note) => (
         <Note
-          key={node.id}
-          id={node.id}
-          date={node.date}
-          title={node.title}
-          additionalText={node.additionalText}
-          active={node.active}
-          onClick={() => nodeClickHandle(node.id)}
-          text={node.text}
+          key={note.id}
+          id={note.id}
+          date={note.date}
+          title={note.title}
+          additionalText={note.additionalText}
+          active={note.active}
+          onClick={() => noteClickHandle(note.id)}
+          body={note.body}
         />
       ))}
     </div>

@@ -64,7 +64,7 @@ export const TextEditor: FC<TextEditorProps> = ({ content, updatedContent }) => 
   return (
     <>
       {/* Отображение даты и времени на странице редактора */}
-      <Text size={'sm'} align='center'>
+      <Text size={'sm'} align="center">
         {moment().format('DD MMMM YYYY, h:mm:a')}
       </Text>
 
@@ -74,14 +74,14 @@ export const TextEditor: FC<TextEditorProps> = ({ content, updatedContent }) => 
       </RichTextEditor>
 
       {/* кнопка добавления картинки по URL */}
-      <Button variant='light' m={10} onClick={addImageURL}>
+      <Button variant="light" m={10} onClick={addImageURL}>
         add URL
       </Button>
 
       {/* кнопка добавления картинки из локального хранилища */}
-      <FileButton onChange={addImageFile} accept='image/*,.png,.jpeg,.svg,.jpg,.gif,.webp'>
+      <FileButton onChange={addImageFile} accept="image/*,.png,.jpeg,.svg,.jpg,.gif,.webp">
         {(props) => (
-          <Button variant='light' {...props}>
+          <Button variant="light" {...props}>
             add File
           </Button>
         )}
