@@ -17,9 +17,9 @@ const Layout = () => {
 
   useEffect(() => {
     //получаем записи из Firebase
-    const notes_res = getNotesFromFirebase('denis.lkg@gmail.com').then((res) =>
+    const notes_res = getNotesFromFirebase('denis.lkg@gmail.com')/* .then((res) =>
       setNotes(res),
-    )
+    ) */
     console.log(notes_res)
 
     //записываем полученные данные в IndexedDB
