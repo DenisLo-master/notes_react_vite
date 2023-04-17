@@ -27,13 +27,13 @@ export function App() {
 
   return (
     //Внешний вид программы
-
     <>
-      <Routes>
-        <Route path='/auth' element={<AuthLayout />} />
-      </Routes>
       <LayoutContext.Provider value={{ visible, toggleVisibleSidebar, activeNote, setCurrentNote }}>
-        <Workspace />
+        <Routes>
+          <Route element={<AuthLayout />}>
+            <Route path='/' element={<Workspace />} />
+          </Route>
+        </Routes>
       </LayoutContext.Provider>
     </>
   )

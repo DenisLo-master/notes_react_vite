@@ -2,23 +2,14 @@ import { FC, PropsWithChildren, useContext, createContext, useState } from 'reac
 import { auth } from '../store/firebase.config.js'
 import { ISignUp } from '../interfaces/LoginTypes.js'
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth'
-import { getDatabase, ref, set } from 'firebase/database'
+import { getDatabase, ref, set, onValue } from 'firebase/database'
 
 export interface IAuthValues {
   user: any
+  accessToken: string
   signUp: (values: ISignUp) => void
   signIn: (values: ISignUp) => void
 }
-
-export interface IToken {
-  refreshToken: string
-  accessToken: string
-  expirationTime: number
-}
-
-const TOKEN_KEY = 'jwt-token'
-const REFRESH_KEY = 'jwt-refresh-token'
-const EXPIRES_KEY = 'jwt-expires'
 
 const AuthContext = createContext<any>({})
 
@@ -26,38 +17,29 @@ export const useAuth = () => {
   return useContext(AuthContext)
 }
 
-const writeUserData = (userId: string, name: string, email: string, createdAt?: string) => {
-  const db = getDatabase()
-  set(ref(db, 'users/' + userId), {
-    username: name,
-    email: email,
-    createdAt: createdAt,
-  })
-}
-
 export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
   const [user, setUser] = useState({})
-  function setToken({ refreshToken, accessToken, expirationTime }: IToken) {
-    localStorage.setItem(TOKEN_KEY, accessToken)
-    localStorage.setItem(REFRESH_KEY, refreshToken)
-    localStorage.setItem(EXPIRES_KEY, expirationTime.toString())
-  }
+  const [accessToken, setAccessToken] = useState('')
 
-  const signUp = async ({ name, email, password, ...rest }: ISignUp) => {
+  const db = getDatabase()
+
+  const signUp = async ({ name, email, password }: ISignUp) => {
     try {
       const response = await createUserWithEmailAndPassword(auth, email, password)
+      const responseUser = response.user
 
-      console.log(response.user)
+      responseUser.getIdToken().then((accessToken) => setAccessToken(accessToken))
 
-      const user = response.user
-      const metadata = user.metadata
-      const userId = user.uid
-      const refreshToken = localStorage.setItem(REFRESH_KEY, user.refreshToken)
-      const accessToken = user.getIdToken().then((accessToken) => localStorage.setItem(TOKEN_KEY, accessToken))
-      const expirationTime = Date.now() + 3600 * 1000
-      const createdAt = metadata.creationTime
+      const userId = responseUser.uid
+      const createdAt = responseUser.metadata.creationTime
 
-      writeUserData(userId, name, email, createdAt)
+      set(ref(db, 'users/' + userId), {
+        userName: name,
+        email,
+        createdAt,
+      })
+
+      setUser({ userId, name, email, createdAt })
     } catch (error) {
       alert(error)
     }
@@ -66,7 +48,22 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
   const signIn = async ({ email, password }: ISignUp) => {
     try {
       const response = await signInWithEmailAndPassword(auth, email, password)
-      console.log('signIn', response)
+      const responseUser = response.user
+
+      responseUser.getIdToken().then((accessToken) => setAccessToken(accessToken))
+
+      const userId = responseUser.uid
+
+      const user = ref(db, 'users/' + userId)
+      onValue(user, (snapshot) => {
+        const data = snapshot.val()
+        setUser({
+          userId,
+          name: data.displayName,
+          email: data.email,
+          createdAt: data.createdAt,
+        })
+      })
     } catch (error) {
       alert(error)
     }
@@ -74,6 +71,7 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
 
   const value = {
     user,
+    accessToken,
     signUp,
     signIn,
   }
