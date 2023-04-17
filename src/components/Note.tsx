@@ -1,13 +1,7 @@
 import { FC } from 'react'
 import { NoteProps } from '../interfaces/NoteProps'
 
-const Note: FC<NoteProps> = ({
-  title,
-  date,
-  additionalText,
-  active,
-  onClick,
-}) => {
+const Note: FC<NoteProps> = ({ title, created_at, additionalText, active, onClick }) => {
   return (
     <div onClick={onClick} className={` ${active ? 'note-active' : ''}`}>
       <div className="note">
@@ -15,7 +9,7 @@ const Note: FC<NoteProps> = ({
           <b>{title}</b>
         </span>
         <div>
-          {date} <span>{additionalText}</span>
+          {created_at.toDateString()} <span>{additionalText}</span>
         </div>
       </div>
     </div>

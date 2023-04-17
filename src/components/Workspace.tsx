@@ -15,33 +15,32 @@ const Layout = () => {
   const [notes, setNotes] = useState<Note[]>([])
   //создаём список для отображения
   const [myNotesList, setMyNotesList] = useState<NoteProps[]>([])
-
+  const { setCurrentNote } = useLayoutContext()
   useEffect(() => {
     db.notes.clear()
     //получаем записи из Firebase
     getNotesFromFirebase('denis.lkg@gmail.com').then((notes) => setNotes(notes))
   }, [])
+  //получаем записи из IndexedDB
   const notesListFromIDB = useLiveQuery(() => db.notes.toArray())
 
   useEffect(() => {
     //записываем полученные данные в IndexedDB
     const tempArray: NoteProps[] = []
-    notes.map((note) => {
+    notes.map((note, index) => {
       tempArray.push({
         id: note.id,
         title: note.title,
         body: note.body,
         additionalText: note.body.substring(0, 10),
-        date: new Date(note.created_at).toDateString(),
-        active: false,
+        created_at: new Date(),
+        active: index === 0 ? true : false, //показываем первую запись активной
       })
       addNotes(note)
     })
     setMyNotesList(tempArray)
+    setCurrentNote(tempArray[0]) //делаем первую запись активной, чтобы отобразилась в редакторе
   }, [notes])
-  //console.log(myNotesList)
-
-  //получаем записи из IndexedDB
 
   return (
     <Container size="xl">
