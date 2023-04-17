@@ -1,4 +1,4 @@
-import Dexie, { Table } from 'dexie'
+import { Dexie, Table } from 'dexie'
 import { Note } from '../../interfaces/NoteProps'
 
 export class NotesDB extends Dexie {

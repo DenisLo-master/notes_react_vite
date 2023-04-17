@@ -1,14 +1,15 @@
 export interface NoteProps {
   id: number
   title: string
-  date: string
+  created_at: Date
   additionalText?: string
   active?: boolean
   onClick?: () => void
-  text: string
+  body: string
 }
 
 export interface Note {
+  id: number
   title: string
   body: string
   created_at: Date
