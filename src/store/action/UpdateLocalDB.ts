@@ -1,15 +1,9 @@
 import { db } from './NotesDB'
-import { Note } from '../../interfaces/NoteProps'
+import { Note, UpdateNote } from '../../interfaces/NoteProps'
 
-type keyNote = keyof Note
-
-type updateNote = {
-  [keys in keyNote]?: string
-}
-
-export async function updateNotes(key: number, note: updateNote): Promise<void> {
+export async function updateNotes(note: UpdateNote): Promise<void> {
   try {
-    await db.notes.update(key, note)
+    await db.updateNote(note)
   } catch (error) {
     console.log(error)
   }

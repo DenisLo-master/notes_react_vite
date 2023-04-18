@@ -4,8 +4,10 @@ import { modals } from '@mantine/modals'
 import { IconSearch } from '@tabler/icons-react'
 import { Dispatch, SetStateAction } from 'react'
 import moment from 'moment'
-import { NoteProps } from './../interfaces/NoteProps'
-import { addNotes } from '../store/action/AddToLocalDB'
+import { Note, NoteProps } from './../interfaces/NoteProps'
+import { CreateNote } from '../store/action/CreateNote'
+import { useLiveQuery } from 'dexie-react-hooks'
+import { db } from '../store/action/NotesDB'
 
 type HeaderType = {
   addItem: Dispatch<SetStateAction<NoteProps[]>>
@@ -13,36 +15,37 @@ type HeaderType = {
 
 const Header = ({ addItem }: HeaderType) => {
   const { visible, toggleVisibleSidebar } = useLayoutContext()
-
   const toggleVisibleHandle = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault()
     toggleVisibleSidebar()
   }
+  //создание заметки
   const createNoteHandle = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault()
-    const newNote: NoteProps = {
+
+    const templateNote: NoteProps = {
       id: new Date().getTime(),
       body: 'Новая заметка',
       created_at: moment(new Date().getTime()).format('DD.MM.YYYY'),
       title: 'Новая заметка',
       additionalText: 'Новая заметка',
     }
-    addItem((prev) => [...prev, newNote])
+
+    addItem((prev) => [...prev, templateNote])
     try {
-      addNotes({
-        id: newNote.id,
-        body: newNote.body,
-        created_at: newNote.created_at,
-        title: newNote.title,
-      })
+      const CreatedNote = {
+        id: templateNote.id,
+        body: templateNote.body,
+        created_at: templateNote.created_at,
+        updated_at: templateNote.created_at,
+        title: templateNote.title,
+      }
+      CreateNote(CreatedNote)
     } catch (error) {
       console.log(error)
     }
   }
-  const changeNoteHandle = (event: React.MouseEvent<HTMLButtonElement>) => {
-    event.preventDefault()
-    console.log('change note')
-  }
+
   const deleteNoteHandler = () =>
     modals.openConfirmModal({
       title: 'Delete your note',
@@ -59,7 +62,8 @@ const Header = ({ addItem }: HeaderType) => {
     const { value } = event.target
     console.log(value)
   }
-
+  //получаем записи из IndexedDB
+  const notesListFromIDB = useLiveQuery(() => db.notes.toArray()) as Note[]
   return (
     <div className="header">
       <div>
@@ -91,16 +95,6 @@ const Header = ({ addItem }: HeaderType) => {
             onClick={deleteNoteHandler}
           >
             Delete note
-          </Button>
-        </Tooltip>
-        <Tooltip label="Change note">
-          <Button
-            variant="light"
-            color="gray"
-            style={{ margin: '0 10px' }}
-            onClick={changeNoteHandle}
-          >
-            Change note
           </Button>
         </Tooltip>
       </div>

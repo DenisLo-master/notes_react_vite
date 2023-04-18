@@ -8,7 +8,7 @@ import { db } from '../store/action/NotesDB'
 const Note: FC<NoteProps> = ({
   title,
   created_at,
-  additionalText,
+  body,
   active,
   onClick,
   id,
@@ -21,25 +21,27 @@ const Note: FC<NoteProps> = ({
   const handlechangeTitle = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target
     setNoteTitle(value)
-    if (inputRef.current) {
-      // console.log(inputRef.current.getAttribute('id'))
-    }
   }
   const handleSaveTitle = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target
-    //console.log(value)
-
     setNoteTitle(value)
     if (inputRef.current) {
-      const id = inputRef.current.getAttribute('id')
-      updateNotes(Number(id), { title: value })
-      //получаем записи из IndexedDB
-      //const notesListFromIDB = useLiveQuery(() => db.notes.toArray())
-
-      //setNotesToFirebase({ user: 'denis.lkg@gmail.com', notes: notesListFromIDB })
+      const id = Number(inputRef.current.getAttribute('id'))
+      updateNotes({
+        id,
+        body,
+        title: value,
+        updated_at: new Date().getTime().toString(),
+      })
+      //загружаем записи в FireBase
+      if (notesListFromIDB) {
+        /* setNotesToFirebase({
+          user: 'denis.lkg@gmail.com',
+          notes: notesListFromIDB,
+        }) */
+      }
     }
   }
-  //console.log(notesListFromIDB)
 
   return (
     <div onClick={onClick} className={` ${active ? 'note-active' : ''}`}>
@@ -53,10 +55,9 @@ const Note: FC<NoteProps> = ({
             value={noteTitle}
             id={id.toString()}
           />
-          {/* <b>{title}</b> */}
         </span>
         <div>
-          {created_at} <span>{additionalText}</span>
+          {created_at} <span>{body.substring(0, 10)}</span>
         </div>
       </div>
     </div>
