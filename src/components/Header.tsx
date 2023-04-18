@@ -1,17 +1,11 @@
-import {
-  Tooltip,
-  Button,
-  Text,
-  Input,
-  Textarea,
-  TextInput,
-} from '@mantine/core'
+import { Tooltip, Button, Text, Input, Textarea, TextInput } from '@mantine/core'
 import { useLayoutContext } from '../hooks/useLayoutContext'
 import { modals } from '@mantine/modals'
 import { IconSearch } from '@tabler/icons-react'
 import { Dispatch, SetStateAction } from 'react'
-import { NoteProps } from '../interfaces/NoteProps'
 import moment from 'moment'
+import { NoteProps } from './../interfaces/NoteProps'
+import { addNotes } from '../store/action/AddToLocalDB'
 
 type HeaderType = {
   addItem: Dispatch<SetStateAction<NoteProps[]>>
@@ -26,16 +20,24 @@ const Header = ({ addItem }: HeaderType) => {
   }
   const createNoteHandle = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault()
-    addItem((prev) => [
-      ...prev,
-      {
-        id: new Date().getTime(),
-        body: 'Новая заметка',
-        created_at: moment(new Date().getTime()).format('DD.MM.YYYY'),
-        title: 'Новая заметка',
-        additionalText: 'текст',
-      },
-    ])
+    const newNote: NoteProps = {
+      id: new Date().getTime(),
+      body: 'Новая заметка',
+      created_at: moment(new Date().getTime()).format('DD.MM.YYYY'),
+      title: 'Новая заметка',
+      additionalText: 'Новая заметка',
+    }
+    addItem((prev) => [...prev, newNote])
+    try {
+      addNotes({
+        id: newNote.id,
+        body: newNote.body,
+        created_at: newNote.created_at,
+        title: newNote.title,
+      })
+    } catch (error) {
+      console.log(error)
+    }
     /* modals.openConfirmModal({
       title: 'Create note',
       centered: true,
@@ -59,9 +61,7 @@ const Header = ({ addItem }: HeaderType) => {
     modals.openConfirmModal({
       title: 'Delete your note',
       centered: true,
-      children: (
-        <Text size="sm">Are you sure you want to delete your note?</Text>
-      ),
+      children: <Text size="sm">Are you sure you want to delete your note?</Text>,
       labels: { confirm: 'Delete note', cancel: "No don't delete it" },
       confirmProps: { color: 'red' },
       onCancel: () => console.log('Cancel'),
@@ -80,8 +80,7 @@ const Header = ({ addItem }: HeaderType) => {
             variant="light"
             color="gray"
             style={{ margin: '0 10px' }}
-            onClick={toggleVisibleHandle}
-          >
+            onClick={toggleVisibleHandle}>
             {visible ? 'Hide' : 'Show'} sidebar
           </Button>
         </Tooltip>
@@ -90,8 +89,7 @@ const Header = ({ addItem }: HeaderType) => {
             variant="light"
             color="gray"
             style={{ margin: '0 10px' }}
-            onClick={createNoteHandle}
-          >
+            onClick={createNoteHandle}>
             Create note
           </Button>
         </Tooltip>
@@ -100,8 +98,7 @@ const Header = ({ addItem }: HeaderType) => {
             variant="light"
             color="gray"
             style={{ margin: '0 10px' }}
-            onClick={deleteNoteHandler}
-          >
+            onClick={deleteNoteHandler}>
             Delete note
           </Button>
         </Tooltip>
@@ -110,8 +107,7 @@ const Header = ({ addItem }: HeaderType) => {
             variant="light"
             color="gray"
             style={{ margin: '0 10px' }}
-            onClick={changeNoteHandle}
-          >
+            onClick={changeNoteHandle}>
             Change note
           </Button>
         </Tooltip>

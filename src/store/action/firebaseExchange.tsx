@@ -21,8 +21,8 @@ export async function setNotesToFirebase({ user, notes }: UserNotes) {
     if (!newHashKey) return
     const updates: Updates = {}
     updates[newHashKey] = notes
-    // console.log(updates)
-    //await set(ref(db, `/notes_data/${uid}/notes/`), updates)
+    console.log(updates)
+    await set(ref(db, `/notes_data/${uid}/notes/`), updates)
   } catch (err) {
     console.error('Error setNotesToFirebase', user, err)
   }
