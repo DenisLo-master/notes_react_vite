@@ -1,21 +1,21 @@
-import { Container, Box } from '@mantine/core'
+import { Container, Box, Button } from '@mantine/core'
 import Header from './Header'
 import ListItem from './ListItem'
 import MainArea from './MainArea'
 import { useLayoutContext } from '../hooks/useLayoutContext'
-import {
-  getNotesFromFirebase,
-  setNotesToFirebase,
-} from '../store/action/firebaseExchange'
+import { getNotesFromFirebase, setNotesToFirebase } from '../store/action/firebaseExchange'
 import { Note, NoteProps } from '../interfaces/NoteProps'
 import { useEffect, useState } from 'react'
 import { addNotes } from '../store/action/AddToLocalDB'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { db } from '../store/action/NotesDB'
 import moment from 'moment'
+import { useAuth } from '../context/AuthProvider'
 
 const Layout = () => {
   //  const dispatch = useAppDispatch()
+
+  const { signOutUser } = useAuth()
   const { visible } = useLayoutContext()
   const [notes, setNotes] = useState<Note[]>([])
 
@@ -80,8 +80,8 @@ const Layout = () => {
   }
 
   return (
-    <Container size="xl">
-      <div className="main">
+    <Container size='xl'>
+      <div className='main'>
         <button
           onClick={() => {
             setNotesToFirebase({
@@ -99,10 +99,11 @@ const Layout = () => {
         >
           fromFB
         </button>
+        <Button onClick={signOutUser}>Выход</Button>
 
         <Header addItem={setMyNotesList} />
         <Box
-          className="containerShadow"
+          className='containerShadow'
           sx={{
             display: 'flex',
             flexDirection: 'row',

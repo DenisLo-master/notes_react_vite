@@ -6,11 +6,11 @@ import { Outlet } from 'react-router'
 
 export const AuthLayout = () => {
   const [register, setRegister] = useState(false)
+
   const { user } = useAuth()
 
-  if (user.userId) {
+  if (localStorage.getItem('userId')) {
     return <Outlet />
-  } else {
-    return <>{register ? <SignIn setRegister={setRegister} /> : <SignUp setRegister={setRegister} />}</>
   }
+  return <>{register ? <SignIn setRegister={setRegister} /> : <SignUp setRegister={setRegister} />}</>
 }
