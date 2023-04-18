@@ -12,18 +12,22 @@ import { useEffect, useState } from 'react'
 import { addNotes } from '../store/action/AddToLocalDB'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { db } from '../store/action/NotesDB'
+import moment from 'moment'
 
 const Layout = () => {
   const { visible } = useLayoutContext()
   const [notes, setNotes] = useState<Note[]>([])
+
   //создаём список для отображения
   const [myNotesList, setMyNotesList] = useState<NoteProps[]>([])
   const { setCurrentNote } = useLayoutContext()
+
   useEffect(() => {
     db.notes.clear()
     //получаем записи из Firebase
     getNotesFromFirebase('denis.lkg@gmail.com').then((notes) => setNotes(notes))
   }, [])
+
   //получаем записи из IndexedDB
   const notesListFromIDB = useLiveQuery(() => db.notes.toArray()) as Note[]
 
@@ -36,7 +40,7 @@ const Layout = () => {
         title: note.title,
         body: note.body,
         additionalText: note.body.substring(0, 10),
-        created_at: new Date(),
+        created_at: moment(note.created_at).format('L'),
         active: index === 0 ? true : false, //показываем первую запись активной
       })
       addNotes(note)
@@ -66,7 +70,7 @@ const Layout = () => {
           fromFB
         </button>
 
-        <Header />
+        <Header addItem={setMyNotesList} />
         <Box
           className="containerShadow"
           sx={{

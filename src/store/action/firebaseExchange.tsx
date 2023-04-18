@@ -13,20 +13,21 @@ interface Updates {
 }
 
 export async function setNotesToFirebase({ user, notes }: UserNotes) {
-    try {
-        //console.log('setNotesToFirebase--', user)
-        //временно пока нет uid будет подставляться вместо userFB
 
-        const uid = user.replace(new RegExp('\\.', 'g'), '_')
-        const newHashKey = push(child(ref(db), `/notes_data/${uid}/notes`)).key
-        if (!newHashKey) return
-        const updates: Updates = {}
-        updates[newHashKey] = notes
-        console.log(updates)
-        //await set(ref(db, `/notes_data/${uid}/notes/`), updates)
-    } catch (err) {
-        console.error('Error setNotesToFirebase', user, err)
-    }
+  try {
+    //console.log('setNotesToFirebase--', user)
+    //временно пока нет uid будет подставляться вместо userFB
+    const uid = user.replace(new RegExp('\\.', 'g'), '_')
+    const newHashKey = push(child(ref(db), `/notes_data/${uid}/notes`)).key
+    if (!newHashKey) return
+    const updates: Updates = {}
+    updates[newHashKey] = notes
+    // console.log(updates)
+    //await set(ref(db, `/notes_data/${uid}/notes/`), updates)
+  } catch (err) {
+    console.error('Error setNotesToFirebase', user, err)
+  }
+
 }
 
 export async function getNotesFromFirebase(user: string) {
@@ -44,5 +45,6 @@ export async function getNotesFromFirebase(user: string) {
         }
     } catch (err) {
         console.error('Error getNotesFromFirebase', user, err)
+
     }
 }
