@@ -1,4 +1,4 @@
-import { Tooltip, Button, Text, Input, Textarea, TextInput } from '@mantine/core'
+import { Tooltip, Button, Text, TextInput } from '@mantine/core'
 import { useLayoutContext } from '../hooks/useLayoutContext'
 import { modals } from '@mantine/modals'
 import { IconSearch } from '@tabler/icons-react'
@@ -38,20 +38,6 @@ const Header = ({ addItem }: HeaderType) => {
     } catch (error) {
       console.log(error)
     }
-    /* modals.openConfirmModal({
-      title: 'Create note',
-      centered: true,
-      children: (
-        <>
-          <Input placeholder="Note title" />{' '}
-          <Textarea placeholder="Text" label="Text" autosize minRows={20} />
-        </>
-      ),
-      labels: { confirm: 'Create note', cancel: 'Cansel' },
-      confirmProps: { color: 'green' },
-      onCancel: () => console.log('Cancel'),
-      onConfirm: () => console.log('Confirmed'),
-    }) */
   }
   const changeNoteHandle = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault()
@@ -61,7 +47,9 @@ const Header = ({ addItem }: HeaderType) => {
     modals.openConfirmModal({
       title: 'Delete your note',
       centered: true,
-      children: <Text size="sm">Are you sure you want to delete your note?</Text>,
+      children: (
+        <Text size="sm">Are you sure you want to delete your note?</Text>
+      ),
       labels: { confirm: 'Delete note', cancel: "No don't delete it" },
       confirmProps: { color: 'red' },
       onCancel: () => console.log('Cancel'),
@@ -80,7 +68,8 @@ const Header = ({ addItem }: HeaderType) => {
             variant="light"
             color="gray"
             style={{ margin: '0 10px' }}
-            onClick={toggleVisibleHandle}>
+            onClick={toggleVisibleHandle}
+          >
             {visible ? 'Hide' : 'Show'} sidebar
           </Button>
         </Tooltip>
@@ -89,7 +78,8 @@ const Header = ({ addItem }: HeaderType) => {
             variant="light"
             color="gray"
             style={{ margin: '0 10px' }}
-            onClick={createNoteHandle}>
+            onClick={createNoteHandle}
+          >
             Create note
           </Button>
         </Tooltip>
@@ -98,7 +88,8 @@ const Header = ({ addItem }: HeaderType) => {
             variant="light"
             color="gray"
             style={{ margin: '0 10px' }}
-            onClick={deleteNoteHandler}>
+            onClick={deleteNoteHandler}
+          >
             Delete note
           </Button>
         </Tooltip>
@@ -107,7 +98,8 @@ const Header = ({ addItem }: HeaderType) => {
             variant="light"
             color="gray"
             style={{ margin: '0 10px' }}
-            onClick={changeNoteHandle}>
+            onClick={changeNoteHandle}
+          >
             Change note
           </Button>
         </Tooltip>

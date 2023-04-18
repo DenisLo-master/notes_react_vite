@@ -5,7 +5,14 @@ import { setNotesToFirebase } from '../store/action/firebaseExchange'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { db } from '../store/action/NotesDB'
 
-const Note: FC<NoteProps> = ({ title, created_at, additionalText, active, onClick, id }) => {
+const Note: FC<NoteProps> = ({
+  title,
+  created_at,
+  additionalText,
+  active,
+  onClick,
+  id,
+}) => {
   const [noteTitle, setNoteTitle] = useState<string>(title)
   const inputRef = useRef<HTMLInputElement>(null)
   //получаем записи из IndexedDB
@@ -32,7 +39,7 @@ const Note: FC<NoteProps> = ({ title, created_at, additionalText, active, onClic
       //setNotesToFirebase({ user: 'denis.lkg@gmail.com', notes: notesListFromIDB })
     }
   }
-  console.log(notesListFromIDB)
+  //console.log(notesListFromIDB)
 
   return (
     <div onClick={onClick} className={` ${active ? 'note-active' : ''}`}>

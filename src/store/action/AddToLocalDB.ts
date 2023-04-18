@@ -7,8 +7,8 @@ export async function addNotes(note: Note): Promise<void> {
       id: note.id,
       body: note.body,
       title: note.title,
-      created_at: new Date(),
-      updated_at: new Date(),
+      created_at: note.created_at,
+      updated_at: note.updated_at,
     })
   } catch (error) {
     console.log(error)
