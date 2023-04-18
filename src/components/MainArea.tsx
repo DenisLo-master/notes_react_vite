@@ -1,11 +1,9 @@
 import { FC, useEffect } from 'react'
 import { useState } from 'react'
-import { Modal, Button, Text } from '@mantine/core'
-import { Container } from '@mantine/core'
-import { useDisclosure } from '@mantine/hooks'
+import { Container, ActionIcon } from '@mantine/core'
 import { TextEditor } from './TextEditor'
-import MarkdownEditor from './MarkdownEditor'
 import { useLayoutContext } from '../hooks/useLayoutContext'
+import { IconEdit } from '@tabler/icons-react';
 
 interface MainbarProps {
   visible: boolean
@@ -13,7 +11,7 @@ interface MainbarProps {
 
 //инициалицазия фэйкового контента
 const initContent =
-  '<p>This is a FAKE TEXT<code>RichTextEditor</code> component focuses on usability and is designed to be as simple as possible to bring a familiar editing experience to regular users. <code>RichTextEditor</code> is based on <a target="_blank" rel="noopener noreferrer nofollow" href="https://tiptap.dev/">Tiptap.dev</a> and supports all of its features:</p>'
+  '<p>опишите заметку</p>'
 
 const MainArea: FC<MainbarProps> = ({ visible }) => {
   //инициалицазия фэйкового контента
@@ -23,34 +21,34 @@ const MainArea: FC<MainbarProps> = ({ visible }) => {
     width: visible ? '70vw' : '90vw',
   }
   const [content, setContent] = useState<string>(initContent)
-  const [opened, { open, close }] = useDisclosure(false)
+  const [isEdit, setIsEdit] = useState<boolean>(false)
 
   useEffect(() => {
     activeNote && setContent(activeNote.body)
   }, [activeNote])
 
+
   return (
     <div className="mainArea" style={style}>
-      <Button variant="light" m={10} onClick={open}>
-        Редактировать Markdown
-      </Button>
-      <div className="mainArea-date">
-        <span>14.04.2023 г.</span>
+      <div className="mainArea-edit">
+        <ActionIcon
+          variant='light'
+          onClick={() => setIsEdit(prev => !prev)}
+        >
+          <IconEdit
+            size={48}
+            strokeWidth={2}
+            color={isEdit ? '#06a4ee' : 'gray'}
+          />
+        </ActionIcon>
       </div>
       <div>
         <Container mt={'md'}>
-          <TextEditor content={content} updatedContent={setContent} />
+          {isEdit ?
+            <TextEditor content={content} updatedContent={setContent} /> :
+            <div dangerouslySetInnerHTML={{ __html: content }} />
+          }
         </Container>
-
-        <Modal opened={opened} onClose={close} title="Markdown Editor" centered size="70%">
-          <MarkdownEditor
-            value={content}
-            setMarkdownText={(value) => {
-              close()
-              setContent(value)
-            }}
-          />
-        </Modal>
       </div>
     </div>
   )

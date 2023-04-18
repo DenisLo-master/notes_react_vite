@@ -8,6 +8,7 @@
   width: 100vw;
   margin-left: calc(50% - 50vw);
 }
+
 .containerShadow {
   -webkit-box-shadow: -1px 8px 10px 10px rgba(125, 138, 148, 0.2);
   -moz-box-shadow: -1px 8px 10px 10px rgba(125, 138, 148, 0.2);
@@ -15,6 +16,7 @@
   border-bottom-right-radius: 10px;
   border-bottom-left-radius: 10px;
 }
+
 .mainArea {
   border: 1px solid #e2e2e2;
   border-top: none;
@@ -22,9 +24,11 @@
   border-bottom-right-radius: 10px;
   padding: 10px;
 }
-.mainArea-date {
-  text-align: center;
-  margin: 10px;
+
+.mainArea-edit {
+  display: flex;
+  justify-content: end;
+  margin-right: 20px;
 }
 
 .sidebarArea {
@@ -33,6 +37,7 @@
   height: 90vh;
   border-bottom-left-radius: 10px;
 }
+
 .header {
   background-color: lightgray;
   border-top-left-radius: 10px;
@@ -48,10 +53,12 @@
   justify-content: space-between;
   padding-right: 20px;
 }
+
 .header .searchNode {
   width: 300px;
   border-radius: 10px;
 }
+
 .note {
   margin-left: 20px;
   border-bottom: 1px solid #e2e2e2;
@@ -60,13 +67,14 @@
   cursor: pointer;
   padding: 10px;
 }
+
 .note-active {
   border-top: 1px solid #e2e2e2;
   margin-top: -1px;
   border-collapse: collapse;
   background-color: #e2e2e2;
 }
+
 .my-editor-image {
   max-height: 12rem;
 }
-
