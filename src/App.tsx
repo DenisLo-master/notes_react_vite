@@ -7,7 +7,7 @@ import { firebaseApp } from './store/firebase.config'
 import { Note } from './interfaces/NoteProps'
 import { Navigate, Route, Routes } from 'react-router'
 import { AuthLayout } from './layouts/AuthLayout'
-import { WorkSpaceLayout } from './layouts/WorkSpaceLayout'
+import { PrivateRoute } from './layouts/PrivateRoute'
 
 export function App() {
   const [visible, setVisible] = useState<boolean>(true)
@@ -17,7 +17,7 @@ export function App() {
   const [activeNote, setActiveNote] = useState<Note>({
     id: 0,
     body: '',
-    created_at: new Date(),
+    created_at: new Date().toString(),
     title: '',
   })
 
@@ -32,7 +32,7 @@ export function App() {
       <LayoutContext.Provider value={{ visible, toggleVisibleSidebar, activeNote, setCurrentNote }}>
         <Routes>
           <Route path='/' element={<AuthLayout />} />
-          <Route path='/workspace' element={<WorkSpaceLayout />}>
+          <Route path='/workspace' element={<PrivateRoute />}>
             <Route path='' element={<Workspace />} />
           </Route>
           <Route path='*' element={<Navigate to='/' />} />

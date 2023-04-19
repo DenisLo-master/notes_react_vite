@@ -3,7 +3,7 @@ import { getAuth, onAuthStateChanged } from 'firebase/auth'
 import { useState, useEffect } from 'react'
 import { Outlet } from 'react-router-dom'
 
-export const WorkSpaceLayout = () => {
+export const PrivateRoute = () => {
   const [currentUser, setCurrentUser] = useState<any>()
 
   const auth = getAuth()
@@ -11,7 +11,6 @@ export const WorkSpaceLayout = () => {
   useEffect(() => {
     const currentUser = onAuthStateChanged(auth, (user) => {
       if (user) {
-        const uid = user.uid
         setCurrentUser(user)
       }
     })

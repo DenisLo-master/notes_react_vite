@@ -1,10 +1,11 @@
-import { FC, PropsWithChildren, useContext, createContext } from 'react'
+import { FC, PropsWithChildren, useContext, createContext, useState } from 'react'
 import { ISignIn, ISignUp } from '../interfaces/LoginTypes.js'
 import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword, signOut } from 'firebase/auth'
 import { getDatabase, ref, set } from 'firebase/database'
 import { useNavigate } from 'react-router-dom'
 
 export interface IAuthValues {
+  currentUserId: string
   signUp: (values: ISignUp) => void
   signIn: (values: ISignIn) => void
   signOutUser: () => void
@@ -19,6 +20,8 @@ export const useAuth = () => {
 export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
   const navigate = useNavigate()
 
+  const [currentUserId, setCurrentUserId] = useState<string>()
+
   const db = getDatabase()
   const auth = getAuth()
 
@@ -30,8 +33,11 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
       const userId = user.uid
       const createdAt = user.metadata.creationTime
 
+      setCurrentUserId(userId)
+
       // запись в базу данных после регистрации
       set(ref(db, 'users/' + userId), {
+        id: userId,
         userName: name,
         email,
         createdAt,
@@ -43,7 +49,12 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
 
   const signIn = async ({ email, password }: ISignIn) => {
     try {
-      await signInWithEmailAndPassword(auth, email, password)
+      const response = await signInWithEmailAndPassword(auth, email, password)
+      const user = response.user
+
+      const userId = user.uid
+
+      setCurrentUserId(userId)
     } catch (error) {
       alert(error)
     }
@@ -60,6 +71,7 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
   }
 
   const value = {
+    currentUserId,
     signUp,
     signIn,
     signOutUser,
