@@ -3,7 +3,10 @@ import Header from './Header'
 import ListItem from './ListItem'
 import MainArea from './MainArea'
 import { useLayoutContext } from '../hooks/useLayoutContext'
-import { getNotesFromFirebase, setNotesToFirebase } from '../store/action/firebaseExchange'
+import {
+  getNotesFromFirebase,
+  setNotesToFirebase,
+} from '../store/action/firebaseExchange'
 import { Note, NoteProps } from '../interfaces/NoteProps'
 import { useEffect, useState } from 'react'
 import { addNotes } from '../store/action/AddToLocalDB'
