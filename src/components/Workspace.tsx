@@ -16,8 +16,8 @@ import moment from 'moment'
 import { useAuth } from '../context/AuthProvider'
 
 const Layout = () => {
-  const { signOutUser, currentUserId } = useAuth()
-
+  const { signOutUser } = useAuth()
+  const currentUserId = localStorage.getItem('userId') || ''
   const { visible } = useLayoutContext()
   const [notes, setNotes] = useState<Note[]>([])
 
@@ -31,7 +31,9 @@ const Layout = () => {
 
   const searchedNotesList = serchedText
     ? myNotesList.filter(
-        (note) => note.title.toLowerCase().includes(serchedText) || note.body.toLowerCase().includes(serchedText),
+        (note) =>
+          note.title.toLowerCase().includes(serchedText) ||
+          note.body.toLowerCase().includes(serchedText),
       )
     : myNotesList
 
