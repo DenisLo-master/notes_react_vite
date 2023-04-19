@@ -1,6 +1,21 @@
-import { FC, PropsWithChildren, useContext, createContext, useState } from 'react'
+import {
+  FC,
+  PropsWithChildren,
+  useContext,
+  createContext,
+  useState,
+} from 'react'
 import { ISignIn, ISignUp } from '../interfaces/LoginTypes.js'
+<<<<<<< HEAD
 import { createUserWithEmailAndPassword, getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'firebase/auth'
+=======
+import {
+  createUserWithEmailAndPassword,
+  getAuth,
+  signInWithEmailAndPassword,
+  signOut,
+} from 'firebase/auth'
+>>>>>>> 3df5fdd (delete redux, add auth)
 import { getDatabase, ref, set } from 'firebase/database'
 import { useNavigate } from 'react-router-dom'
 
@@ -11,7 +26,7 @@ export interface IAuthValues {
   signIn: (values: ISignIn) => void
   signOutUser: () => void
 }
-
+type AuthContext = Partial<IAuthValues>
 const AuthContext = createContext<any>({})
 
 export const useAuth = () => {
@@ -28,8 +43,17 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
 
   const signUp = async ({ name, email, password }: ISignUp) => {
     try {
+<<<<<<< HEAD
       const response = await createUserWithEmailAndPassword(auth, email, password)
       const user = response.user as any
+=======
+      const response = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password,
+      )
+      const user = response.user
+>>>>>>> 3df5fdd (delete redux, add auth)
 
       const userId = user.uid
       const createdAt = user.metadata.creationTime

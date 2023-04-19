@@ -3,9 +3,12 @@ import Header from './Header'
 import ListItem from './ListItem'
 import MainArea from './MainArea'
 import { useLayoutContext } from '../hooks/useLayoutContext'
-import { getNotesFromFirebase, setNotesToFirebase } from '../store/action/firebaseExchange'
+import {
+  getNotesFromFirebase,
+  setNotesToFirebase,
+} from '../store/action/firebaseExchange'
 import { Note, NoteProps } from '../interfaces/NoteProps'
-import { useEffect, useState, FC } from 'react'
+import { useEffect, useState, FC, useContext } from 'react'
 import { addNotes } from '../store/action/AddToLocalDB'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { db } from '../store/action/NotesDB'
@@ -13,9 +16,8 @@ import moment from 'moment'
 import { useAuth } from '../context/AuthProvider'
 
 const Layout = () => {
-  //  const dispatch = useAppDispatch()
+  const { signOutUser, currentUserId } = useAuth()
 
-  const { signOutUser } = useAuth()
   const { visible } = useLayoutContext()
   const [notes, setNotes] = useState<Note[]>([])
 
@@ -104,7 +106,7 @@ const Layout = () => {
 
         <Header addItem={setMyNotesList} />
         <Box
-          className='containerShadow'
+          className="containerShadow"
           sx={{
             display: 'flex',
             flexDirection: 'row',
