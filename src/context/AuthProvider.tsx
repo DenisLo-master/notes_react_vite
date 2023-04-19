@@ -1,23 +1,13 @@
-import { FC, PropsWithChildren, useContext, createContext, useState } from 'react'
-import { auth } from '../store/firebase.config.js'
-import { ISignUp } from '../interfaces/LoginTypes.js'
+import { FC, PropsWithChildren, useContext, createContext } from 'react'
+import { ISignIn, ISignUp } from '../interfaces/LoginTypes.js'
 import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword, signOut } from 'firebase/auth'
-import { getDatabase, ref, set, onValue } from 'firebase/database'
-import { async } from '@firebase/util'
+import { getDatabase, ref, set } from 'firebase/database'
+import { useNavigate } from 'react-router-dom'
 
 export interface IAuthValues {
-  user: any
-  accessToken: string
   signUp: (values: ISignUp) => void
-  signIn: (values: ISignUp) => void
-}
-
-function setLocalStorage(userId: string) {
-  localStorage.setItem('userId', userId)
-}
-
-function removeLocalStorage() {
-  localStorage.removeItem('userId')
+  signIn: (values: ISignIn) => void
+  signOutUser: () => void
 }
 
 const AuthContext = createContext<any>({})
@@ -27,59 +17,33 @@ export const useAuth = () => {
 }
 
 export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
-  const [user, setUser] = useState<any>(null)
-  const [accessToken, setAccessToken] = useState('')
+  const navigate = useNavigate()
 
   const db = getDatabase()
   const auth = getAuth()
-  const currentUser = auth.currentUser
 
   const signUp = async ({ name, email, password }: ISignUp) => {
     try {
       const response = await createUserWithEmailAndPassword(auth, email, password)
       const user = response.user
 
-      setUser(user)
-      setLocalStorage(user.uid)
+      const userId = user.uid
+      const createdAt = user.metadata.creationTime
 
-      // responseUser.getIdToken().then((accessToken) => setAccessToken(accessToken))
-
-      // const userId = responseUser.uid
-      // const createdAt = responseUser.metadata.creationTime
-
-      // set(ref(db, 'users/' + userId), {
-      //   userName: name,
-      //   email,
-      //   createdAt,
-      // })
+      // запись в базу данных после регистрации
+      set(ref(db, 'users/' + userId), {
+        userName: name,
+        email,
+        createdAt,
+      })
     } catch (error) {
       alert(error)
     }
   }
 
-  const signIn = async ({ email, password }: ISignUp) => {
+  const signIn = async ({ email, password }: ISignIn) => {
     try {
-      const response = await signInWithEmailAndPassword(auth, email, password)
-      const user = response.user
-      setUser(user)
-      setLocalStorage(user.uid)
-
-      // console.log(responseUser)
-
-      // responseUser.getIdToken().then((accessToken) => setAccessToken(accessToken))
-
-      // const userId = responseUser.uid
-
-      // const user = ref(db, 'users/' + userId)
-      // onValue(user, (snapshot) => {
-      //   const data = snapshot.val()
-      //   setUser({
-      //     userId,
-      //     name: data.displayName,
-      //     email: data.email,
-      //     createdAt: data.createdAt,
-      //   })
-      // })
+      await signInWithEmailAndPassword(auth, email, password)
     } catch (error) {
       alert(error)
     }
@@ -88,20 +52,14 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
   const signOutUser = async () => {
     try {
       await signOut(auth).then(() => {
-        setUser(null)
-        removeLocalStorage()
-        console.log('signOut')
+        navigate('/')
       })
     } catch (error) {
       alert(error)
     }
   }
 
-  console.log('user', user)
-
   const value = {
-    user,
-    accessToken,
     signUp,
     signIn,
     signOutUser,

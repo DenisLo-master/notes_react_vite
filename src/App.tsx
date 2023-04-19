@@ -5,8 +5,9 @@ import Workspace from './components/Workspace'
 import { LayoutContext } from './hooks/useLayoutContext'
 import { firebaseApp } from './store/firebase.config'
 import { Note } from './interfaces/NoteProps'
-import { Route, Routes } from 'react-router'
+import { Navigate, Route, Routes } from 'react-router'
 import { AuthLayout } from './layouts/AuthLayout'
+import { WorkSpaceLayout } from './layouts/WorkSpaceLayout'
 
 export function App() {
   const [visible, setVisible] = useState<boolean>(true)
@@ -30,9 +31,11 @@ export function App() {
     <>
       <LayoutContext.Provider value={{ visible, toggleVisibleSidebar, activeNote, setCurrentNote }}>
         <Routes>
-          <Route element={<AuthLayout />}>
-            <Route path='/' element={<Workspace />} />
+          <Route path='/' element={<AuthLayout />} />
+          <Route path='/workspace' element={<WorkSpaceLayout />}>
+            <Route path='' element={<Workspace />} />
           </Route>
+          <Route path='*' element={<Navigate to='/' />} />
         </Routes>
       </LayoutContext.Provider>
     </>

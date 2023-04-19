@@ -1,8 +1,8 @@
 import { Container, Flex, PasswordInput, Stack, Text, useMantineTheme } from '@mantine/core'
-import { Dispatch, FC, SetStateAction, useState } from 'react'
+import { FC } from 'react'
 import * as Yup from 'yup'
 import { useForm, yupResolver } from '@mantine/form'
-import { TextInput, Button, Box, Group } from '@mantine/core'
+import { TextInput, Button, Group } from '@mantine/core'
 import { AuthProps, ISignUp } from '../../interfaces/LoginTypes'
 import { IAuthValues, useAuth } from '../../context/AuthProvider'
 
@@ -18,7 +18,7 @@ const schema = Yup.object().shape({
 })
 
 export const SignUp: FC<AuthProps> = ({ setRegister }) => {
-  const { user, signUp }: IAuthValues = useAuth()
+  const { signUp }: IAuthValues = useAuth()
   const theme = useMantineTheme()
 
   const form = useForm({
@@ -78,7 +78,6 @@ export const SignUp: FC<AuthProps> = ({ setRegister }) => {
           </form>
         </Stack>
       </Flex>
-      {/* {JSON.stringify(user)} */}
     </Container>
   )
 }

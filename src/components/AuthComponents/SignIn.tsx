@@ -1,9 +1,9 @@
 import { Container, Flex, PasswordInput, Stack, Text, useMantineTheme } from '@mantine/core'
-import { FC, useState } from 'react'
+import { FC } from 'react'
 import * as Yup from 'yup'
 import { useForm, yupResolver } from '@mantine/form'
-import { TextInput, Button, Box, Group } from '@mantine/core'
-import { AuthProps, ISignUp } from '../../interfaces/LoginTypes'
+import { TextInput, Button, Group } from '@mantine/core'
+import { AuthProps, ISignIn } from '../../interfaces/LoginTypes'
 import { IAuthValues, useAuth } from '../../context/AuthProvider'
 
 const schema = Yup.object().shape({
@@ -17,7 +17,7 @@ const schema = Yup.object().shape({
 })
 
 export const SignIn: FC<AuthProps> = ({ setRegister }) => {
-  const { signUp, signIn }: IAuthValues = useAuth()
+  const { signIn }: IAuthValues = useAuth()
   const theme = useMantineTheme()
 
   const form = useForm({
@@ -28,7 +28,7 @@ export const SignIn: FC<AuthProps> = ({ setRegister }) => {
     },
   })
 
-  const handleSignUp = (values: ISignUp) => {
+  const handleSignIn = (values: ISignIn) => {
     signIn(values)
   }
 
@@ -65,7 +65,7 @@ export const SignIn: FC<AuthProps> = ({ setRegister }) => {
           <Text align='center' fz='1.2rem' fw='600'>
             Войти
           </Text>
-          <form onSubmit={form.onSubmit((values) => handleSignUp(values))}>
+          <form onSubmit={form.onSubmit((values) => handleSignIn(values))}>
             <TextInput withAsterisk label='Email' placeholder='example@mail.com' {...form.getInputProps('email')} />
             <PasswordInput withAsterisk label='Password' placeholder='Password' {...form.getInputProps('password')} />
 

@@ -77,6 +77,9 @@ const Layout = () => {
       user: 'denis.lkg@gmail.com',
       notes: notesListFromIDB,
     })
+  // выход из аккаунта
+  const handleClickOut = () => {
+    signOutUser()
   }
 
   return (
@@ -99,7 +102,10 @@ const Layout = () => {
         >
           fromFB
         </button>
-        <Button onClick={signOutUser}>Выход</Button>
+        {/* Кнопка выхода из аккаунта */}
+        <Button pos={'fixed'} right={0} m={10} onClick={handleClickOut}>
+          Выход
+        </Button>
 
         <Header addItem={setMyNotesList} />
         <Box
