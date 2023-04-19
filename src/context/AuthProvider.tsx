@@ -1,21 +1,11 @@
-import {
-  FC,
-  PropsWithChildren,
-  useContext,
-  createContext,
-  useState,
-} from 'react'
+import { FC, PropsWithChildren, useContext, createContext, useState } from 'react'
 import { ISignIn, ISignUp } from '../interfaces/LoginTypes.js'
-<<<<<<< HEAD
-import { createUserWithEmailAndPassword, getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'firebase/auth'
-=======
 import {
   createUserWithEmailAndPassword,
   getAuth,
   signInWithEmailAndPassword,
   signOut,
 } from 'firebase/auth'
->>>>>>> 3df5fdd (delete redux, add auth)
 import { getDatabase, ref, set } from 'firebase/database'
 import { useNavigate } from 'react-router-dom'
 
@@ -115,6 +105,7 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
     try {
       await signOut(auth).then(() => {
         navigate('/')
+        localStorage.removeItem('userId')
       })
     } catch (error) {
       alert(error)
