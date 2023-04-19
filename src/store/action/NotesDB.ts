@@ -7,7 +7,7 @@ export class NotesDB extends Dexie {
   constructor() {
     super('MyNotes')
     this.version(1).stores({
-      notes: 'id, title, body,created_at,updated_at', // Primary key and indexed props
+      notes: 'id, title, body,created_at,updated_at,syncByTime', // Primary key and indexed props
     })
   }
   updateNote(note: UpdateNote) {

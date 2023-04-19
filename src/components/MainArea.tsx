@@ -4,6 +4,7 @@ import { Container, ActionIcon } from '@mantine/core'
 import { TextEditor } from './TextEditor'
 import { useLayoutContext } from '../hooks/useLayoutContext'
 import { IconEdit } from '@tabler/icons-react';
+import { updateNotes } from '../store/action/UpdateLocalDB'
 
 interface MainbarProps {
   visible: boolean
@@ -27,6 +28,12 @@ const MainArea: FC<MainbarProps> = ({ visible }) => {
     activeNote && setContent(activeNote.body)
   }, [activeNote])
 
+  useEffect(() => {
+    const updateNote = { ...activeNote }
+    console.log("updateNote", content.length)
+    updateNote.body = content
+    updateNotes(updateNote)
+  }, [content])
 
   return (
     <div className="mainArea" style={style}>

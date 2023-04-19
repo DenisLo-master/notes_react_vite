@@ -25,10 +25,10 @@ const Layout = () => {
 
   const searchedNotesList = serchedText
     ? myNotesList.filter(
-        (note) =>
-          note.title.toLowerCase().includes(serchedText) ||
-          note.body.toLowerCase().includes(serchedText),
-      )
+      (note) =>
+        note.title.toLowerCase().includes(serchedText) ||
+        note.body.toLowerCase().includes(serchedText),
+    )
     : myNotesList
 
   useEffect(() => {
@@ -49,6 +49,7 @@ const Layout = () => {
           body: note.body,
           additionalText: note.body.substring(0, 10),
           created_at: moment(note.created_at).format('L'),
+          updated_at: moment(note.updated_at).format('L'),
           active: index === 0 ? true : false, //показываем первую запись активной
         })
       })
