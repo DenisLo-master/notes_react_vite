@@ -1,17 +1,6 @@
-import {
-  FC,
-  PropsWithChildren,
-  useContext,
-  createContext,
-  useState,
-} from 'react'
+import { FC, PropsWithChildren, useContext, createContext, useState } from 'react'
 import { ISignIn, ISignUp } from '../interfaces/LoginTypes.js'
-import {
-  createUserWithEmailAndPassword,
-  getAuth,
-  signInWithEmailAndPassword,
-  signOut,
-} from 'firebase/auth'
+import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword, signOut } from 'firebase/auth'
 import { getDatabase, ref, set } from 'firebase/database'
 import { useNavigate } from 'react-router-dom'
 
@@ -38,15 +27,13 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
 
   const signUp = async ({ name, email, password }: ISignUp) => {
     try {
-      const response = await createUserWithEmailAndPassword(
-        auth,
-        email,
-        password,
-      )
+      const response = await createUserWithEmailAndPassword(auth, email, password)
       const user = response.user
 
       const userId = user.uid
       const createdAt = user.metadata.creationTime
+
+      localStorage.setItem('userId', userId)
 
       setCurrentUserId(userId)
 
@@ -69,6 +56,8 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
 
       const userId = user.uid
 
+      localStorage.setItem('userId', userId)
+
       setCurrentUserId(userId)
     } catch (error) {
       alert(error)
@@ -79,6 +68,7 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
     try {
       await signOut(auth).then(() => {
         navigate('/')
+        localStorage.removeItem('userId')
       })
     } catch (error) {
       alert(error)
