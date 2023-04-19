@@ -36,6 +36,14 @@ const Layout = () => {
     )
     : myNotesList
 
+  const [serchedText, setSearchedText] = useState('')
+
+  const searchedNotesList = serchedText
+    ? myNotesList.filter(
+      (note) => note.title.toLowerCase().includes(serchedText) || note.body.toLowerCase().includes(serchedText),
+    )
+    : myNotesList
+
   useEffect(() => {
     db.notes.clear()
     //получаем записи из Firebase

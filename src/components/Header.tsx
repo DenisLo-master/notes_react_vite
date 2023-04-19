@@ -66,7 +66,7 @@ const Header = ({ addItem, serchText }: HeaderType) => {
   }
 
   return (
-    <div className="header">
+    <div className='header'>
       <div>
         <Tooltip label="Show/Hide sidebar">
           <Button
@@ -96,12 +96,8 @@ const Header = ({ addItem, serchText }: HeaderType) => {
           </Button>
         </Tooltip>
       </div>
-      <div className="searchNode">
-        <TextInput
-          onChange={searchHandle}
-          placeholder="Find note"
-          rightSection={<IconSearch size="0.8rem" />}
-        />
+      <div className='searchNode'>
+        <TextInput onChange={searchHandle} placeholder='Find note' rightSection={<IconSearch size='0.8rem' />} />
       </div>
     </div>
   )
