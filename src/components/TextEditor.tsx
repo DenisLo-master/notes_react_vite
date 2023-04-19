@@ -61,12 +61,62 @@ export const TextEditor: FC<TextEditorProps> = ({ content, updatedContent }) => 
     }
   }
 
+
+
+
   //добавление картинки из локального хранилища на место установки курсора
   const addImageFile = (file: File) => {
     console.log('adding file', file)
     if (file) {
-      const image = URL.createObjectURL(file)
-      editor?.chain().focus().setImage({ src: image }).run()
+      const reader = new FileReader();
+      reader.onload = () => {
+        const imageDataUrl = reader.result as string;
+        // Сохранение файла в состоянии компонента
+        console.log("+++++++++image", imageDataUrl.length)
+        localStorage.setItem(`${file.name}`, imageDataUrl);
+
+        function dataURLtoBlob(dataURL: string): Blob {
+          const byteString = atob(dataURL.split(',')[1]);
+          const mimeString = dataURL.split(',')[0].split(':')[1].split(';')[0];
+          const arrayBuffer = new ArrayBuffer(byteString.length);
+          const uint8Array = new Uint8Array(arrayBuffer);
+
+          for (let i = 0; i < byteString.length; i++) {
+            uint8Array[i] = byteString.charCodeAt(i);
+          }
+
+          return new Blob([arrayBuffer], { type: mimeString });
+        }
+
+
+        const imageDataLocal = localStorage.getItem(`${file.name}`);
+        if (imageDataLocal) {
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            // Чтение файла в виде ArrayBuffer
+            const buffer = reader.result as ArrayBuffer;
+
+            // Создание Uint8Array из ArrayBuffer
+            const uint8Array = new Uint8Array(buffer);
+
+            // Создание Blob из Uint8Array с указанием типа MIME для изображения
+            const blob = new Blob([uint8Array], { type: 'image/jpeg' }); // Здесь указан тип MIME, замените его на соответствующий тип вашего изображения
+
+            // Создание URL из Blob
+            const imageUrl = URL.createObjectURL(blob); // Создание URL из Blob
+            console.log("+++++++++imageUrl", imageDataUrl.length)
+
+            editor?.chain().focus().setImage({ src: imageUrl }).run()
+
+          };
+        }
+        // Чтение Data URL в виде ArrayBuffer
+        reader.readAsArrayBuffer(dataURLtoBlob);
+
+      };
+      reader.readAsDataURL(file);
+      // const fileLocal = localStorage.getItem(`${file.name}`)
+      // const image = fileLocal && URL.createObjectURL(fileLocal)
     }
   }
 

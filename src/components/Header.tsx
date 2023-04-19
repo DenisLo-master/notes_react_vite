@@ -28,6 +28,7 @@ const Header = ({ addItem }: HeaderType) => {
       id: new Date().getTime(),
       body: 'Новая заметка',
       created_at: moment(new Date().getTime()).format('DD.MM.YYYY'),
+      updated_at: moment(new Date().getTime()).format('DD.MM.YYYY'),
       title: 'Новая заметка',
       additionalText: 'Новая заметка',
     }

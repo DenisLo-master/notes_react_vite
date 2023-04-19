@@ -45,6 +45,7 @@ const Layout = () => {
           body: note.body,
           additionalText: note.body.substring(0, 10),
           created_at: moment(note.created_at).format('L'),
+          updated_at: moment(note.updated_at).format('L'),
           active: index === 0 ? true : false, //показываем первую запись активной
         })
       })
@@ -62,11 +63,11 @@ const Layout = () => {
           body: note.body,
           additionalText: note.body.substring(0, 10),
           created_at: moment(note.created_at).format('L'),
+          updated_at: moment(note.updated_at).format('L'),
           active: index === 0 ? true : false, //показываем первую запись активной
         })
         addNotes(note)
       })
-
     setMyNotesList(tempArray)
     setCurrentNote(tempArray[0]) //делаем первую запись активной, чтобы отобразилась в редакторе
   }, [notes])
