@@ -5,7 +5,7 @@ import MainArea from './MainArea'
 import { useLayoutContext } from '../hooks/useLayoutContext'
 import { getNotesFromFirebase, setNotesToFirebase } from '../store/action/firebaseExchange'
 import { Note, NoteProps } from '../interfaces/NoteProps'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, FC } from 'react'
 import { addNotes } from '../store/action/AddToLocalDB'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { db } from '../store/action/NotesDB'
@@ -77,6 +77,7 @@ const Layout = () => {
       user: 'denis.lkg@gmail.com',
       notes: notesListFromIDB,
     })
+  }
   // выход из аккаунта
   const handleClickOut = () => {
     signOutUser()

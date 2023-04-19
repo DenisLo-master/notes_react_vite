@@ -6,17 +6,20 @@ import { ModalsProvider } from '@mantine/modals'
 
 import { Provider } from 'react-redux'
 import { store } from './store/notesRedux/store'
+import { BrowserRouter } from 'react-router-dom'
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   // <React.StrictMode>
-  <Provider store={store}>
-    <AuthProvider>
-      <MantineProvider theme={{ colorScheme: 'light' }} withGlobalStyles withNormalizeCSS>
-        <ModalsProvider>
-          <App />
-        </ModalsProvider>
-      </MantineProvider>
-    </AuthProvider>
-  </Provider>,
+  <BrowserRouter>
+    <Provider store={store}>
+      <AuthProvider>
+        <MantineProvider theme={{ colorScheme: 'light' }} withGlobalStyles withNormalizeCSS>
+          <ModalsProvider>
+            <App />
+          </ModalsProvider>
+        </MantineProvider>
+      </AuthProvider>
+    </Provider>
+  </BrowserRouter>,
   //</React.StrictMode>
 )
