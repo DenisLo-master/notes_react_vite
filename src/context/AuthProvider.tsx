@@ -1,6 +1,17 @@
-import { FC, PropsWithChildren, useContext, createContext, useState } from 'react'
+import {
+  FC,
+  PropsWithChildren,
+  useContext,
+  createContext,
+  useState,
+} from 'react'
 import { ISignIn, ISignUp } from '../interfaces/LoginTypes.js'
-import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword, signOut } from 'firebase/auth'
+import {
+  createUserWithEmailAndPassword,
+  getAuth,
+  signInWithEmailAndPassword,
+  signOut,
+} from 'firebase/auth'
 import { getDatabase, ref, set } from 'firebase/database'
 import { useNavigate } from 'react-router-dom'
 
@@ -10,7 +21,7 @@ export interface IAuthValues {
   signIn: (values: ISignIn) => void
   signOutUser: () => void
 }
-
+type AuthContext = Partial<IAuthValues>
 const AuthContext = createContext<any>({})
 
 export const useAuth = () => {
@@ -27,7 +38,11 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
 
   const signUp = async ({ name, email, password }: ISignUp) => {
     try {
-      const response = await createUserWithEmailAndPassword(auth, email, password)
+      const response = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password,
+      )
       const user = response.user
 
       const userId = user.uid

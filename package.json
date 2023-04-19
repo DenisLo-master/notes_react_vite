@@ -15,7 +15,6 @@
 		"@mantine/hooks": "6.0.7",
 		"@mantine/modals": "^6.0.7",
 		"@mantine/tiptap": "6.0.7",
-		"@reduxjs/toolkit": "^1.9.5",
 		"@tabler/icons-react": "2.16.0",
 		"@tiptap/extension-highlight": "^2.0.3",
 		"@tiptap/extension-image": "2.0.3",
@@ -39,8 +38,8 @@
 		"react-dom": "^18.2.0",
 		"react-markdown": "^8.0.7",
 		"react-redux": "^8.0.5",
-		"react-simplemde-editor": "^5.2.0",
 		"react-router-dom": "^6.10.0",
+		"react-simplemde-editor": "^5.2.0",
 		"yup": "^1.1.1"
 	},
 	"devDependencies": {
