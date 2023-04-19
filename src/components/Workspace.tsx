@@ -1,21 +1,21 @@
-import { Container, Box } from '@mantine/core'
+import { Container, Box, Button } from '@mantine/core'
 import Header from './Header'
 import ListItem from './ListItem'
 import MainArea from './MainArea'
 import { useLayoutContext } from '../hooks/useLayoutContext'
-import {
-  getNotesFromFirebase,
-  setNotesToFirebase,
-} from '../store/action/firebaseExchange'
+import { getNotesFromFirebase, setNotesToFirebase } from '../store/action/firebaseExchange'
 import { Note, NoteProps } from '../interfaces/NoteProps'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, FC } from 'react'
 import { addNotes } from '../store/action/AddToLocalDB'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { db } from '../store/action/NotesDB'
 import moment from 'moment'
+import { useAuth } from '../context/AuthProvider'
 
 const Layout = () => {
   //  const dispatch = useAppDispatch()
+
+  const { signOutUser } = useAuth()
   const { visible } = useLayoutContext()
   const [notes, setNotes] = useState<Note[]>([])
 
@@ -78,10 +78,14 @@ const Layout = () => {
       notes: notesListFromIDB,
     })
   }
+  // выход из аккаунта
+  const handleClickOut = () => {
+    signOutUser()
+  }
 
   return (
-    <Container size="xl">
-      <div className="main">
+    <Container size='xl'>
+      <div className='main'>
         <button
           onClick={() => {
             setNotesToFirebase({
@@ -99,10 +103,14 @@ const Layout = () => {
         >
           fromFB
         </button>
+        {/* Кнопка выхода из аккаунта */}
+        <Button pos={'fixed'} right={0} m={10} onClick={handleClickOut}>
+          Выход
+        </Button>
 
         <Header addItem={setMyNotesList} />
         <Box
-          className="containerShadow"
+          className='containerShadow'
           sx={{
             display: 'flex',
             flexDirection: 'row',
