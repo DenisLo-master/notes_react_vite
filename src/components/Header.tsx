@@ -4,7 +4,7 @@ import { modals } from '@mantine/modals'
 import { IconSearch } from '@tabler/icons-react'
 import { Dispatch, SetStateAction } from 'react'
 import moment from 'moment'
-import { Note, NoteProps } from './../interfaces/NoteProps'
+import { NoteProps } from './../interfaces/NoteProps'
 import { CreateNote } from '../store/action/CreateNote'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { db } from '../store/action/NotesDB'
@@ -15,6 +15,7 @@ type HeaderType = {
 
 const Header = ({ addItem }: HeaderType) => {
   const { visible, toggleVisibleSidebar } = useLayoutContext()
+  const { activeNote } = useLayoutContext()
   const toggleVisibleHandle = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault()
     toggleVisibleSidebar()
@@ -56,14 +57,15 @@ const Header = ({ addItem }: HeaderType) => {
       labels: { confirm: 'Delete note', cancel: "No don't delete it" },
       confirmProps: { color: 'red' },
       onCancel: () => console.log('Cancel'),
-      onConfirm: () => console.log('Confirmed'),
+      onConfirm: () => {
+        db.deleteNote(activeNote.id)
+      },
     })
   const searchHandle = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target
     console.log(value)
   }
-  //получаем записи из IndexedDB
-  const notesListFromIDB = useLiveQuery(() => db.notes.toArray()) as Note[]
+
   return (
     <div className="header">
       <div>

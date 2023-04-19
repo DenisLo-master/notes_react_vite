@@ -13,6 +13,9 @@ export class NotesDB extends Dexie {
   updateNote(note: UpdateNote) {
     return this.notes.update(note.id, note)
   }
+  deleteNote(id: number) {
+    return this.notes.delete(id)
+  }
   createNote(note: Note) {
     return this.notes.add(note)
   }

@@ -14,6 +14,7 @@ interface SidebarProps {
 const ListItem: FC<SidebarProps> = ({ visible, notesList }) => {
   const [notes, setNotes] = useState<NoteProps[]>(notesList)
   const { setCurrentNote } = useLayoutContext()
+
   useEffect(() => {
     setNotes(notesList)
   }, [notesList])
@@ -29,6 +30,7 @@ const ListItem: FC<SidebarProps> = ({ visible, notesList }) => {
       if (note.id === id) {
         note.active = true
         setCurrentNote(note)
+        localStorage.setItem('activeNote', id.toString())
       }
 
       updateNote.push(note)

@@ -14,11 +14,8 @@ import { useLiveQuery } from 'dexie-react-hooks'
 import { db } from '../store/action/NotesDB'
 import moment from 'moment'
 
-import { addNotesToIndexedDB } from '../store/notesRedux/notesSlice'
-import { useAppDispatch } from '../hooks/reduxhooks'
-
 const Layout = () => {
-  const dispatch = useAppDispatch()
+  //  const dispatch = useAppDispatch()
   const { visible } = useLayoutContext()
   const [notes, setNotes] = useState<Note[]>([])
 
@@ -30,7 +27,7 @@ const Layout = () => {
     db.notes.clear()
     //получаем записи из Firebase
     getNotesFromFirebase('denis.lkg@gmail.com').then((notes) => {
-      dispatch(addNotesToIndexedDB(notes))
+      //dispatch(addNotesToIndexedDB(notes))
       setNotes(notes)
     })
   }, [])
@@ -39,7 +36,23 @@ const Layout = () => {
   const notesListFromIDB = useLiveQuery(() => db.notes.toArray()) as Note[]
 
   useEffect(() => {
-    //записываем полученные данные в IndexedDB
+    const tempArray: NoteProps[] = []
+    notesListFromIDB &&
+      notesListFromIDB.map((note, index) => {
+        tempArray.push({
+          id: note.id,
+          title: note.title,
+          body: note.body,
+          additionalText: note.body.substring(0, 10),
+          created_at: moment(note.created_at).format('L'),
+          active: index === 0 ? true : false, //показываем первую запись активной
+        })
+      })
+
+    setMyNotesList(tempArray)
+  }, [notesListFromIDB])
+
+  useEffect(() => {
     const tempArray: NoteProps[] = []
     notes &&
       notes.map((note, index) => {
@@ -53,6 +66,7 @@ const Layout = () => {
         })
         addNotes(note)
       })
+
     setMyNotesList(tempArray)
     setCurrentNote(tempArray[0]) //делаем первую запись активной, чтобы отобразилась в редакторе
   }, [notes])

@@ -1,5 +1,5 @@
 import { db } from './NotesDB'
-import { Note, UpdateNote } from '../../interfaces/NoteProps'
+import { UpdateNote } from '../../interfaces/NoteProps'
 
 export async function updateNotes(note: UpdateNote): Promise<void> {
   try {

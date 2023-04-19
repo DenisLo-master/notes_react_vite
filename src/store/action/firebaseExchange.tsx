@@ -5,15 +5,14 @@ import { Note } from '../../interfaces/NoteProps'
 const db = getDatabase(firebaseApp)
 
 interface UserNotes {
-    user: string
-    notes: Note[]
+  user: string
+  notes: Note[]
 }
 interface Updates {
-    [key: string]: Note[]
+  [key: string]: Note[]
 }
 
 export async function setNotesToFirebase({ user, notes }: UserNotes) {
-
   try {
     //console.log('setNotesToFirebase--', user)
     //временно пока нет uid будет подставляться вместо userFB
@@ -22,29 +21,27 @@ export async function setNotesToFirebase({ user, notes }: UserNotes) {
     if (!newHashKey) return
     const updates: Updates = {}
     updates[newHashKey] = notes
-    console.log(updates)
+    //console.log(updates)
     await set(ref(db, `/notes_data/${uid}/notes/`), updates)
   } catch (err) {
     console.error('Error setNotesToFirebase', user, err)
   }
-
 }
 
 export async function getNotesFromFirebase(user: string) {
-    try {
-        //console.log('getNotesFromFirebase--', user)
-        const uid = user.replace(new RegExp('\\.', 'g'), '_')
-        //console.log(uid)
-        const snapshot = await get(child(ref(db), `/notes_data/${uid}/notes/`))
+  try {
+    //console.log('getNotesFromFirebase--', user)
+    const uid = user.replace(new RegExp('\\.', 'g'), '_')
+    //console.log(uid)
+    const snapshot = await get(child(ref(db), `/notes_data/${uid}/notes/`))
 
-        if (snapshot.exists()) {
-            const hash = Object.keys(snapshot.val())[0]
-            const notes = snapshot.val()[hash]
-            console.log('Notes', notes)
-            return notes
-        }
-    } catch (err) {
-        console.error('Error getNotesFromFirebase', user, err)
-
+    if (snapshot.exists()) {
+      const hash = Object.keys(snapshot.val())[0]
+      const notes = snapshot.val()[hash]
+      //console.log('Notes', notes)
+      return notes
     }
+  } catch (err) {
+    console.error('Error getNotesFromFirebase', user, err)
+  }
 }
