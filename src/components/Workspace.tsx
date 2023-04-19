@@ -23,6 +23,14 @@ const Layout = () => {
   const [myNotesList, setMyNotesList] = useState<NoteProps[]>([])
   const { setCurrentNote } = useLayoutContext()
 
+  const [serchedText, setSearchedText] = useState('')
+
+  const searchedNotesList = serchedText
+    ? myNotesList.filter(
+        (note) => note.title.toLowerCase().includes(serchedText) || note.body.toLowerCase().includes(serchedText),
+      )
+    : myNotesList
+
   useEffect(() => {
     db.notes.clear()
     //получаем записи из Firebase
@@ -108,7 +116,7 @@ const Layout = () => {
           Выход
         </Button>
 
-        <Header addItem={setMyNotesList} />
+        <Header addItem={setMyNotesList} serchText={setSearchedText} />
         <Box
           className='containerShadow'
           sx={{
@@ -117,7 +125,7 @@ const Layout = () => {
             justifyItems: 'flex-start',
           }}
         >
-          <ListItem visible={visible} notesList={myNotesList} />
+          <ListItem visible={visible} notesList={searchedNotesList} />
           <MainArea visible={visible} />
         </Box>
       </div>
