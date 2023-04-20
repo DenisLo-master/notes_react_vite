@@ -6,7 +6,6 @@ import { Dispatch, SetStateAction } from 'react'
 import moment from 'moment'
 import { NoteProps } from './../interfaces/NoteProps'
 import { CreateNote } from '../store/action/CreateNote'
-import { useLiveQuery } from 'dexie-react-hooks'
 import { db } from '../store/action/NotesDB'
 
 type HeaderType = {
@@ -52,7 +51,7 @@ const Header = ({ addItem, serchText }: HeaderType) => {
     modals.openConfirmModal({
       title: 'Delete your note',
       centered: true,
-      children: <Text size='sm'>Are you sure you want to delete your note?</Text>,
+      children: <Text size="sm">Are you sure you want to delete your note?</Text>,
       labels: { confirm: 'Delete note', cancel: "No don't delete it" },
       confirmProps: { color: 'red' },
       onCancel: () => console.log('Cancel'),
@@ -66,26 +65,42 @@ const Header = ({ addItem, serchText }: HeaderType) => {
   }
 
   return (
-    <div className='header'>
+    <div className="header">
       <div>
-        <Tooltip label='Show/Hide sidebar'>
-          <Button variant='light' color='gray' style={{ margin: '0 10px' }} onClick={toggleVisibleHandle}>
+        <Tooltip label="Show/Hide sidebar">
+          <Button
+            variant="light"
+            color="gray"
+            style={{ margin: '0 10px' }}
+            onClick={toggleVisibleHandle}>
             {visible ? 'Hide' : 'Show'} sidebar
           </Button>
         </Tooltip>
-        <Tooltip label='Create note'>
-          <Button variant='light' color='gray' style={{ margin: '0 10px' }} onClick={createNoteHandle}>
+        <Tooltip label="Create note">
+          <Button
+            variant="light"
+            color="gray"
+            style={{ margin: '0 10px' }}
+            onClick={createNoteHandle}>
             Create note
           </Button>
         </Tooltip>
-        <Tooltip label='Delete note'>
-          <Button variant='light' color='gray' style={{ margin: '0 10px' }} onClick={deleteNoteHandler}>
+        <Tooltip label="Delete note">
+          <Button
+            variant="light"
+            color="gray"
+            style={{ margin: '0 10px' }}
+            onClick={deleteNoteHandler}>
             Delete note
           </Button>
         </Tooltip>
       </div>
-      <div className='searchNode'>
-        <TextInput onChange={searchHandle} placeholder='Find note' rightSection={<IconSearch size='0.8rem' />} />
+      <div className="searchNode">
+        <TextInput
+          onChange={searchHandle}
+          placeholder="Find note"
+          rightSection={<IconSearch size="0.8rem" />}
+        />
       </div>
     </div>
   )

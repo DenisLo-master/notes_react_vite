@@ -1,5 +1,5 @@
 import { ref, getDatabase, child, get, push, set } from 'firebase/database'
-import { auth, firebaseApp } from '../firebase.config'
+import { firebaseApp } from '../firebase.config'
 import { Note } from '../../interfaces/NoteProps'
 
 const db = getDatabase(firebaseApp)
@@ -29,7 +29,7 @@ export async function setNotesToFirebase({ user, notes }: UserNotes) {
   }
 }
 
-export async function getNotesFromFirebase(user: string) {
+export async function getNotesFromFirebase(user: string): Promise<Note[] | undefined> {
   try {
     //console.log('getNotesFromFirebase--', user)
     //const uid = user.replace(new RegExp('\\.', 'g'), '_')

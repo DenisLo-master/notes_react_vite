@@ -1,18 +1,10 @@
 import { FC, useState, useRef } from 'react'
 import { NoteProps } from '../interfaces/NoteProps'
 import { updateNotes } from '../store/action/UpdateLocalDB'
-import { setNotesToFirebase } from '../store/action/firebaseExchange'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { db } from '../store/action/NotesDB'
 
-const Note: FC<NoteProps> = ({
-  title,
-  created_at,
-  body,
-  active,
-  onClick,
-  id,
-}) => {
+const Note: FC<NoteProps> = ({ title, created_at, body, active, onClick, id }) => {
   const [noteTitle, setNoteTitle] = useState<string>(title)
   const inputRef = useRef<HTMLInputElement>(null)
   //получаем записи из IndexedDB

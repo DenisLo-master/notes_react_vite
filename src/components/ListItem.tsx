@@ -4,8 +4,7 @@ import { useLayoutContext } from '../hooks/useLayoutContext'
 import moment from 'moment'
 
 import Note from './Note'
-import { setNotesToFirebase } from '../store/action/firebaseExchange'
-
+import { ScrollArea } from '@mantine/core'
 interface SidebarProps {
   visible: boolean
   notesList: NoteProps[]
@@ -48,20 +47,22 @@ const ListItem: FC<SidebarProps> = ({ visible, notesList }) => {
   } else {
     return visible ? (
       <div className="sidebarArea" style={style}>
-        {notes.length !== 0
-          ? notes.map((note) => (
-              <Note
-                key={note.id}
-                id={note.id}
-                created_at={moment(note.updated_at).format('DD.MM.YYYY')}
-                title={note.title}
-                additionalText={note.additionalText}
-                active={note.active}
-                onClick={() => noteClickHandle(note.id)}
-                body={note.body}
-              />
-            ))
-          : 'Загрузка...'}
+        <ScrollArea.Autosize mah="100%">
+          {notes.length !== 0
+            ? notes.map((note) => (
+                <Note
+                  key={note.id}
+                  id={note.id}
+                  created_at={moment(note.updated_at).format('DD.MM.YYYY')}
+                  title={note.title}
+                  additionalText={note.additionalText}
+                  active={note.active}
+                  onClick={() => noteClickHandle(note.id)}
+                  body={note.body}
+                />
+              ))
+            : 'Загрузка...'}
+        </ScrollArea.Autosize>
       </div>
     ) : (
       <div style={style}></div>
