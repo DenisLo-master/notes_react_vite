@@ -31,12 +31,11 @@ const MainArea: FC<MainbarProps> = ({ visible }) => {
   }, [activeNote])
 
   useEffect(() => {
-    const { id, title, body, created_at, updated_at } = activeNote
-    if (id) {
+    if (activeNote.id) {
       !isEdit &&
         setNoteToFirebase({
           uid: currentUserId,
-          note: { id, title, body, created_at, updated_at },
+          noteId: activeNote.id,
         })
     }
   }, [isEdit])

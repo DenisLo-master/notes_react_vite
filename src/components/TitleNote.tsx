@@ -18,7 +18,7 @@ const Note: FC<NoteProps> = ({
   //получаем записи из IndexedDB
   const notesListFromIDB = useLiveQuery(() => db.notes.toArray())
 
-  const handlechangeTitle = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChangeTitle = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target
     setNoteTitle(value)
   }
@@ -42,7 +42,7 @@ const Note: FC<NoteProps> = ({
             onBlur={handleSaveTitle}
             ref={inputRef}
             style={{ fontWeight: 'bold', border: 'none', background: 'none' }}
-            onChange={handlechangeTitle}
+            onChange={handleChangeTitle}
             value={noteTitle}
             placeholder={'Новая заметка'}
             id={id.toString()}

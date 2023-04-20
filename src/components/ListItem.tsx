@@ -2,7 +2,7 @@ import { FC, useEffect, useState } from 'react'
 import { NoteProps } from '../interfaces/NoteProps'
 import { useLayoutContext } from '../hooks/useLayoutContext'
 
-import Note from './Note'
+import Note from './TitleNote'
 import { ScrollArea } from '@mantine/core'
 interface SidebarProps {
   visible: boolean

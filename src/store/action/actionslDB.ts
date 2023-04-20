@@ -39,3 +39,11 @@ export async function addNote(note: Note): Promise<void> {
     console.log(error)
   }
 }
+
+export async function getNote(noteId: number): Promise<Note | undefined> {
+  try {
+    return await db.getNote(noteId)
+  } catch (error) {
+    console.log(error)
+  }
+}

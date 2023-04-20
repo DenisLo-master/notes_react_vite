@@ -22,17 +22,15 @@ const Layout = () => {
   const notesListFromIDB = useLiveQuery(() => db.notes.toArray()) as Note[]
 
   const { currentUserId } = useAuth()
-  console.log('activeNote', localStorage.getItem('activeNote'))
 
   useEffect(() => {
     if (notesListFromIDB && notesListFromIDB.length) {
-      //console.log('init------', notesListFromIDB)
       notesListFromIDB.forEach((note, index) => {
-        /* if (index === 0) {
+        if (index === 0) {
           setActive(note)
-        } */
+        }
         if (!note.sync) {
-          setNoteToFirebase({ uid: currentUserId, note })
+          setNoteToFirebase({ uid: currentUserId, noteId: note.id })
         } else {
           getNoteIdFromFirebase({ uid: currentUserId, noteId: note.id }).then(
             (note) => {
@@ -42,14 +40,12 @@ const Layout = () => {
         }
       })
     } else {
-      //console.log("init------empty", currentUserId)
       getNotesFromFirebase(currentUserId).then((notes) => {
         notes && notes.forEach((note) => addNote(note))
       })
     }
   }, [])
 
-  // //создаём список для отображения
   const [myNotesList, setMyNotesList] = useState<NoteProps[]>([])
   const [searchedText, setSearchedText] = useState('')
 

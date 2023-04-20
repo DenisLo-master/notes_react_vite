@@ -26,7 +26,11 @@ export class NotesDB extends Dexie {
   }
 
   createNote(note: Note) {
-    return this.notes.add(note)
+    return this.notes.add({ ...note, sync: false })
+  }
+
+  getNote(noteId: number) {
+    return this.notes.get(noteId)
   }
 }
 
