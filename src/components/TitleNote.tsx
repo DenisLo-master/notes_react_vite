@@ -3,6 +3,7 @@ import { NoteProps } from '../interfaces/NoteProps'
 import { updateNote } from '../store/action/actionslDB'
 import { setNoteToFirebase } from '../store/action/firebaseExchange'
 import { useAuth } from '../context/AuthProvider'
+import moment from 'moment'
 
 const Note: FC<NoteProps> = ({ title, created_at, body, active, onClick, id }) => {
   const { currentUserId } = useAuth()
@@ -21,7 +22,7 @@ const Note: FC<NoteProps> = ({ title, created_at, body, active, onClick, id }) =
       updateNote({
         id,
         title: value,
-        updated_at: new Date().toDateString(),
+        updated_at: new Date().toString()
       })
       setNoteToFirebase({
         uid: currentUserId,

@@ -1,5 +1,8 @@
 import { db } from './NotesDB'
 import { Note, UpdateNote } from '../../interfaces/NoteProps'
+import moment from 'moment'
+
+
 
 export async function updateNote(note: UpdateNote): Promise<void> {
   try {
@@ -26,8 +29,8 @@ export async function addNote(note: Note): Promise<void> {
       id: note.id,
       body: note.body,
       title: note.title,
-      created_at: new Date().toDateString(),
-      updated_at: new Date().toDateString()
+      created_at: new Date().toString(),
+      updated_at: new Date().toString()
     })
   } catch (error) {
     console.log(error)

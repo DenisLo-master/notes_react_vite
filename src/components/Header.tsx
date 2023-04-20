@@ -28,11 +28,11 @@ const Header = ({ addItem, searchText, currentUserId }: HeaderType) => {
 
     const templateNote: NoteProps = {
       id: new Date().getTime(),
-      body: 'Новая заметка',
-      created_at: moment(new Date().getTime()).format('DD.MM.YYYY'),
-      updated_at: moment(new Date().getTime()).format('DD.MM.YYYY'),
+      body: '',
+      created_at: new Date().toString(),
+      updated_at: new Date().toString(),
       title: 'Новая заметка',
-      additionalText: 'Новая заметка',
+      additionalText: '',
     }
 
     addItem((prev) => [...prev, templateNote])
