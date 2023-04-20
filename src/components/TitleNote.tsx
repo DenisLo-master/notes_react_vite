@@ -48,7 +48,8 @@ const Note: FC<NoteProps> = ({
           />
         </span>
         <div>
-          {created_at} <span>{body.substring(0, 10)}</span>
+          {created_at}{' '}
+          <span>{body.substring(0, 10).replace(/(<([^>]+)>)/gi, '')}</span>
         </div>
       </div>
     </div>
