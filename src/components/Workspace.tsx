@@ -3,52 +3,76 @@ import Header from './Header'
 import ListItem from './ListItem'
 import MainArea from './MainArea'
 import { useLayoutContext } from '../hooks/useLayoutContext'
-import { getNotesFromFirebase, setNotesToFirebase } from '../store/action/firebaseExchange'
+import {
+  getNoteIdFromFirebase,
+  getNotesFromFirebase,
+  setNoteToFirebase,
+} from '../store/action/firebaseExchange'
 import { Note, NoteProps } from '../interfaces/NoteProps'
 import { useEffect, useState } from 'react'
-import { addNotes } from '../store/action/AddToLocalDB'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { db } from '../store/action/NotesDB'
 import moment from 'moment'
 import { useAuth } from '../context/AuthProvider'
+import { addNote, updateNote } from '../store/action/actionslDB'
 
 const Layout = () => {
   const { signOutUser } = useAuth()
-  const currentUserId = localStorage.getItem('userId') || ''
-  const { visible } = useLayoutContext()
+  const { visible, setActiveNote } = useLayoutContext()
   //получаем записи из IndexedDB
   const notesListFromIDB = useLiveQuery(() => db.notes.toArray()) as Note[]
 
-  //создаём список для отображения
-  const [myNotesList, setMyNotesList] = useState<NoteProps[]>([])
-  const [serchedText, setSearchedText] = useState('')
-
-  const searchedNotesList = serchedText
-    ? myNotesList.filter(
-        (note) =>
-          note.title.toLowerCase().includes(serchedText) ||
-          note.body.toLowerCase().includes(serchedText),
-      )
-    : myNotesList
+  const { currentUserId } = useAuth()
 
   useEffect(() => {
-    db.notes.clear()
-    //получаем записи из Firebase
-    getNotesFromFirebase(currentUserId /* 'denis.lkg@gmail.com' */).then((notes) => {
-      notes && notes.map((note) => addNotes(note))
-    })
+    if (notesListFromIDB && notesListFromIDB.length) {
+      console.log("init------", notesListFromIDB)
+      notesListFromIDB.forEach((note, index) => {
+        if (index === 0) {
+          setActiveNote(note)
+        }
+        if (!note.sync) {
+          setNoteToFirebase({ uid: currentUserId, note })
+        } else {
+          getNoteIdFromFirebase({ uid: currentUserId, noteId: note.id })
+            .then((note) => {
+              note && updateNote(note)
+            })
+        }
+      })
+    } else {
+      console.log("init------empty", currentUserId)
+      getNotesFromFirebase(currentUserId).then((notes) => {
+        notes && notes.forEach((note) => addNote(note))
+      })
+    }
   }, [])
+
+  // //создаём список для отображения
+  const [myNotesList, setMyNotesList] = useState<NoteProps[]>([])
+  const [searchedText, setSearchedText] = useState('')
+
+  const searchedNotesList = searchedText
+    ? myNotesList.filter(
+      (note) =>
+        note.title.toLowerCase().includes(searchedText) ||
+        note.body.toLowerCase().includes(searchedText),
+    )
+    : myNotesList
+
 
   useEffect(() => {
     const tempArray: NoteProps[] = []
     notesListFromIDB &&
-      notesListFromIDB.map((note, index) => {
+      notesListFromIDB.forEach((note, index) => {
         tempArray.push({
           id: note.id,
           title: note.title,
           body: note.body,
           additionalText: note.body.substring(0, 10),
           created_at: moment(note.created_at).format('L'),
+          updated_at: moment(note.updated_at).format('L'),
+          sync: note.sync,
           active: index === 0 ? true : false, //показываем первую запись активной
         })
       })
@@ -56,15 +80,7 @@ const Layout = () => {
     setMyNotesList(tempArray)
   }, [notesListFromIDB])
 
-  //отправляем в FireBase, если не пустой список
-  if (notesListFromIDB && notesListFromIDB.length !== 0) {
-    setNotesToFirebase({
-      user: currentUserId,
 
-      notes: notesListFromIDB,
-    })
-  }
-  // выход из аккаунта
   const handleClickOut = () => {
     signOutUser()
   }
@@ -72,27 +88,16 @@ const Layout = () => {
   return (
     <Container size="xl">
       <div className="main">
-        <button
-          onClick={() => {
-            setNotesToFirebase({
-              user: 'denis.lkg@gmail.com',
-              notes: notesListFromIDB,
-            })
-          }}>
-          toFB
-        </button>
-        <button
-          onClick={() => {
-            getNotesFromFirebase('denis.lkg@gmail.com')
-          }}>
-          fromFB
-        </button>
         {/* Кнопка выхода из аккаунта */}
         <Button pos={'fixed'} right={0} m={10} onClick={handleClickOut}>
           Выход
         </Button>
 
-        <Header addItem={setMyNotesList} serchText={setSearchedText} />
+        <Header
+          addItem={setMyNotesList}
+          searchText={setSearchedText}
+          currentUserId={currentUserId}
+        />
         <Box
           className="containerShadow"
           sx={{

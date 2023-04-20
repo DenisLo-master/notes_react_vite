@@ -1,6 +1,6 @@
 import { FC, useState, useRef } from 'react'
 import { NoteProps } from '../interfaces/NoteProps'
-import { updateNotes } from '../store/action/UpdateLocalDB'
+import { updateNote } from '../store/action/actionslDB'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { db } from '../store/action/NotesDB'
 
@@ -19,7 +19,7 @@ const Note: FC<NoteProps> = ({ title, created_at, body, active, onClick, id }) =
     setNoteTitle(value)
     if (inputRef.current) {
       const id = Number(inputRef.current.getAttribute('id'))
-      updateNotes({
+      updateNote({
         id,
         body,
         title: value,
@@ -27,7 +27,7 @@ const Note: FC<NoteProps> = ({ title, created_at, body, active, onClick, id }) =
       })
       //загружаем записи в FireBase
       if (notesListFromIDB) {
-        /* setNotesToFirebase({
+        /* setNoteToFirebase({
           user: 'denis.lkg@gmail.com',
           notes: notesListFromIDB,
         }) */

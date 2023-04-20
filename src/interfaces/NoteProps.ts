@@ -1,20 +1,17 @@
-export interface NoteProps {
-  id: number
-  title: string
-  created_at: string
-  updated_at?: string
-  additionalText?: string
-  active?: boolean
-  onClick?: () => void
-  body: string
-}
-
 export interface Note {
   id: number
   title: string
   body: string
-  created_at?: string
-  updated_at?: string
+  created_at: string
+  updated_at: string
+  sync?: boolean
+}
+
+
+export interface NoteProps extends Note {
+  additionalText?: string
+  active?: boolean
+  onClick?: () => void
 }
 
 export type UpdateNote = {
@@ -22,4 +19,6 @@ export type UpdateNote = {
   title: string
   body: string
   updated_at: string
+  sync?: boolean
 }
+

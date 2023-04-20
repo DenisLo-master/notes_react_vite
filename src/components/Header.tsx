@@ -5,15 +5,17 @@ import { IconSearch } from '@tabler/icons-react'
 import { Dispatch, SetStateAction } from 'react'
 import moment from 'moment'
 import { NoteProps } from './../interfaces/NoteProps'
-import { CreateNote } from '../store/action/CreateNote'
 import { db } from '../store/action/NotesDB'
+import { addNote } from '../store/action/actionslDB'
+import { deleteNoteFromFirebase } from '../store/action/firebaseExchange'
 
 type HeaderType = {
   addItem: Dispatch<SetStateAction<NoteProps[]>>
-  serchText: (text: string) => void
+  currentUserId: string
+  searchText: (text: string) => void
 }
 
-const Header = ({ addItem, serchText }: HeaderType) => {
+const Header = ({ addItem, searchText, currentUserId }: HeaderType) => {
   const { visible, toggleVisibleSidebar } = useLayoutContext()
   const { activeNote } = useLayoutContext()
   const toggleVisibleHandle = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -28,6 +30,7 @@ const Header = ({ addItem, serchText }: HeaderType) => {
       id: new Date().getTime(),
       body: 'Новая заметка',
       created_at: moment(new Date().getTime()).format('DD.MM.YYYY'),
+      updated_at: moment(new Date().getTime()).format('DD.MM.YYYY'),
       title: 'Новая заметка',
       additionalText: 'Новая заметка',
     }
@@ -41,7 +44,7 @@ const Header = ({ addItem, serchText }: HeaderType) => {
         updated_at: templateNote.created_at,
         title: templateNote.title,
       }
-      CreateNote(CreatedNote)
+      addNote(CreatedNote)
     } catch (error) {
       console.log(error)
     }
@@ -57,15 +60,20 @@ const Header = ({ addItem, serchText }: HeaderType) => {
       onCancel: () => console.log('Cancel'),
       onConfirm: () => {
         db.deleteNote(activeNote.id)
+        deleteNoteFromFirebase(
+          {
+            uid: currentUserId,
+            noteId: activeNote.id
+          })
       },
     })
   const searchHandle = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target
-    serchText(value)
+    searchText(value)
   }
 
   return (
-    <div className="header">
+    <div className='header'>
       <div>
         <Tooltip label="Show/Hide sidebar">
           <Button
@@ -95,12 +103,8 @@ const Header = ({ addItem, serchText }: HeaderType) => {
           </Button>
         </Tooltip>
       </div>
-      <div className="searchNode">
-        <TextInput
-          onChange={searchHandle}
-          placeholder="Find note"
-          rightSection={<IconSearch size="0.8rem" />}
-        />
+      <div className='searchNode'>
+        <TextInput onChange={searchHandle} placeholder='Find note' rightSection={<IconSearch size='0.8rem' />} />
       </div>
     </div>
   )

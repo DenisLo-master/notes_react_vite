@@ -61,12 +61,50 @@ export const TextEditor: FC<TextEditorProps> = ({ content, updatedContent }) => 
     }
   }
 
+  function dataURLtoBlob(dataURL: string): Blob | null {
+    const arr = dataURL.split(',');
+    const mimeMatch = arr[0].match(/:(.*?);/);
+    if (!mimeMatch) {
+      return null; // Вернуть null, если не найдено совпадение с регулярным выражением
+    }
+    const mime = mimeMatch[1];
+    const bstr = atob(arr[1]);
+    let n = bstr.length;
+    const u8arr = new Uint8Array(n);
+
+    while (n--) {
+      u8arr[n] = bstr.charCodeAt(n);
+    }
+
+    return new Blob([u8arr], { type: mime });
+  }
+
+
   //добавление картинки из локального хранилища на место установки курсора
   const addImageFile = (file: File) => {
     console.log('adding file', file)
     if (file) {
-      const image = URL.createObjectURL(file)
-      editor?.chain().focus().setImage({ src: image }).run()
+      const reader = new FileReader();
+      reader.onload = () => {
+        const imageDataUrl = reader.result as string;
+        // Сохранение файла в состоянии компонента
+        console.log("+++++++++image", imageDataUrl.length)
+        localStorage.setItem(`${file.name}`, imageDataUrl);
+        const imageDataLocal = localStorage.getItem(`${file.name}`);
+
+        if (imageDataLocal) {
+          const blob = dataURLtoBlob(imageDataUrl); // Преобразование Data URL в Blob
+          if (blob) {
+            const imageUrl = URL.createObjectURL(blob); // Создание URL из Blob
+            editor?.chain().focus().setImage({ src: imageUrl }).run()
+          }
+        }
+
+
+      };
+      reader.readAsDataURL(file);
+      // const fileLocal = localStorage.getItem(`${file.name}`)
+      // const image = fileLocal && URL.createObjectURL(fileLocal)
     }
   }
 

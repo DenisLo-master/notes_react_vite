@@ -18,18 +18,16 @@ export function App() {
     id: 0,
     body: '',
     created_at: new Date().toString(),
+    updated_at: new Date().toString(),
     title: '',
   })
 
-  const setCurrentNote = (note: Note) => {
-    setActiveNote(note)
-  }
   firebaseApp.auth()
 
   return (
     //Внешний вид программы
     <>
-      <LayoutContext.Provider value={{ visible, toggleVisibleSidebar, activeNote, setCurrentNote }}>
+      <LayoutContext.Provider value={{ visible, toggleVisibleSidebar, activeNote, setActiveNote }}>
         <Routes>
           <Route path='/' element={<AuthLayout />} />
           <Route path='/workspace' element={<PrivateRoute />}>
