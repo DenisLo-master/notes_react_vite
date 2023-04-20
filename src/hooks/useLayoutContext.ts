@@ -5,13 +5,19 @@ export interface LayoutContext {
   visible: boolean
   toggleVisibleSidebar: () => void
   activeNote: Note
-  setCurrentNote: (note: Note) => void
+  setActiveNote: (note: Note) => void
 }
 
 export const LayoutContext = createContext<LayoutContext>({
   visible: true,
   toggleVisibleSidebar: () => { },
-  activeNote: { id: 0, body: '', created_at: new Date().toString(), updated_at: new Date().toString(), title: '' },
-  setCurrentNote: () => { },
+  activeNote: {
+    id: 0,
+    body: '',
+    created_at: '',
+    updated_at: '',
+    title: ''
+  },
+  setActiveNote: () => { },
 })
 export const useLayoutContext = () => useContext(LayoutContext)

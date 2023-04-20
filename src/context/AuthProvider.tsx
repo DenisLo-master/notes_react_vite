@@ -9,6 +9,7 @@ import {
 } from 'firebase/auth'
 import { getDatabase, ref, set } from 'firebase/database'
 import { useNavigate } from 'react-router-dom'
+import { clearNotes } from '../store/action/actionslDB.js'
 
 export interface IAuthValues {
   currentUserId: string
@@ -26,7 +27,7 @@ export const useAuth = () => {
 export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
   const navigate = useNavigate()
 
-  const [currentUserId, setCurrentUserId] = useState<string>()
+  const [currentUserId, setCurrentUserId] = useState<string>("")
 
   const db = getDatabase()
   const auth = getAuth()
@@ -36,7 +37,7 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
       const response = await createUserWithEmailAndPassword(auth, email, password)
       const user = response.user as any
 
-      const userId = user.uid
+      const userId: string = user.uid
       const createdAt = user.metadata.creationTime
 
       const expirationTime = new Date(
@@ -71,7 +72,7 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
       const user = response.user as any
 
 
-      const userId = user.uid
+      const userId: string = user.uid
 
 
       const expirationTime = new Date(
@@ -120,6 +121,7 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
     localStorage.removeItem("token");
     localStorage.removeItem("expirationDate");
     localStorage.removeItem("timeLeft");
+    clearNotes()
   };
 
   const autoRefreshUserToken = (time: number) => {
@@ -166,7 +168,10 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
       logoutFirebase();
     } else {
       const time = localStorage.getItem("expirationTime")
-      if (!time) return
+      if (!time) {
+        logoutFirebase()
+        return
+      }
       const expirationTime = new Date(+time);
       const timeLeft = (expirationTime.getTime() - new Date().getTime()) / 1000;
 
@@ -187,5 +192,11 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
     signOutUser,
   }
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
+  return (
+    <AuthContext.Provider
+      value={value}
+    >
+      {children}
+    </AuthContext.Provider>
+  )
 }

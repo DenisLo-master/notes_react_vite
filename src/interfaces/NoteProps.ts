@@ -4,6 +4,7 @@ export interface Note {
   body: string
   created_at: string
   updated_at: string
+  sync?: boolean
 }
 
 
@@ -18,4 +19,6 @@ export type UpdateNote = {
   title: string
   body: string
   updated_at: string
+  sync?: boolean
 }
+

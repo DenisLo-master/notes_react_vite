@@ -1,45 +1,83 @@
-import { ref, getDatabase, child, get, push, set } from 'firebase/database'
+import { ref, getDatabase, child, get, push, set, remove } from 'firebase/database'
 import { firebaseApp } from '../firebase.config'
 import { Note } from '../../interfaces/NoteProps'
-import { useAuth } from '../../context/AuthProvider'
+import { db } from './NotesDB'
 
-const db = getDatabase(firebaseApp)
+const dbFireBase = getDatabase(firebaseApp)
 
 interface UserNotes {
     uid: string
     note: Note
 }
+
+interface UserNoteID {
+    uid: string
+    noteId: number
+}
 interface Updates {
     [key: string]: Note
 }
 
-export async function setNotesToFirebase({ uid, note }: UserNotes) {
+interface NoteHash {
+    [key: string]: Note
+}
 
+export async function setNoteToFirebase({ uid, note }: UserNotes) {
     try {
-        const newHashKey = push(child(ref(db), `/notes_data/${uid}/notes/${note.id}`)).key
+        const newHashKey = push(child(ref(dbFireBase), `/notes_data/${uid}/notes/${note.id}/`)).key
         if (!newHashKey) return
         const updates: Updates = {}
         updates[newHashKey] = note
-        console.log(updates)
-        await set(ref(db, `/notes_data/${uid}/notes/`), updates)
+        await set(ref(dbFireBase, `/notes_data/${uid}/notes/${note.id}/`), updates)
+        db.setNoteSync(note.id)
     } catch (err) {
-        console.error('Error setNotesToFirebase', uid, err)
+        console.error('Error setNoteToFirebase', uid, err)
     }
 
 }
 
 export async function getNotesFromFirebase(uid: string): Promise<Note[] | undefined> {
     try {
-        const snapshot = await get(child(ref(db), `/notes_data/${uid}/notes/`))
-
+        const snapshot = await get(child(ref(dbFireBase), `/notes_data/${uid}/notes/`))
         if (snapshot.exists()) {
-            const hash = Object.keys(snapshot.val())[0]
-            const notes: Note[] = snapshot.val()[hash]
-            console.log('Notes', notes)
-            return notes
+            const listNotesWithHash: NoteHash[] = snapshot.val()
+            let notesList: Note[] = []
+            listNotesWithHash.length && listNotesWithHash.forEach((noteHash: NoteHash) => {
+                const noteValue = Object.values(noteHash)
+                if (noteValue.length) return
+                const note = noteValue[0]
+                notesList.push(note)
+            })
+            return notesList
         }
     } catch (err) {
         console.error('Error getNotesFromFirebase', uid, err)
 
+    }
+}
+
+
+export async function getNoteIdFromFirebase({ uid, noteId }: UserNoteID): Promise<Note | undefined> {
+    try {
+        const snapshot = await get(child(ref(dbFireBase), `/notes_data/${uid}/notes/${noteId}`))
+
+        if (snapshot.exists()) {
+            const hash = Object.keys(snapshot.val())[0]
+            const note: Note = snapshot.val()[hash]
+            console.log('Note', note)
+            return note
+        }
+    } catch (err) {
+        console.error('Error getNoteIdFromFirebase', uid, err)
+
+    }
+}
+
+
+export async function deleteNoteFromFirebase({ uid, noteId }: UserNoteID): Promise<void> {
+    try {
+        remove(child(ref(dbFireBase), `/notes_data/${uid}/notes/${noteId}`))
+    } catch (err) {
+        console.error('Error deleteNoteFromFirebase', uid, err)
     }
 }
