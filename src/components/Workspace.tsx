@@ -31,10 +31,10 @@ const Layout = () => {
 
   const searchedNotesList = serchedText
     ? myNotesList.filter(
-        (note) =>
-          note.title.toLowerCase().includes(serchedText) ||
-          note.body.toLowerCase().includes(serchedText),
-      )
+      (note) =>
+        note.title.toLowerCase().includes(serchedText) ||
+        note.body.toLowerCase().includes(serchedText),
+    )
     : myNotesList
 
   useEffect(() => {
