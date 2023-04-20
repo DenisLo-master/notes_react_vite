@@ -14,26 +14,23 @@ export function App() {
   const toggleVisibleSidebar = (): void => {
     setVisible((prev) => !prev)
   }
-  const [activeNote, setActiveNote] = useState<Note>({
-    id: 0,
-    body: '',
-    created_at: new Date().toString(),
-    updated_at: new Date().toString(),
-    title: '',
-  })
+  const [activeNote, setActiveNote] = useState<Note | unknown>({})
+  const setActive = (note: Note): void => setActiveNote(note)
 
   firebaseApp.auth()
 
   return (
     //Внешний вид программы
     <>
-      <LayoutContext.Provider value={{ visible, toggleVisibleSidebar, activeNote, setActiveNote }}>
+      <LayoutContext.Provider
+        value={{ visible, toggleVisibleSidebar, activeNote, setActive }}
+      >
         <Routes>
-          <Route path='/' element={<AuthLayout />} />
-          <Route path='/workspace' element={<PrivateRoute />}>
-            <Route path='' element={<Workspace />} />
+          <Route path="/" element={<AuthLayout />} />
+          <Route path="/workspace" element={<PrivateRoute />}>
+            <Route path="" element={<Workspace />} />
           </Route>
-          <Route path='*' element={<Navigate to='/' />} />
+          <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </LayoutContext.Provider>
     </>

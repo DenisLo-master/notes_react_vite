@@ -25,16 +25,17 @@ const Header = ({ addItem, searchText, currentUserId }: HeaderType) => {
   //создание заметки
   const createNoteHandle = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault()
-
+    event.stopPropagation()
     const templateNote: NoteProps = {
       id: new Date().getTime(),
-      body: 'Новая заметка',
+      body: '',
       created_at: moment(new Date().getTime()).format('DD.MM.YYYY'),
       updated_at: moment(new Date().getTime()).format('DD.MM.YYYY'),
-      title: 'Новая заметка',
-      additionalText: 'Новая заметка',
+      title: '',
+      additionalText: '',
+      active: true,
     }
-
+    localStorage.setItem('activeNote', templateNote.id.toString())
     addItem((prev) => [...prev, templateNote])
     try {
       const CreatedNote = {
@@ -54,17 +55,18 @@ const Header = ({ addItem, searchText, currentUserId }: HeaderType) => {
     modals.openConfirmModal({
       title: 'Delete your note',
       centered: true,
-      children: <Text size="sm">Are you sure you want to delete your note?</Text>,
+      children: (
+        <Text size="sm">Are you sure you want to delete your note?</Text>
+      ),
       labels: { confirm: 'Delete note', cancel: "No don't delete it" },
       confirmProps: { color: 'red' },
       onCancel: () => console.log('Cancel'),
       onConfirm: () => {
         db.deleteNote(activeNote.id)
-        deleteNoteFromFirebase(
-          {
-            uid: currentUserId,
-            noteId: activeNote.id
-          })
+        deleteNoteFromFirebase({
+          uid: currentUserId,
+          noteId: activeNote.id,
+        })
       },
     })
   const searchHandle = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -73,14 +75,15 @@ const Header = ({ addItem, searchText, currentUserId }: HeaderType) => {
   }
 
   return (
-    <div className='header'>
+    <div className="header">
       <div>
         <Tooltip label="Show/Hide sidebar">
           <Button
             variant="light"
             color="gray"
             style={{ margin: '0 10px' }}
-            onClick={toggleVisibleHandle}>
+            onClick={toggleVisibleHandle}
+          >
             {visible ? 'Hide' : 'Show'} sidebar
           </Button>
         </Tooltip>
@@ -89,7 +92,8 @@ const Header = ({ addItem, searchText, currentUserId }: HeaderType) => {
             variant="light"
             color="gray"
             style={{ margin: '0 10px' }}
-            onClick={createNoteHandle}>
+            onClick={createNoteHandle}
+          >
             Create note
           </Button>
         </Tooltip>
@@ -98,13 +102,18 @@ const Header = ({ addItem, searchText, currentUserId }: HeaderType) => {
             variant="light"
             color="gray"
             style={{ margin: '0 10px' }}
-            onClick={deleteNoteHandler}>
+            onClick={deleteNoteHandler}
+          >
             Delete note
           </Button>
         </Tooltip>
       </div>
-      <div className='searchNode'>
-        <TextInput onChange={searchHandle} placeholder='Find note' rightSection={<IconSearch size='0.8rem' />} />
+      <div className="searchNode">
+        <TextInput
+          onChange={searchHandle}
+          placeholder="Find note"
+          rightSection={<IconSearch size="0.8rem" />}
+        />
       </div>
     </div>
   )

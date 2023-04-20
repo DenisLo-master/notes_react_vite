@@ -3,7 +3,7 @@ import { useState } from 'react'
 import { Container, ActionIcon } from '@mantine/core'
 import { TextEditor } from './TextEditor'
 import { useLayoutContext } from '../hooks/useLayoutContext'
-import { IconEdit } from '@tabler/icons-react';
+import { IconEdit } from '@tabler/icons-react'
 import { updateNote } from '../store/action/actionslDB'
 import { setNoteToFirebase } from '../store/action/firebaseExchange'
 import { useAuth } from '../context/AuthProvider'
@@ -13,8 +13,7 @@ interface MainbarProps {
 }
 
 //инициалицазия фэйкового контента
-const initContent =
-  '<p>опишите заметку</p>'
+const initContent = '<p>опишите заметку</p>'
 
 const MainArea: FC<MainbarProps> = ({ visible }) => {
   //инициалицазия фэйкового контента
@@ -31,14 +30,15 @@ const MainArea: FC<MainbarProps> = ({ visible }) => {
     activeNote && setContent(activeNote.body)
   }, [activeNote])
 
-
   useEffect(() => {
     const { id, title, body, created_at, updated_at } = activeNote
-    !isEdit && setNoteToFirebase(
-      {
-        uid: currentUserId,
-        note: { id, title, body, created_at, updated_at }
-      })
+    if (id) {
+      !isEdit &&
+        setNoteToFirebase({
+          uid: currentUserId,
+          note: { id, title, body, created_at, updated_at },
+        })
+    }
   }, [isEdit])
 
   useEffect(() => {
@@ -51,10 +51,7 @@ const MainArea: FC<MainbarProps> = ({ visible }) => {
   return (
     <div className="mainArea" style={style}>
       <div className="mainArea-edit">
-        <ActionIcon
-          variant='light'
-          onClick={() => setIsEdit(prev => !prev)}
-        >
+        <ActionIcon variant="light" onClick={() => setIsEdit((prev) => !prev)}>
           <IconEdit
             size={48}
             strokeWidth={2}
@@ -64,10 +61,11 @@ const MainArea: FC<MainbarProps> = ({ visible }) => {
       </div>
       <div>
         <Container mt={'md'}>
-          {isEdit ?
-            <TextEditor content={content} updatedContent={setContent} /> :
+          {isEdit ? (
+            <TextEditor content={content} updatedContent={setContent} />
+          ) : (
             <div dangerouslySetInnerHTML={{ __html: content }} />
-          }
+          )}
         </Container>
       </div>
     </div>

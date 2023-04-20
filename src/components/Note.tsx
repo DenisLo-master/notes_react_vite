@@ -1,12 +1,20 @@
 import { FC, useState, useRef } from 'react'
 import { NoteProps } from '../interfaces/NoteProps'
-import { updateNote } from '../store/action/actionslDB'
+import { updateNoteTitle } from '../store/action/actionslDB'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { db } from '../store/action/NotesDB'
 
-const Note: FC<NoteProps> = ({ title, created_at, body, active, onClick, id }) => {
+const Note: FC<NoteProps> = ({
+  title,
+  created_at,
+  body,
+  active,
+  onClick,
+  id,
+}) => {
   const [noteTitle, setNoteTitle] = useState<string>(title)
   const inputRef = useRef<HTMLInputElement>(null)
+
   //получаем записи из IndexedDB
   const notesListFromIDB = useLiveQuery(() => db.notes.toArray())
 
@@ -19,19 +27,10 @@ const Note: FC<NoteProps> = ({ title, created_at, body, active, onClick, id }) =
     setNoteTitle(value)
     if (inputRef.current) {
       const id = Number(inputRef.current.getAttribute('id'))
-      updateNote({
+      updateNoteTitle({
         id,
-        body,
         title: value,
-        updated_at: new Date().getTime().toString(),
       })
-      //загружаем записи в FireBase
-      if (notesListFromIDB) {
-        /* setNoteToFirebase({
-          user: 'denis.lkg@gmail.com',
-          notes: notesListFromIDB,
-        }) */
-      }
     }
   }
 
@@ -45,6 +44,7 @@ const Note: FC<NoteProps> = ({ title, created_at, body, active, onClick, id }) =
             style={{ fontWeight: 'bold', border: 'none', background: 'none' }}
             onChange={handlechangeTitle}
             value={noteTitle}
+            placeholder={'Новая заметка'}
             id={id.toString()}
           />
         </span>

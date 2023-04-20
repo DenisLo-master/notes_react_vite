@@ -4,20 +4,14 @@ import { Note } from '../interfaces/NoteProps'
 export interface LayoutContext {
   visible: boolean
   toggleVisibleSidebar: () => void
-  activeNote: Note
-  setActiveNote: (note: Note) => void
+  activeNote: Note | any
+  setActive: (note: Note) => void
 }
 
 export const LayoutContext = createContext<LayoutContext>({
   visible: true,
-  toggleVisibleSidebar: () => { },
-  activeNote: {
-    id: 0,
-    body: '',
-    created_at: '',
-    updated_at: '',
-    title: ''
-  },
-  setActiveNote: () => { },
+  toggleVisibleSidebar: () => {},
+  activeNote: <Note>{},
+  setActive: (note: Note): void => {},
 })
 export const useLayoutContext = () => useContext(LayoutContext)

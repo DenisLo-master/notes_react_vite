@@ -1,5 +1,5 @@
 import { Dexie, Table } from 'dexie'
-import { Note, UpdateNote } from '../../interfaces/NoteProps'
+import { Note, UpdateNote, UpdateNoteTitle } from '../../interfaces/NoteProps'
 
 export class NotesDB extends Dexie {
   notes!: Table<Note>
@@ -16,6 +16,9 @@ export class NotesDB extends Dexie {
 
   updateNote(note: UpdateNote) {
     return this.notes.update(note.id, { ...note, sync: false })
+  }
+  updateNoteTitle(note: UpdateNoteTitle) {
+    return this.notes.update(note.id, { title: note.title })
   }
 
   deleteNote(id: number) {

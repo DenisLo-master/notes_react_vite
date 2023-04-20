@@ -7,7 +7,6 @@ export interface Note {
   sync?: boolean
 }
 
-
 export interface NoteProps extends Note {
   additionalText?: string
   active?: boolean
@@ -21,4 +20,7 @@ export type UpdateNote = {
   updated_at: string
   sync?: boolean
 }
-
+export type UpdateNoteTitle = {
+  id: number
+  title: string
+}

@@ -12,36 +12,37 @@ import { Note, NoteProps } from '../interfaces/NoteProps'
 import { useEffect, useState } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { db } from '../store/action/NotesDB'
-import moment from 'moment'
 import { useAuth } from '../context/AuthProvider'
 import { addNote, updateNote } from '../store/action/actionslDB'
 
 const Layout = () => {
   const { signOutUser } = useAuth()
-  const { visible, setActiveNote } = useLayoutContext()
+  const { visible, setActive } = useLayoutContext()
   //получаем записи из IndexedDB
   const notesListFromIDB = useLiveQuery(() => db.notes.toArray()) as Note[]
 
   const { currentUserId } = useAuth()
+  console.log('activeNote', localStorage.getItem('activeNote'))
 
   useEffect(() => {
     if (notesListFromIDB && notesListFromIDB.length) {
-      console.log("init------", notesListFromIDB)
+      //console.log('init------', notesListFromIDB)
       notesListFromIDB.forEach((note, index) => {
-        if (index === 0) {
-          setActiveNote(note)
-        }
+        /* if (index === 0) {
+          setActive(note)
+        } */
         if (!note.sync) {
           setNoteToFirebase({ uid: currentUserId, note })
         } else {
-          getNoteIdFromFirebase({ uid: currentUserId, noteId: note.id })
-            .then((note) => {
+          getNoteIdFromFirebase({ uid: currentUserId, noteId: note.id }).then(
+            (note) => {
               note && updateNote(note)
-            })
+            },
+          )
         }
       })
     } else {
-      console.log("init------empty", currentUserId)
+      //console.log("init------empty", currentUserId)
       getNotesFromFirebase(currentUserId).then((notes) => {
         notes && notes.forEach((note) => addNote(note))
       })
@@ -54,12 +55,11 @@ const Layout = () => {
 
   const searchedNotesList = searchedText
     ? myNotesList.filter(
-      (note) =>
-        note.title.toLowerCase().includes(searchedText) ||
-        note.body.toLowerCase().includes(searchedText),
-    )
+        (note) =>
+          note.title.toLowerCase().includes(searchedText) ||
+          note.body.toLowerCase().includes(searchedText),
+      )
     : myNotesList
-
 
   useEffect(() => {
     const tempArray: NoteProps[] = []
@@ -70,16 +70,15 @@ const Layout = () => {
           title: note.title,
           body: note.body,
           additionalText: note.body.substring(0, 10),
-          created_at: moment(note.created_at).format('L'),
-          updated_at: moment(note.updated_at).format('L'),
+          created_at: note.created_at,
+          updated_at: note.updated_at,
           sync: note.sync,
-          active: index === 0 ? true : false, //показываем первую запись активной
+          //active: index === 0 ? true : false, //показываем первую запись активной
         })
       })
 
     setMyNotesList(tempArray)
   }, [notesListFromIDB])
-
 
   const handleClickOut = () => {
     signOutUser()
@@ -104,7 +103,8 @@ const Layout = () => {
             display: 'flex',
             flexDirection: 'row',
             justifyItems: 'flex-start',
-          }}>
+          }}
+        >
           <ListItem visible={visible} notesList={searchedNotesList} />
           <MainArea visible={visible} />
         </Box>
