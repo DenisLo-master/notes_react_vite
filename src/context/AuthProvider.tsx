@@ -4,6 +4,7 @@ import {
   createUserWithEmailAndPassword,
   getAuth,
   signInWithEmailAndPassword,
+  onAuthStateChanged,
   signOut,
 } from 'firebase/auth'
 import { getDatabase, ref, set } from 'firebase/database'
@@ -32,17 +33,8 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
 
   const signUp = async ({ name, email, password }: ISignUp) => {
     try {
-<<<<<<< HEAD
       const response = await createUserWithEmailAndPassword(auth, email, password)
       const user = response.user as any
-=======
-      const response = await createUserWithEmailAndPassword(
-        auth,
-        email,
-        password,
-      )
-      const user = response.user
->>>>>>> 3df5fdd (delete redux, add auth)
 
       const userId = user.uid
       const createdAt = user.metadata.creationTime
