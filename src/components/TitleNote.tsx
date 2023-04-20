@@ -1,8 +1,6 @@
 import { FC, useState, useRef } from 'react'
 import { NoteProps } from '../interfaces/NoteProps'
 import { updateNote } from '../store/action/actionslDB'
-import { useLiveQuery } from 'dexie-react-hooks'
-import { db } from '../store/action/NotesDB'
 import { setNoteToFirebase } from '../store/action/firebaseExchange'
 import { useAuth } from '../context/AuthProvider'
 
