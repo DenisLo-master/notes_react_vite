@@ -1,6 +1,7 @@
 import { ref, getDatabase, child, get, push, set } from 'firebase/database'
 import { firebaseApp } from '../firebase.config'
 import { Note } from '../../interfaces/NoteProps'
+import { useAuth } from '../../context/AuthProvider'
 
 const db = getDatabase(firebaseApp)
 

@@ -9,7 +9,6 @@ import {
 import { getDatabase, ref, set } from 'firebase/database'
 import { useNavigate } from 'react-router-dom'
 
-
 export interface IAuthValues {
   currentUserId: string
   signUp: (values: ISignUp) => void
