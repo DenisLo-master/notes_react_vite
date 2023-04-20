@@ -3,7 +3,7 @@ import { NoteProps } from '../interfaces/NoteProps'
 import { useLayoutContext } from '../hooks/useLayoutContext'
 import moment from 'moment'
 
-import Note from './Note'
+import Note from './TitleNote'
 import { ScrollArea } from '@mantine/core'
 interface SidebarProps {
   visible: boolean
