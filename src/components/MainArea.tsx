@@ -1,12 +1,13 @@
 import { FC, useEffect } from 'react'
 import { useState } from 'react'
-import { Container, ActionIcon } from '@mantine/core'
+import { Container, ActionIcon, Text } from '@mantine/core'
 import { TextEditor } from './TextEditor'
 import { useLayoutContext } from '../hooks/useLayoutContext'
 import { IconEdit } from '@tabler/icons-react'
 import { updateNote } from '../store/action/actionslDB'
 import { setNoteToFirebase } from '../store/action/firebaseExchange'
 import { useAuth } from '../context/AuthProvider'
+import moment from 'moment'
 
 interface MainbarProps {
   visible: boolean
@@ -63,7 +64,12 @@ const MainArea: FC<MainbarProps> = ({ visible }) => {
           {isEdit ? (
             <TextEditor content={content} updatedContent={setContent} />
           ) : (
-            <div dangerouslySetInnerHTML={{ __html: content }} />
+            <div>
+              <Text size={'sm'} align="center">
+                {moment(activeNote.updated_at).format('DD MMMM YYYY, h:mm:a')}
+              </Text>
+              <div dangerouslySetInnerHTML={{ __html: content }} />
+            </div>
           )}
         </Container>
       </div>

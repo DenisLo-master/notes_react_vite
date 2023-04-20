@@ -9,7 +9,7 @@ import Superscript from '@tiptap/extension-superscript';
 import Placeholder from '@tiptap/extension-placeholder'
 import SubScript from '@tiptap/extension-subscript';
 import Image from '@tiptap/extension-image'
-import { Button, ActionIcon, Menu, Text, } from '@mantine/core'
+import { ActionIcon, Menu, Text, } from '@mantine/core'
 import { IconPhotoPlus, IconFileUpload, IconLink } from '@tabler/icons-react';
 import moment from 'moment'
 
