@@ -4,7 +4,6 @@ import { useLayoutContext } from '../hooks/useLayoutContext'
 import moment from 'moment'
 
 import Note from './Note'
-import { setNotesToFirebase } from '../store/action/firebaseExchange'
 
 interface SidebarProps {
   visible: boolean
@@ -48,19 +47,20 @@ const ListItem: FC<SidebarProps> = ({ visible, notesList }) => {
   } else {
     return visible ? (
       <div className="sidebarArea" style={style}>
-        {notes.length !== 0
+        {notes.length
           ? notes.map((note) => (
-              <Note
-                key={note.id}
-                id={note.id}
-                created_at={moment(note.updated_at).format('DD.MM.YYYY')}
-                title={note.title}
-                additionalText={note.additionalText}
-                active={note.active}
-                onClick={() => noteClickHandle(note.id)}
-                body={note.body}
-              />
-            ))
+            <Note
+              key={note.id}
+              id={note.id}
+              created_at={moment(note.created_at).format('DD.MM.YYYY')}
+              updated_at={moment(note.updated_at).format('DD.MM.YYYY')}
+              title={note.title}
+              additionalText={note.additionalText}
+              active={note.active}
+              onClick={() => noteClickHandle(note.id)}
+              body={note.body}
+            />
+          ))
           : 'Загрузка...'}
       </div>
     ) : (

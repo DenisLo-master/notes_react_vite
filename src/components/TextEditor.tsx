@@ -61,7 +61,23 @@ export const TextEditor: FC<TextEditorProps> = ({ content, updatedContent }) => 
     }
   }
 
+  function dataURLtoBlob(dataURL: string): Blob | null {
+    const arr = dataURL.split(',');
+    const mimeMatch = arr[0].match(/:(.*?);/);
+    if (!mimeMatch) {
+      return null; // Вернуть null, если не найдено совпадение с регулярным выражением
+    }
+    const mime = mimeMatch[1];
+    const bstr = atob(arr[1]);
+    let n = bstr.length;
+    const u8arr = new Uint8Array(n);
 
+    while (n--) {
+      u8arr[n] = bstr.charCodeAt(n);
+    }
+
+    return new Blob([u8arr], { type: mime });
+  }
 
 
   //добавление картинки из локального хранилища на место установки курсора
@@ -74,44 +90,16 @@ export const TextEditor: FC<TextEditorProps> = ({ content, updatedContent }) => 
         // Сохранение файла в состоянии компонента
         console.log("+++++++++image", imageDataUrl.length)
         localStorage.setItem(`${file.name}`, imageDataUrl);
-
-        function dataURLtoBlob(dataURL: string): Blob {
-          const byteString = atob(dataURL.split(',')[1]);
-          const mimeString = dataURL.split(',')[0].split(':')[1].split(';')[0];
-          const arrayBuffer = new ArrayBuffer(byteString.length);
-          const uint8Array = new Uint8Array(arrayBuffer);
-
-          for (let i = 0; i < byteString.length; i++) {
-            uint8Array[i] = byteString.charCodeAt(i);
-          }
-
-          return new Blob([arrayBuffer], { type: mimeString });
-        }
-
-
         const imageDataLocal = localStorage.getItem(`${file.name}`);
+
         if (imageDataLocal) {
-          const reader = new FileReader();
-          reader.onloadend = () => {
-            // Чтение файла в виде ArrayBuffer
-            const buffer = reader.result as ArrayBuffer;
-
-            // Создание Uint8Array из ArrayBuffer
-            const uint8Array = new Uint8Array(buffer);
-
-            // Создание Blob из Uint8Array с указанием типа MIME для изображения
-            const blob = new Blob([uint8Array], { type: 'image/jpeg' }); // Здесь указан тип MIME, замените его на соответствующий тип вашего изображения
-
-            // Создание URL из Blob
+          const blob = dataURLtoBlob(imageDataUrl); // Преобразование Data URL в Blob
+          if (blob) {
             const imageUrl = URL.createObjectURL(blob); // Создание URL из Blob
-            console.log("+++++++++imageUrl", imageDataUrl.length)
-
             editor?.chain().focus().setImage({ src: imageUrl }).run()
-
-          };
+          }
         }
-        // Чтение Data URL в виде ArrayBuffer
-        reader.readAsArrayBuffer(dataURLtoBlob);
+
 
       };
       reader.readAsDataURL(file);

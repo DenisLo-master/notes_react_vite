@@ -19,15 +19,15 @@ const Layout = () => {
   const { visible } = useLayoutContext()
   const [notes, setNotes] = useState<Note[]>([])
 
+  const { currentUser, getCurrentUser } = useAuth()
+
   //создаём список для отображения
   const [myNotesList, setMyNotesList] = useState<NoteProps[]>([])
   const { setCurrentNote } = useLayoutContext()
 
   useEffect(() => {
     db.notes.clear()
-    //получаем записи из Firebase
-    getNotesFromFirebase('denis.lkg@gmail.com').then((notes) => {
-      //dispatch(addNotesToIndexedDB(notes))
+    getNotesFromFirebase(currentUser).then((notes) => {
       setNotes(notes)
     })
   }, [])
@@ -36,6 +36,8 @@ const Layout = () => {
   const notesListFromIDB = useLiveQuery(() => db.notes.toArray()) as Note[]
 
   useEffect(() => {
+    console.log("currentUser Effect", currentUser)
+
     const tempArray: NoteProps[] = []
     notesListFromIDB &&
       notesListFromIDB.map((note, index) => {
@@ -55,7 +57,7 @@ const Layout = () => {
 
   useEffect(() => {
     const tempArray: NoteProps[] = []
-    notes &&
+    notes.length &&
       notes.map((note, index) => {
         tempArray.push({
           id: note.id,
@@ -72,11 +74,20 @@ const Layout = () => {
     setCurrentNote(tempArray[0]) //делаем первую запись активной, чтобы отобразилась в редакторе
   }, [notes])
 
+  !currentUser && getCurrentUser()
+
+
+
   //отправляем в FireBase, если не пустой список
   if (notesListFromIDB && notesListFromIDB.length !== 0) {
-    setNotesToFirebase({
-      user: 'denis.lkg@gmail.com',
-      notes: notesListFromIDB,
+
+    console.log("currentUser", currentUser)
+
+    currentUser && notesListFromIDB.forEach(note => {
+      setNotesToFirebase({
+        uid: currentUser,
+        note,
+      })
     })
   }
   // выход из аккаунта
@@ -87,24 +98,6 @@ const Layout = () => {
   return (
     <Container size='xl'>
       <div className='main'>
-        <button
-          onClick={() => {
-            setNotesToFirebase({
-              user: 'denis.lkg@gmail.com',
-              notes: notesListFromIDB,
-            })
-          }}
-        >
-          toFB
-        </button>
-        <button
-          onClick={() => {
-            getNotesFromFirebase('denis.lkg@gmail.com')
-          }}
-        >
-          fromFB
-        </button>
-        {/* Кнопка выхода из аккаунта */}
         <Button pos={'fixed'} right={0} m={10} onClick={handleClickOut}>
           Выход
         </Button>
