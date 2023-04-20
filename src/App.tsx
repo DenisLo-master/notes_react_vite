@@ -18,6 +18,7 @@ export function App() {
     id: 0,
     body: '',
     created_at: new Date().toString(),
+    updated_at: new Date().toString(),
     title: '',
   })
 

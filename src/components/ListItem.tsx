@@ -50,17 +50,18 @@ const ListItem: FC<SidebarProps> = ({ visible, notesList }) => {
         <ScrollArea.Autosize mah="100%">
           {notes.length !== 0
             ? notes.map((note) => (
-                <Note
-                  key={note.id}
-                  id={note.id}
-                  created_at={moment(note.updated_at).format('DD.MM.YYYY')}
-                  title={note.title}
-                  additionalText={note.additionalText}
-                  active={note.active}
-                  onClick={() => noteClickHandle(note.id)}
-                  body={note.body}
-                />
-              ))
+              <Note
+                key={note.id}
+                id={note.id}
+                created_at={moment(note.created_at).format('DD.MM.YYYY')}
+                updated_at={moment(note.updated_at).format('DD.MM.YYYY')}
+                title={note.title}
+                additionalText={note.additionalText}
+                active={note.active}
+                onClick={() => noteClickHandle(note.id)}
+                body={note.body}
+              />
+            ))
             : 'Загрузка...'}
         </ScrollArea.Autosize>
       </div>

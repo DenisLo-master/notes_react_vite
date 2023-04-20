@@ -29,8 +29,8 @@ const MainArea: FC<MainbarProps> = ({ visible }) => {
   }, [activeNote])
 
   useEffect(() => {
+    if (!activeNote) return
     const updateNote = { ...activeNote }
-    console.log("updateNote", content.length)
     updateNote.body = content
     updateNotes(updateNote)
   }, [content])

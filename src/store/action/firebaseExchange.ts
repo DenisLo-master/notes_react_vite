@@ -1,40 +1,35 @@
 import { ref, getDatabase, child, get, push, set } from 'firebase/database'
 import { auth, firebaseApp } from '../firebase.config'
 import { Note } from '../../interfaces/NoteProps'
+import { useAuth } from '../../context/AuthProvider'
 
 const db = getDatabase(firebaseApp)
 
 interface UserNotes {
-    user: string
-    notes: Note[]
+    uid: string
+    note: Note
 }
 interface Updates {
-    [key: string]: Note[]
+    [key: string]: Note
 }
 
-export async function setNotesToFirebase({ user, notes }: UserNotes) {
+export async function setNotesToFirebase({ uid, note }: UserNotes) {
 
     try {
-        //console.log('setNotesToFirebase--', user)
-        //временно пока нет uid будет подставляться вместо userFB
-        const uid = user.replace(new RegExp('\\.', 'g'), '_')
-        const newHashKey = push(child(ref(db), `/notes_data/${uid}/notes`)).key
+        const newHashKey = push(child(ref(db), `/notes_data/${uid}/notes/${note.id}`)).key
         if (!newHashKey) return
         const updates: Updates = {}
-        updates[newHashKey] = notes
+        updates[newHashKey] = note
         console.log(updates)
         await set(ref(db, `/notes_data/${uid}/notes/`), updates)
     } catch (err) {
-        console.error('Error setNotesToFirebase', user, err)
+        console.error('Error setNotesToFirebase', uid, err)
     }
 
 }
 
-export async function getNotesFromFirebase(user: string): Promise<Note[] | undefined> {
+export async function getNotesFromFirebase(uid: string): Promise<Note[] | undefined> {
     try {
-        //console.log('getNotesFromFirebase--', user)
-        const uid = user.replace(new RegExp('\\.', 'g'), '_')
-        //console.log(uid)
         const snapshot = await get(child(ref(db), `/notes_data/${uid}/notes/`))
 
         if (snapshot.exists()) {
@@ -44,7 +39,7 @@ export async function getNotesFromFirebase(user: string): Promise<Note[] | undef
             return notes
         }
     } catch (err) {
-        console.error('Error getNotesFromFirebase', user, err)
+        console.error('Error getNotesFromFirebase', uid, err)
 
     }
 }

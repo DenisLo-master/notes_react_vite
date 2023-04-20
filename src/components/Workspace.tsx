@@ -19,6 +19,8 @@ const Layout = () => {
   //получаем записи из IndexedDB
   const notesListFromIDB = useLiveQuery(() => db.notes.toArray()) as Note[]
 
+  const { currentUser, getCurrentUser } = useAuth()
+
   //создаём список для отображения
   const [myNotesList, setMyNotesList] = useState<NoteProps[]>([])
   const [serchedText, setSearchedText] = useState('')
@@ -40,6 +42,8 @@ const Layout = () => {
   }, [])
 
   useEffect(() => {
+    console.log("currentUser Effect", currentUser)
+
     const tempArray: NoteProps[] = []
     notesListFromIDB &&
       notesListFromIDB.map((note, index) => {
@@ -58,13 +62,12 @@ const Layout = () => {
   }, [notesListFromIDB])
 
   //отправляем в FireBase, если не пустой список
-  if (notesListFromIDB && notesListFromIDB.length !== 0) {
-    setNotesToFirebase({
-      user: currentUserId,
-
-      notes: notesListFromIDB,
-    })
-  }
+  // if (notesListFromIDB && notesListFromIDB.length !== 0) {
+  //   setNotesToFirebase({
+  //     user: currentUserId,
+  //     note: notesListFromIDB,
+  //   })
+  // }
   // выход из аккаунта
   const handleClickOut = () => {
     signOutUser()
@@ -73,21 +76,6 @@ const Layout = () => {
   return (
     <Container size="xl">
       <div className="main">
-        <button
-          onClick={() => {
-            setNotesToFirebase({
-              user: 'denis.lkg@gmail.com',
-              notes: notesListFromIDB,
-            })
-          }}>
-          toFB
-        </button>
-        <button
-          onClick={() => {
-            getNotesFromFirebase('denis.lkg@gmail.com')
-          }}>
-          fromFB
-        </button>
         {/* Кнопка выхода из аккаунта */}
         <Button pos={'fixed'} right={0} m={10} onClick={handleClickOut}>
           Выход
