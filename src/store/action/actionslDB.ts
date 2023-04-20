@@ -3,7 +3,6 @@ import { Note, UpdateNote } from '../../interfaces/NoteProps'
 
 export async function updateNote(note: UpdateNote): Promise<void> {
   try {
-    console.log('Updating notes-------', note)
     await db.updateNote(note)
   } catch (error) {
     console.log(error)
@@ -14,7 +13,6 @@ export async function updateNote(note: UpdateNote): Promise<void> {
 
 export async function clearNotes(): Promise<void> {
   try {
-    console.log('clear notes-------')
     await db.notes.clear()
   } catch (error) {
     console.log("ERROR clear notes", error)
@@ -36,3 +34,10 @@ export async function addNote(note: Note): Promise<void> {
   }
 }
 
+export async function getNote(noteId: number): Promise<Note | undefined> {
+  try {
+    return await db.getNote(noteId)
+  } catch (error) {
+    console.log(error)
+  }
+}
