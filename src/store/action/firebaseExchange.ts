@@ -2,13 +2,9 @@ import { ref, getDatabase, child, get, push, set, remove } from 'firebase/databa
 import { firebaseApp } from '../firebase.config'
 import { Note } from '../../interfaces/NoteProps'
 import { db } from './NotesDB'
+import { getNote } from './actionslDB'
 
 const dbFireBase = getDatabase(firebaseApp)
-
-interface UserNotes {
-    uid: string
-    note: Note
-}
 
 interface UserNoteID {
     uid: string
@@ -22,12 +18,21 @@ interface NoteHash {
     [key: string]: Note
 }
 
-export async function setNoteToFirebase({ uid, note }: UserNotes) {
+export async function setNoteToFirebase({ uid, noteId }: UserNoteID) {
     try {
+        const note = await getNote(noteId)
+        if (!note || note.sync) return
+        const noteFB = {
+            id: note.id,
+            title: note.title,
+            body: note.body,
+            created_at: note.created_at,
+            updated_at: note.updated_at,
+        }
         const newHashKey = push(child(ref(dbFireBase), `/notes_data/${uid}/notes/${note.id}/`)).key
         if (!newHashKey) return
         const updates: Updates = {}
-        updates[newHashKey] = note
+        updates[newHashKey] = noteFB
         await set(ref(dbFireBase, `/notes_data/${uid}/notes/${note.id}/`), updates)
         db.setNoteSync(note.id)
     } catch (err) {

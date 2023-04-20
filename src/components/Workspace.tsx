@@ -19,20 +19,18 @@ import { addNote, updateNote } from '../store/action/actionslDB'
 const Layout = () => {
   const { signOutUser } = useAuth()
   const { visible, setActiveNote } = useLayoutContext()
-  //получаем записи из IndexedDB
   const notesListFromIDB = useLiveQuery(() => db.notes.toArray()) as Note[]
 
   const { currentUserId } = useAuth()
 
   useEffect(() => {
     if (notesListFromIDB && notesListFromIDB.length) {
-      console.log("init------", notesListFromIDB)
       notesListFromIDB.forEach((note, index) => {
         if (index === 0) {
           setActiveNote(note)
         }
         if (!note.sync) {
-          setNoteToFirebase({ uid: currentUserId, note })
+          setNoteToFirebase({ uid: currentUserId, noteId: note.id })
         } else {
           getNoteIdFromFirebase({ uid: currentUserId, noteId: note.id })
             .then((note) => {
@@ -41,14 +39,12 @@ const Layout = () => {
         }
       })
     } else {
-      console.log("init------empty", currentUserId)
       getNotesFromFirebase(currentUserId).then((notes) => {
         notes && notes.forEach((note) => addNote(note))
       })
     }
   }, [])
 
-  // //создаём список для отображения
   const [myNotesList, setMyNotesList] = useState<NoteProps[]>([])
   const [searchedText, setSearchedText] = useState('')
 
@@ -59,7 +55,6 @@ const Layout = () => {
         note.body.toLowerCase().includes(searchedText),
     )
     : myNotesList
-
 
   useEffect(() => {
     const tempArray: NoteProps[] = []

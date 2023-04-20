@@ -16,8 +16,8 @@ export interface NoteProps extends Note {
 
 export type UpdateNote = {
   id: number
-  title: string
-  body: string
+  title?: string
+  body?: string
   updated_at: string
   sync?: boolean
 }
