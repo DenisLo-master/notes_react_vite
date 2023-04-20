@@ -11,9 +11,9 @@ export const AuthLayout = () => {
 
   const { currentUser, getCurrentUser } = useAuth()
 
-  useEffect(() => {
-    !currentUser && getCurrentUser()
-  }, [])
+  // useEffect(() => {
+  //   !currentUser && getCurrentUser()
+  // }, [])
 
   if (currentUser) {
     return <Navigate to='/workspace' />
