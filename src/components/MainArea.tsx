@@ -66,7 +66,7 @@ const MainArea: FC<MainbarProps> = ({ visible }) => {
           ) : (
             <div>
               <Text size={'sm'} align="center">
-                {moment(activeNote.updated_at).format('DD MMMM YYYY, h:mm:a')}
+                {activeNote.updated_at}
               </Text>
               <div dangerouslySetInnerHTML={{ __html: content }} />
             </div>
