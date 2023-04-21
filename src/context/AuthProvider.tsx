@@ -1,10 +1,4 @@
-import {
-  FC,
-  PropsWithChildren,
-  useContext,
-  createContext,
-  useState,
-} from 'react'
+import { FC, PropsWithChildren, useContext, createContext, useState } from 'react'
 import { ISignIn, ISignUp } from '../interfaces/LoginTypes.js'
 import {
   createUserWithEmailAndPassword,
@@ -40,11 +34,7 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
 
   const signUp = async ({ name, email, password }: ISignUp) => {
     try {
-      const response = await createUserWithEmailAndPassword(
-        auth,
-        email,
-        password,
-      )
+      const response = await createUserWithEmailAndPassword(auth, email, password)
       const user = response.user as any
 
       const userId: string = user.uid
@@ -97,6 +87,7 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
     try {
       await signOut(auth).then(() => {
         navigate('/')
+        setCurrentUserId('')
         localStorage.removeItem('userId')
       })
     } catch (error) {
@@ -136,8 +127,7 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
         const user = auth.currentUser as any
         const expirationTime = new Date(user.stsTokenManager.expirationTime)
 
-        const timeLeft =
-          (expirationTime.getTime() - new Date().getTime()) / 1000
+        const timeLeft = (expirationTime.getTime() - new Date().getTime()) / 1000
         localStorage.setItem('token', user.accessToken)
         localStorage.setItem('expirationTime', expirationTime.toDateString())
         localStorage.setItem('timeLeft', timeLeft.toString())
