@@ -33,6 +33,12 @@ const Note: FC<NoteProps> = ({
     }
   }
 
+  const getTextFromHtml = (html: string) => {
+    var tempElement = document.createElement("div");
+    tempElement.innerHTML = html;
+    return tempElement.textContent?.substring(0, 10)
+  }
+
   return (
     <div onClick={onClick} className={` ${active ? 'note-active' : ''}`}>
       <div className="note">
@@ -49,7 +55,7 @@ const Note: FC<NoteProps> = ({
         </span>
         <div>
           {created_at}{' '}
-          <span>{body.substring(0, 10).replace(/(<([^>]+)>)/gi, '')}</span>
+          <span>{getTextFromHtml(body)}</span>
         </div>
       </div>
     </div>
