@@ -17,7 +17,7 @@ const schema = Yup.object().shape({
 })
 
 export const SignIn: FC<AuthProps> = ({ setRegister }) => {
-  const { signIn }: IAuthValues = useAuth()
+  const { signIn, error }: IAuthValues = useAuth()
   const theme = useMantineTheme()
 
   const form = useForm({
@@ -65,6 +65,7 @@ export const SignIn: FC<AuthProps> = ({ setRegister }) => {
           <Text align='center' fz='1.2rem' fw='600'>
             Войти
           </Text>
+          {error && <div style={{ color: 'red', fontSize: '0.8rem', textAlign: 'center' }}>{error}</div>}
           <form onSubmit={form.onSubmit((values) => handleSignIn(values))}>
             <TextInput withAsterisk label='Email' placeholder='example@mail.com' {...form.getInputProps('email')} />
             <PasswordInput withAsterisk label='Password' placeholder='Password' {...form.getInputProps('password')} />
