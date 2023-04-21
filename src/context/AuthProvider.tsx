@@ -16,8 +16,24 @@ export interface IAuthValues {
   signUp: (values: ISignUp) => void
   signIn: (values: ISignIn) => void
   signOutUser: () => void
+  error: string
 }
 type AuthContext = Partial<IAuthValues>
+
+export interface IError {
+  error: {
+    code: number
+    message: string
+    errors: [
+      {
+        message: string
+        domain: string
+        reason: string
+      },
+    ]
+  }
+}
+
 const AuthContext = createContext<any>({})
 
 export const useAuth = () => {
@@ -28,6 +44,7 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
   const navigate = useNavigate()
 
   const [currentUserId, setCurrentUserId] = useState<string>('')
+  const [error, setError] = useState('')
 
   const db = getDatabase()
   const auth = getAuth()
@@ -58,7 +75,9 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
       })
       autoRefreshUserToken(timeLeft)
     } catch (error) {
-      alert(error)
+      if (error instanceof Error) {
+        setError('Пользователь уже существует')
+      }
     }
   }
 
@@ -79,7 +98,9 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
       setCurrentUserId(userId)
       autoRefreshUserToken(timeLeft)
     } catch (error) {
-      alert(error)
+      if (error instanceof Error) {
+        setError('Пользователь не найден')
+      }
     }
   }
 
@@ -176,6 +197,7 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
     signUp,
     signIn,
     signOutUser,
+    error,
   }
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
