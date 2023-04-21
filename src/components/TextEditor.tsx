@@ -12,6 +12,7 @@ import Image from '@tiptap/extension-image'
 import { ActionIcon, Menu, Text, } from '@mantine/core'
 import { IconPhotoPlus, IconFileUpload, IconLink } from '@tabler/icons-react';
 import moment from 'moment'
+import { dataURLtoBlob } from '../utilities/prepareImage';
 
 interface TextEditorProps {
   content: string
@@ -61,23 +62,7 @@ export const TextEditor: FC<TextEditorProps> = ({ content, updatedContent }) => 
     }
   }
 
-  function dataURLtoBlob(dataURL: string): Blob | null {
-    const arr = dataURL.split(',');
-    const mimeMatch = arr[0].match(/:(.*?);/);
-    if (!mimeMatch) {
-      return null; // Вернуть null, если не найдено совпадение с регулярным выражением
-    }
-    const mime = mimeMatch[1];
-    const bstr = atob(arr[1]);
-    let n = bstr.length;
-    const u8arr = new Uint8Array(n);
 
-    while (n--) {
-      u8arr[n] = bstr.charCodeAt(n);
-    }
-
-    return new Blob([u8arr], { type: mime });
-  }
 
 
   //добавление картинки из локального хранилища на место установки курсора
@@ -86,25 +71,21 @@ export const TextEditor: FC<TextEditorProps> = ({ content, updatedContent }) => 
     if (file) {
       const reader = new FileReader();
       reader.onload = () => {
+        const nameImage = `${file.name}${new Date().getTime()}`
+        console.log("nameImage", nameImage)
         const imageDataUrl = reader.result as string;
-        // Сохранение файла в состоянии компонента
-        console.log("+++++++++image", imageDataUrl.length)
-        localStorage.setItem(`${file.name}`, imageDataUrl);
-        const imageDataLocal = localStorage.getItem(`${file.name}`);
+        localStorage.setItem(nameImage, imageDataUrl);
+        const imageDataLocal = localStorage.getItem(nameImage);
 
         if (imageDataLocal) {
-          const blob = dataURLtoBlob(imageDataUrl); // Преобразование Data URL в Blob
+          const blob = dataURLtoBlob(imageDataLocal); // Преобразование Data URL в Blob
           if (blob) {
             const imageUrl = URL.createObjectURL(blob); // Создание URL из Blob
-            editor?.chain().focus().setImage({ src: imageUrl }).run()
+            editor?.chain().focus().setImage({ src: imageUrl, alt: "local", title: nameImage }).run()
           }
         }
-
-
       };
       reader.readAsDataURL(file);
-      // const fileLocal = localStorage.getItem(`${file.name}`)
-      // const image = fileLocal && URL.createObjectURL(fileLocal)
     }
   }
 

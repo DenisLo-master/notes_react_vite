@@ -28,12 +28,12 @@ export class NotesDB extends Dexie {
     return this.auth.update(1, auth)
   }
 
-  setNoteSync(noteId: number) {
-    return this.notes.update(noteId, { sync: true })
+  setNoteSync(noteId: number, sync: boolean = true) {
+    return this.notes.update(noteId, { sync })
   }
 
-  updateNote(note: UpdateNote) {
-    return this.notes.update(note.id, { ...note, sync: false })
+  updateNote(note: UpdateNote, sync: boolean = true) {
+    return this.notes.update(note.id, { ...note, sync })
   }
   updateNoteTitle(note: UpdateNoteTitle) {
     return this.notes.update(note.id, { title: note.title })
@@ -49,6 +49,10 @@ export class NotesDB extends Dexie {
 
   getNote(noteId: number) {
     return this.notes.get(noteId)
+  }
+
+  getNotesList() {
+    return this.notes.toArray()
   }
 }
 

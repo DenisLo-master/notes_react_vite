@@ -83,3 +83,10 @@ export async function clearAuthInfo(): Promise<void> {
     console.log('ERROR clear notes', error)
   }
 }
+export async function getNotesList(): Promise<Note[] | undefined> {
+  try {
+    return await db.getNotesList()
+  } catch (error) {
+    console.log(error)
+  }
+}

@@ -11,6 +11,7 @@ import { firebaseApp } from '../firebase.config'
 import { Note } from '../../interfaces/NoteProps'
 import { db } from './NotesDB'
 import { getNote } from './actionslDB'
+import { imageToStorage } from '../../utilities/prepareImage'
 
 const dbFireBase = getDatabase(firebaseApp)
 
@@ -28,9 +29,11 @@ interface NoteHash {
 
 export async function setNoteToFirebase({ uid, noteId }: UserNoteID) {
   try {
+    const tempNote = await getNote(noteId)
+    if (!tempNote || tempNote.sync) return
+    const sync = await imageToStorage({ uid, note: tempNote })
     const note = await getNote(noteId)
-
-    if (!note || note.sync) return
+    if (!note) return
     const noteFB = {
       id: note.id,
       title: note.title,
@@ -38,14 +41,12 @@ export async function setNoteToFirebase({ uid, noteId }: UserNoteID) {
       created_at: note.created_at,
       updated_at: note.updated_at,
     }
-    const newHashKey = push(
-      child(ref(dbFireBase), `/notes_data/${uid}/notes/${note.id}/`),
-    ).key
+    const newHashKey = push(child(ref(dbFireBase), `/notes_data/${uid}/notes/${note.id}`)).key
     if (!newHashKey) return
     const updates: Updates = {}
     updates[newHashKey] = noteFB
     await set(ref(dbFireBase, `/notes_data/${uid}/notes/${note.id}/`), updates)
-    db.setNoteSync(note.id)
+    db.setNoteSync(note.id, sync)
   } catch (err) {
     console.error('Error setNoteToFirebase', uid, err)
   }

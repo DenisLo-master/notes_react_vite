@@ -13,7 +13,9 @@ import { useEffect, useState } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { db } from '../store/action/NotesDB'
 import { useAuth } from '../context/AuthProvider'
-import { addNote, updateNote } from '../store/action/actionslDB'
+import { addNote, getNotesList, updateNote } from '../store/action/actionslDB'
+import { imageToStorage } from '../utilities/prepareImage'
+
 
 const Layout = () => {
   const { currentUserId, getCurrentUser } = useAuth()
@@ -22,13 +24,17 @@ const Layout = () => {
   const notesListFromIDB = useLiveQuery(() => db.notes.toArray()) as Note[]
   getCurrentUser()
 
-  useEffect(() => {
-    if (notesListFromIDB && notesListFromIDB.length) {
-      notesListFromIDB.forEach((note, index) => {
+
+
+  async function initNotes() {
+    const notesIDB = await getNotesList()
+    if (notesIDB && notesIDB.length) {
+      notesIDB.forEach(async (note, index) => {
         if (index === 0) {
           setActive(note)
         }
         if (!note.sync) {
+          await imageToStorage({ uid: currentUserId, note })
           setNoteToFirebase({ uid: currentUserId, noteId: note.id })
         } else {
           getNoteIdFromFirebase({ uid: currentUserId, noteId: note.id }).then(
@@ -43,6 +49,10 @@ const Layout = () => {
         notes && notes.forEach((note) => addNote(note))
       })
     }
+  }
+
+  useEffect(() => {
+    initNotes()
   }, [])
 
   const [myNotesList, setMyNotesList] = useState<NoteProps[]>([])
@@ -50,10 +60,10 @@ const Layout = () => {
 
   const searchedNotesList = searchedText
     ? myNotesList.filter(
-        (note) =>
-          note.title.toLowerCase().includes(searchedText) ||
-          note.body.toLowerCase().includes(searchedText),
-      )
+      (note) =>
+        note.title.toLowerCase().includes(searchedText) ||
+        note.body.toLowerCase().includes(searchedText),
+    )
     : myNotesList
 
   useEffect(() => {

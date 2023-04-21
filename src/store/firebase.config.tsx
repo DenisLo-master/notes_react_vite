@@ -12,7 +12,7 @@ const firebaseConfig = {
   authDomain: 'notes-3f0e5.firebaseapp.com',
   databaseURL: 'https://notes-3f0e5-default-rtdb.europe-west1.firebasedatabase.app',
   projectId: 'notes-3f0e5',
-  storageBucket: 'notes-3f0e5.appspot.com',
+  storageBucket: "notes-3f0e5.appspot.com",
   messagingSenderId: '743950442941',
   appId: '1:743950442941:web:0c59b0874b641417ab72d4',
 }
