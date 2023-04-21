@@ -19,7 +19,7 @@ export const PrivateRoute = () => {
 
   if (!currentUser) {
     return (
-      <Flex justify='center' mt='2rem'>
+      <Flex h='100vh' justify='center' align='center' mt='2rem'>
         <Loader size={'4rem'} variant='dots' />
       </Flex>
     )
