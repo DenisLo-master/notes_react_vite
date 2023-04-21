@@ -26,6 +26,7 @@ const Note: FC<NoteProps> = ({
     if (inputRef.current) {
       const id = Number(inputRef.current.getAttribute('id'))
       updateNoteTitle({ id, title: value })
+
       setNoteToFirebase({
         uid: currentUserId,
         noteId: id,
@@ -34,8 +35,8 @@ const Note: FC<NoteProps> = ({
   }
 
   const getTextFromHtml = (html: string) => {
-    var tempElement = document.createElement("div");
-    tempElement.innerHTML = html;
+    var tempElement = document.createElement('div')
+    tempElement.innerHTML = html
     return tempElement.textContent?.substring(0, 10)
   }
 
@@ -54,8 +55,7 @@ const Note: FC<NoteProps> = ({
           />
         </span>
         <div>
-          {created_at}{' '}
-          <span>{getTextFromHtml(body)}</span>
+          {created_at} <span>{getTextFromHtml(body)}</span>
         </div>
       </div>
     </div>

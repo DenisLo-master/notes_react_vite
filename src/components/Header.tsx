@@ -7,7 +7,10 @@ import moment from 'moment'
 import { NoteProps } from './../interfaces/NoteProps'
 import { db } from '../store/action/NotesDB'
 import { addNote } from '../store/action/actionslDB'
-import { deleteNoteFromFirebase } from '../store/action/firebaseExchange'
+import {
+  deleteNoteFromFirebase,
+  setNoteToFirebase,
+} from '../store/action/firebaseExchange'
 import { useAuth } from '../context/AuthProvider'
 import { createStyles, Header, Group, rem } from '@mantine/core'
 
@@ -42,12 +45,18 @@ const useStyles = createStyles((theme) => ({
     padding: `${rem(8)} ${rem(12)}`,
     borderRadius: theme.radius.sm,
     textDecoration: 'none',
-    color: theme.colorScheme === 'dark' ? theme.colors.dark[0] : theme.colors.gray[7],
+    color:
+      theme.colorScheme === 'dark'
+        ? theme.colors.dark[0]
+        : theme.colors.gray[7],
     fontSize: theme.fontSizes.sm,
     fontWeight: 500,
 
     '&:hover': {
-      backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[0],
+      backgroundColor:
+        theme.colorScheme === 'dark'
+          ? theme.colors.dark[6]
+          : theme.colors.gray[0],
     },
   },
 }))
@@ -62,7 +71,11 @@ type HeaderType = {
   searchText: (text: string) => void
 }
 
-export const HeaderSearch = ({ addItem, searchText, currentUserId }: HeaderType) => {
+export const HeaderSearch = ({
+  addItem,
+  searchText,
+  currentUserId,
+}: HeaderType) => {
   const { classes } = useStyles()
 
   const { visible, toggleVisibleSidebar } = useLayoutContext()
@@ -96,27 +109,36 @@ export const HeaderSearch = ({ addItem, searchText, currentUserId }: HeaderType)
         title: templateNote.title,
       }
       addNote(CreatedNote)
+      setNoteToFirebase({
+        uid: currentUserId,
+        noteId: CreatedNote.id,
+      })
     } catch (error) {
       console.log(error)
     }
   }
 
-  const deleteNoteHandler = () =>
+  const deleteNoteHandler = () => {
+    if (!localStorage.getItem('activeNote')) return
     modals.openConfirmModal({
       title: 'Delete your note',
       centered: true,
-      children: <Text size='sm'>Are you sure you want to delete your note?</Text>,
+      children: (
+        <Text size="sm">Are you sure you want to delete your note?</Text>
+      ),
       labels: { confirm: 'Delete note', cancel: "No don't delete it" },
       confirmProps: { color: 'red' },
       onCancel: () => console.log('Cancel'),
       onConfirm: () => {
-        db.deleteNote(activeNote.id)
+        db.deleteNote(Number(localStorage.getItem('activeNote')))
         deleteNoteFromFirebase({
           uid: currentUserId,
           noteId: activeNote.id,
         })
+        localStorage.setItem('activeNote', '')
       },
     })
+  }
   const searchHandle = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target
     searchText(value)
@@ -124,30 +146,34 @@ export const HeaderSearch = ({ addItem, searchText, currentUserId }: HeaderType)
 
   return (
     <Header height={56} className={classes.header}>
-      <Flex justify='space-between' align='center' className={classes.inner}>
-        <Group spacing='xs'>
-          <Tooltip label='Show/Hide sidebar'>
-            <Button compact variant='outline' onClick={toggleVisibleHandle}>
+      <Flex justify="space-between" align="center" className={classes.inner}>
+        <Group spacing="xs">
+          <Tooltip label="Show/Hide sidebar">
+            <Button compact variant="outline" onClick={toggleVisibleHandle}>
               {visible ? 'Hide' : 'Show'} sidebar
             </Button>
           </Tooltip>
 
-          <Tooltip label='Create note'>
-            <Button compact variant='outline' onClick={createNoteHandle}>
+          <Tooltip label="Create note">
+            <Button compact variant="outline" onClick={createNoteHandle}>
               Create note
             </Button>
           </Tooltip>
 
-          <Tooltip label='Delete note'>
-            <Button compact variant='outline' onClick={deleteNoteHandler}>
+          <Tooltip label="Delete note">
+            <Button compact variant="outline" onClick={deleteNoteHandler}>
               Delete note
             </Button>
           </Tooltip>
         </Group>
 
-        <Group spacing='xs' align='center'>
-          <TextInput onChange={searchHandle} placeholder='Find note' rightSection={<IconSearch size='0.8rem' />} />
-          <Tooltip label='Выход'>
+        <Group spacing="xs" align="center">
+          <TextInput
+            onChange={searchHandle}
+            placeholder="Find note"
+            rightSection={<IconSearch size="0.8rem" />}
+          />
+          <Tooltip label="Выход">
             <Button compact onClick={signOutUser}>
               <IconLogout />
             </Button>

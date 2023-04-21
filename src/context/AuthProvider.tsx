@@ -1,4 +1,11 @@
-import { FC, PropsWithChildren, useContext, createContext, useState } from 'react'
+import {
+  FC,
+  PropsWithChildren,
+  useContext,
+  createContext,
+  useState,
+  useEffect,
+} from 'react'
 import { ISignIn, ISignUp } from '../interfaces/LoginTypes.js'
 import {
   createUserWithEmailAndPassword,
@@ -9,7 +16,9 @@ import {
 } from 'firebase/auth'
 import { getDatabase, ref, set } from 'firebase/database'
 import { useNavigate } from 'react-router-dom'
-import { clearNotes } from '../store/action/actionslDB.js'
+import { clearAuthInfo, clearNotes } from '../store/action/actionslDB.js'
+import { db as IndexedDB } from '../store/action/NotesDB.js'
+import { IAuth } from '../interfaces/NoteProps.js'
 
 export interface IAuthValues {
   currentUserId: string
@@ -41,6 +50,14 @@ export const useAuth = () => {
 }
 
 export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
+  const [authListFromIDB, setAuthListFromIDB] = useState<IAuth>()
+
+  useEffect(() => {
+    IndexedDB.getAuthInfo(1).then((res) => {
+      setAuthListFromIDB(res)
+    })
+  }, [])
+
   const navigate = useNavigate()
 
   const [currentUserId, setCurrentUserId] = useState<string>('')
@@ -51,7 +68,11 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
 
   const signUp = async ({ name, email, password }: ISignUp) => {
     try {
-      const response = await createUserWithEmailAndPassword(auth, email, password)
+      const response = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password,
+      )
       const user = response.user as any
 
       const userId: string = user.uid
@@ -60,9 +81,16 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
       const expirationTime = new Date(user.stsTokenManager.expirationTime)
 
       const timeLeft = (expirationTime.getTime() - new Date().getTime()) / 1000
-      localStorage.setItem('token', user.multiFactor.user.accessToken)
-      localStorage.setItem('expirationTime', expirationTime.toDateString())
-      localStorage.setItem('timeLeft', timeLeft.toString())
+      console.log(user)
+
+      const authInfo: IAuth = {
+        id: 1,
+        token: user.accessToken,
+        expirationTime: expirationTime.toDateString(),
+        timeLeft: timeLeft.toString(),
+      }
+
+      IndexedDB.createAuth(authInfo)
 
       setCurrentUserId(userId)
 
@@ -76,6 +104,8 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
       autoRefreshUserToken(timeLeft)
     } catch (error) {
       if (error instanceof Error) {
+        console.log(error)
+
         setError('Пользователь уже существует')
       }
     }
@@ -85,15 +115,18 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
     try {
       const response = await signInWithEmailAndPassword(auth, email, password)
       const user = response.user as any
-
       const userId: string = user.uid
-
       const expirationTime = new Date(user.stsTokenManager.expirationTime)
-
       const timeLeft = (expirationTime.getTime() - new Date().getTime()) / 1000
-      localStorage.setItem('token', user.accessToken)
-      localStorage.setItem('expirationTime', expirationTime.toDateString())
-      localStorage.setItem('timeLeft', timeLeft.toString())
+
+      const authInfo: IAuth = {
+        id: 1,
+        token: user.accessToken,
+        expirationTime: expirationTime.toDateString(),
+        timeLeft: timeLeft.toString(),
+      }
+
+      IndexedDB.createAuth(authInfo)
 
       setCurrentUserId(userId)
       autoRefreshUserToken(timeLeft)
@@ -109,7 +142,7 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
       await signOut(auth).then(() => {
         navigate('/')
         setCurrentUserId('')
-        localStorage.removeItem('userId')
+        clearAuthInfo()
       })
     } catch (error) {
       alert(error)
@@ -117,9 +150,9 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
   }
 
   const getCurrentUser = () => {
-    console.log('getCurrentUser')
+    //  console.log('getCurrentUser')
     onAuthStateChanged(auth, (user) => {
-      console.log('getCurrentUser2', user)
+      //  console.log('getCurrentUser2', user)
 
       if (user) {
         const uid = user.uid
@@ -129,9 +162,7 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
   }
 
   const logoutFirebase = () => {
-    localStorage.removeItem('token')
-    localStorage.removeItem('expirationDate')
-    localStorage.removeItem('timeLeft')
+    clearAuthInfo()
     clearNotes()
   }
 
@@ -148,10 +179,16 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
         const user = auth.currentUser as any
         const expirationTime = new Date(user.stsTokenManager.expirationTime)
 
-        const timeLeft = (expirationTime.getTime() - new Date().getTime()) / 1000
-        localStorage.setItem('token', user.accessToken)
-        localStorage.setItem('expirationTime', expirationTime.toDateString())
-        localStorage.setItem('timeLeft', timeLeft.toString())
+        const timeLeft =
+          (expirationTime.getTime() - new Date().getTime()) / 1000
+
+        const authInfo: IAuth = {
+          id: 1,
+          token: user.accessToken,
+          expirationTime: expirationTime.toDateString(),
+          timeLeft: timeLeft.toString(),
+        }
+        IndexedDB.updateAuth(authInfo)
 
         autoRefreshUserToken(timeLeft)
       })
@@ -163,19 +200,19 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
   auth.onAuthStateChanged((user) => {
     // console.log("--------------onAuthStateChanged-------------------");
     if (user) {
-      //console.log('onAuthStateChanged', user)
       refreshUserToken()
       autoLoginFirebase()
     }
   })
 
   const autoLoginFirebase = () => {
-    const token = localStorage.getItem('token')
+    if (!authListFromIDB) return
+    const token = authListFromIDB.token //localStorage.getItem('token')
 
     if (!token) {
       logoutFirebase()
     } else {
-      const time = localStorage.getItem('expirationTime')
+      const time = authListFromIDB.expirationTime //localStorage.getItem('expirationTime')
       if (!time) {
         logoutFirebase()
         return

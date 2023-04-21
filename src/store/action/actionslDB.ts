@@ -1,5 +1,10 @@
 import { db } from './NotesDB'
-import { Note, UpdateNote, UpdateNoteTitle } from '../../interfaces/NoteProps'
+import {
+  IAuth,
+  Note,
+  UpdateNote,
+  UpdateNoteTitle,
+} from '../../interfaces/NoteProps'
 
 export async function updateNote(note: UpdateNote): Promise<void> {
   try {
@@ -45,5 +50,36 @@ export async function getNote(noteId: number): Promise<Note | undefined> {
     return await db.getNote(noteId)
   } catch (error) {
     console.log(error)
+  }
+}
+
+export async function getAuthInfo(auth: IAuth): Promise<IAuth | undefined> {
+  try {
+    const result = await db.getAuthInfo(auth.id)
+    return result
+  } catch (error) {
+    console.log(error)
+  }
+}
+export async function addAuthInfo(auth: IAuth): Promise<void> {
+  try {
+    await db.createAuth(auth)
+  } catch (error) {
+    console.log(error)
+  }
+}
+export async function updateAuthInfo(auth: IAuth): Promise<void> {
+  try {
+    await db.updateAuth(auth)
+  } catch (error) {
+    console.log(error)
+  }
+}
+export async function clearAuthInfo(): Promise<void> {
+  try {
+    //console.log('clear notes-------')
+    await db.auth.clear()
+  } catch (error) {
+    console.log('ERROR clear notes', error)
   }
 }

@@ -24,3 +24,10 @@ export type UpdateNoteTitle = {
   id: number
   title: string
 }
+
+export interface IAuth {
+  id: number
+  token: string
+  expirationTime: string
+  timeLeft: string
+}

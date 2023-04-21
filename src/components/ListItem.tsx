@@ -19,6 +19,7 @@ const ListItem: FC<SidebarProps> = ({ visible, notesList }) => {
 
   const style = {
     width: visible ? '20vw' : '0',
+    display: visible ? '' : 'none',
   }
 
   const noteClickHandle = (id: number) => {
