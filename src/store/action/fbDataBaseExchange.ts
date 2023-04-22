@@ -9,13 +9,14 @@ import {
 } from 'firebase/database'
 import { firebaseApp } from '../firebase.config'
 import { Note } from '../../interfaces/NoteProps'
-import { db } from './NotesDB'
-import { getNote } from './actionslDB'
-import { imageToStorage } from '../../utilities/prepareImage'
+import { db } from './indexDB'
+import { getNote } from './notesDB'
+import { imageToStorage } from '../../utilities/saveImage'
+import { deleteNoteImagesDB } from './imageDB'
 
 const dbFireBase = getDatabase(firebaseApp)
 
-interface UserNoteID {
+export interface UserNoteID {
   uid: string
   noteId: number
 }
@@ -30,6 +31,7 @@ interface NoteHash {
 export async function setNoteToFirebase({ uid, noteId }: UserNoteID) {
   try {
     const tempNote = await getNote(noteId)
+    console.log("tempNote", tempNote)
     if (!tempNote || tempNote.sync) return
     const sync = await imageToStorage({ uid, note: tempNote })
     const note = await getNote(noteId)
@@ -102,6 +104,7 @@ export async function deleteNoteFromFirebase({
 }: UserNoteID): Promise<void> {
   try {
     remove(child(ref(dbFireBase), `/notes_data/${uid}/notes/${noteId}`))
+    deleteNoteImagesDB({ uid, noteId })
   } catch (err) {
     console.error('Error deleteNoteFromFirebase', uid, err)
   }

@@ -3,7 +3,10 @@ import {
     ref,
     getDownloadURL,
     uploadBytesResumable,
+    listAll, deleteObject
 } from "firebase/storage";
+import { UserNoteID } from "./fbDataBaseExchange";
+import { firebaseApp } from "../firebase.config";
 
 
 interface UploadFilesProps {
@@ -12,11 +15,12 @@ interface UploadFilesProps {
     fileName: string
     file: Blob
 }
+const storage = getStorage();
+
 
 export const uploadFiles = ({ uid, noteId, fileName, file }: UploadFilesProps): Promise<string> => {
     return new Promise((resolve) => {
         if (!file) return;
-        const storage = getStorage();
         const storageRef = ref(storage, `/${uid}/${noteId}/${fileName}`);
         const uploadImg = uploadBytesResumable(storageRef, file);
 
@@ -55,4 +59,24 @@ export const uploadFiles = ({ uid, noteId, fileName, file }: UploadFilesProps): 
                 })
         );
     })
+};
+
+export async function deleteNoteImages({ uid, noteId }: UserNoteID) {
+    try {
+        const storage = getStorage(firebaseApp);
+        const folderRef = ref(storage, `/${uid}/${noteId}`)
+        const filesSnapshot = await listAll(folderRef);
+
+        const filesPromises = filesSnapshot.items.map((item) => {
+            return deleteObject(item);
+        });
+
+        await Promise.all(filesPromises);
+
+        // await deleteObject(folderRef);
+
+        console.log(`Файлы заметок успешно удалены.`);
+    } catch (error) {
+        console.error(`Ошибка при удалении файлов  заметки:`, error);
+    }
 };

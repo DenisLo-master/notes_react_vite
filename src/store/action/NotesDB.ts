@@ -1,59 +1,62 @@
-import { Dexie, Table } from 'dexie'
+import { db } from './indexDB'
 import {
-  IAuth,
   Note,
   UpdateNote,
   UpdateNoteTitle,
 } from '../../interfaces/NoteProps'
+import { deleteAllImagesDB } from './imageDB'
 
-export class NotesDB extends Dexie {
-  notes!: Table<Note>
-  auth!: Table<IAuth>
-
-  constructor() {
-    super('MyNotes')
-    this.version(1).stores({
-      notes: 'id, title, body,created_at,updated_at,sync', // Primary key and indexed props
-      auth: 'id, token, expirationTime, timeLeft',
-    })
+export async function updateNote(note: UpdateNote): Promise<void> {
+  try {
+    //console.log('Updating notes-------', note)
+    await db.updateNote(note)
+  } catch (error) {
+    console.log(error)
   }
-
-  getAuthInfo(authId: number) {
-    return this.auth.get(authId)
-  }
-  createAuth(auth: IAuth) {
-    return this.auth.add(auth)
-  }
-  updateAuth(auth: IAuth) {
-    return this.auth.update(1, auth)
-  }
-
-  setNoteSync(noteId: number, sync: boolean = true) {
-    return this.notes.update(noteId, { sync })
-  }
-
-  updateNote(note: UpdateNote, sync: boolean = true) {
-    return this.notes.update(note.id, { ...note, sync })
-  }
-  updateNoteTitle(note: UpdateNoteTitle) {
-    return this.notes.update(note.id, { title: note.title })
-  }
-
-  deleteNote(id: number) {
-    return this.notes.delete(id)
-  }
-
-  createNote(note: Note) {
-    return this.notes.add({ ...note, sync: false })
-  }
-
-  getNote(noteId: number) {
-    return this.notes.get(noteId)
-  }
-
-  getNotesList() {
-    return this.notes.toArray()
+}
+export async function updateNoteTitle(note: UpdateNoteTitle): Promise<void> {
+  try {
+    await db.updateNoteTitle(note)
+  } catch (error) {
+    console.log(error)
   }
 }
 
-export const db = new NotesDB()
+export async function clearNotes(): Promise<void> {
+  try {
+    deleteAllImagesDB()
+    await db.clearNotes()
+  } catch (error) {
+    console.log('ERROR clear notes', error)
+  }
+}
+
+export async function addNote(note: Note): Promise<void> {
+  try {
+    await db.createNote({
+      id: note.id,
+      body: note.body,
+      title: note.title,
+      created_at: note.created_at,
+      updated_at: note.updated_at,
+    })
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+export async function getNote(noteId: number): Promise<Note | undefined> {
+  try {
+    return await db.getNote(noteId)
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+export async function getNotesList(): Promise<Note[] | undefined> {
+  try {
+    return await db.getNotesList()
+  } catch (error) {
+    console.log(error)
+  }
+}

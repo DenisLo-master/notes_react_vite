@@ -7,14 +7,14 @@ import {
   getNoteIdFromFirebase,
   getNotesFromFirebase,
   setNoteToFirebase,
-} from '../store/action/firebaseExchange'
+} from '../store/action/fbDataBaseExchange'
 import { Note, NoteProps } from '../interfaces/NoteProps'
 import { useEffect, useState } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
-import { db } from '../store/action/NotesDB'
+import { db } from '../store/action/indexDB'
 import { useAuth } from '../context/AuthProvider'
-import { addNote, getNotesList, updateNote } from '../store/action/actionslDB'
-import { imageToStorage } from '../utilities/prepareImage'
+import { addNote, getNotesList, updateNote } from '../store/action/notesDB'
+import { imageToStorage } from '../utilities/saveImage'
 
 
 const Layout = () => {
