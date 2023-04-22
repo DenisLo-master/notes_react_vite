@@ -5,7 +5,6 @@ import { AuthProvider } from './context/AuthProvider'
 import { ModalsProvider } from '@mantine/modals'
 
 import { BrowserRouter } from 'react-router-dom'
-import './pwaReg'
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   // <React.StrictMode>
