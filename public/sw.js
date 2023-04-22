@@ -1,5 +1,5 @@
-const staticCacheName = 'ststic-site-v8'
-const dinamicCacheName = 'dinamic-site-v8'
+const staticCacheName = 'ststic-site-v9'
+const dinamicCacheName = 'dinamic-site-v9'
 
 const firebaseKey = 'AIzaSyAEaOGPrYjbM0k'
 
