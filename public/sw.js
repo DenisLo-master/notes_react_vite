@@ -1,9 +1,9 @@
-const staticCacheName = 'ststic-site-v9'
-const dinamicCacheName = 'dinamic-site-v9'
+const staticCacheName = 'ststic-site-v11'
+const dinamicCacheName = 'dinamic-site-v11'
 
 const firebaseKey = 'AIzaSyAEaOGPrYjbM0k'
 
-const ASSETS = ['/', '/index.html', 'offline.html']
+const ASSETS = ['/', '/index.html', '/assets/index-e6689b31.css', '/assets/index-dec6d257.js']
 
 self.addEventListener('install', async (event) => {
   const cache = await caches.open(staticCacheName)
@@ -21,7 +21,7 @@ self.addEventListener('activate', async (event) => {
 //fetch
 self.addEventListener('fetch', async (event) => {
   if (!event.request.url.includes(firebaseKey)) {
-    await event.respondWith(cacheFirst(event.request))
+    if (!event.request.url.includes('chrome-extension')) await event.respondWith(cacheFirst(event.request))
   }
 })
 
