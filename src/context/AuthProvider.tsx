@@ -5,7 +5,7 @@ import {
   createContext,
   useState,
 } from 'react'
-import { IAuth, ISignIn, ISignUp } from '../interfaces/LoginTypes.js'
+import { IAuth, ISignIn, ISignUp } from '../interfaces/LoginTypes'
 import {
   createUserWithEmailAndPassword,
   getAuth,
@@ -14,8 +14,8 @@ import {
   signOut,
 } from 'firebase/auth'
 import { useNavigate } from 'react-router-dom'
-import { clearNotesDB } from '../store/action/notesDB.js'
 import { addAuthInfoDB, clearAuthInfoDB, getAuthInfoDB, updateAuthInfoDB } from '../store/action/authDB.js'
+import { clearNotesDB } from '../store/action/noteDB'
 
 export interface IAuthValues {
   uid: string

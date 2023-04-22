@@ -9,8 +9,8 @@ import {
 } from 'firebase/database'
 import { firebaseApp } from '../firebase.config'
 import { Note, NoteFB } from '../../interfaces/NoteProps'
-import { NotesDB, db } from './indexDB'
-import { getNoteDB, getNotesListDB } from './notesDB'
+import { db } from './indexDB'
+import { getNoteDB, getNotesListDB } from './noteDB'
 import { imageToStorage } from '../../utilities/imageToStorage'
 import { deleteNoteImagesDB } from './imageDB'
 

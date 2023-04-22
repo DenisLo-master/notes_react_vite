@@ -1,6 +1,6 @@
 import { FC, useState, useRef } from 'react'
 import { NoteProps } from '../interfaces/NoteProps'
-import { updateNoteTitleDB } from '../store/action/notesDB'
+import { updateNoteTitleDB } from '../store/action/noteDB'
 import { setNoteToFirebase } from '../store/action/fbDataBaseExchange'
 import { useAuth } from '../context/AuthProvider'
 
