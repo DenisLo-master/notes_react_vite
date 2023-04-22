@@ -4,9 +4,8 @@ import {
   useContext,
   createContext,
   useState,
-  useEffect,
 } from 'react'
-import { ISignIn, ISignUp } from '../interfaces/LoginTypes.js'
+import { IAuth, ISignIn, ISignUp } from '../interfaces/LoginTypes.js'
 import {
   createUserWithEmailAndPassword,
   getAuth,
@@ -16,9 +15,8 @@ import {
 } from 'firebase/auth'
 import { getDatabase, ref, set } from 'firebase/database'
 import { useNavigate } from 'react-router-dom'
-import { clearAuthInfo, clearNotes } from '../store/action/actionslDB.js'
-import { db as IndexedDB } from '../store/action/NotesDB.js'
-import { IAuth } from '../interfaces/NoteProps.js'
+import { clearNotes } from '../store/action/notesDB.js'
+import { addAuthInfoDB, clearAuthInfoDB, getAuthInfoDB, updateAuthInfoDB } from '../store/action/authDB.js'
 
 export interface IAuthValues {
   currentUserId: string
@@ -50,13 +48,7 @@ export const useAuth = () => {
 }
 
 export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
-  const [authListFromIDB, setAuthListFromIDB] = useState<IAuth>()
 
-  useEffect(() => {
-    IndexedDB.getAuthInfo(1).then((res) => {
-      setAuthListFromIDB(res)
-    })
-  }, [])
 
   const navigate = useNavigate()
 
@@ -89,8 +81,7 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
         expirationTime: expirationTime.toDateString(),
         timeLeft: timeLeft.toString(),
       }
-
-      IndexedDB.createAuth(authInfo)
+      addAuthInfoDB(authInfo)
 
       setCurrentUserId(userId)
 
@@ -126,8 +117,7 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
         timeLeft: timeLeft.toString(),
       }
 
-      IndexedDB.createAuth(authInfo)
-
+      addAuthInfoDB(authInfo)
       setCurrentUserId(userId)
       autoRefreshUserToken(timeLeft)
     } catch (error) {
@@ -142,18 +132,15 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
       await signOut(auth).then(() => {
         navigate('/')
         setCurrentUserId('')
-        clearAuthInfo()
+        clearAuthInfoDB()
       })
     } catch (error) {
-      alert(error)
+      console.log(error)
     }
   }
 
   const getCurrentUser = () => {
-    //  console.log('getCurrentUser')
     onAuthStateChanged(auth, (user) => {
-      //  console.log('getCurrentUser2', user)
-
       if (user) {
         const uid = user.uid
         setCurrentUserId(uid)
@@ -162,7 +149,7 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
   }
 
   const logoutFirebase = () => {
-    clearAuthInfo()
+    clearAuthInfoDB()
     clearNotes()
   }
 
@@ -188,7 +175,7 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
           expirationTime: expirationTime.toDateString(),
           timeLeft: timeLeft.toString(),
         }
-        IndexedDB.updateAuth(authInfo)
+        updateAuthInfoDB(authInfo)
 
         autoRefreshUserToken(timeLeft)
       })
@@ -198,21 +185,20 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
   }
 
   auth.onAuthStateChanged((user) => {
-    // console.log("--------------onAuthStateChanged-------------------");
     if (user) {
       refreshUserToken()
       autoLoginFirebase()
     }
   })
 
-  const autoLoginFirebase = () => {
-    if (!authListFromIDB) return
-    const token = authListFromIDB.token //localStorage.getItem('token')
+  const autoLoginFirebase = async () => {
+    const authInfo = await getAuthInfoDB()
+    const token = authInfo?.token
 
     if (!token) {
       logoutFirebase()
     } else {
-      const time = authListFromIDB.expirationTime //localStorage.getItem('expirationTime')
+      const time = authInfo.expirationTime
       if (!time) {
         logoutFirebase()
         return

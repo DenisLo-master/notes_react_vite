@@ -4,8 +4,8 @@ import { Container, ActionIcon, Text } from '@mantine/core'
 import { TextEditor } from './TextEditor'
 import { useLayoutContext } from '../hooks/useLayoutContext'
 import { IconEdit } from '@tabler/icons-react'
-import { updateNote } from '../store/action/actionslDB'
-import { setNoteToFirebase } from '../store/action/firebaseExchange'
+import { updateNote } from '../store/action/notesDB'
+import { setNoteToFirebase } from '../store/action/fbDataBaseExchange'
 import { useAuth } from '../context/AuthProvider'
 import moment from 'moment'
 
@@ -33,6 +33,7 @@ const MainArea: FC<MainbarProps> = ({ visible }) => {
 
   useEffect(() => {
     if (activeNote.id) {
+      console.log(currentUserId, activeNote.id)
       !isEdit &&
         setNoteToFirebase({
           uid: currentUserId,
@@ -62,7 +63,11 @@ const MainArea: FC<MainbarProps> = ({ visible }) => {
       <div>
         <Container mt={'md'}>
           {isEdit ? (
-            <TextEditor content={content} updatedContent={setContent} />
+            <TextEditor
+              uid={currentUserId}
+              noteId={activeNote.id}
+              content={content}
+              updatedContent={setContent} />
           ) : (
             <div>
               <Text size={'sm'} align="center">

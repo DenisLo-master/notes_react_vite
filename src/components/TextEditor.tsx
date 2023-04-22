@@ -12,13 +12,17 @@ import Image from '@tiptap/extension-image'
 import { ActionIcon, Menu, Text, } from '@mantine/core'
 import { IconPhotoPlus, IconFileUpload, IconLink } from '@tabler/icons-react';
 import moment from 'moment'
+import { dataURLtoBlob } from '../utilities/saveImage';
+import { addImageDB } from '../store/action/imageDB';
 
 interface TextEditorProps {
+  uid: string
+  noteId: number
   content: string
   updatedContent: Dispatch<React.SetStateAction<string>>
 }
 
-export const TextEditor: FC<TextEditorProps> = ({ content, updatedContent }) => {
+export const TextEditor: FC<TextEditorProps> = ({ uid, noteId, content, updatedContent }) => {
   //для обновления времени на странице через 1 минуту
   const [, setDate] = useState<Date>()
 
@@ -61,62 +65,35 @@ export const TextEditor: FC<TextEditorProps> = ({ content, updatedContent }) => 
     }
   }
 
-  function dataURLtoBlob(dataURL: string): Blob | null {
-    const arr = dataURL.split(',');
-    const mimeMatch = arr[0].match(/:(.*?);/);
-    if (!mimeMatch) {
-      return null; // Вернуть null, если не найдено совпадение с регулярным выражением
-    }
-    const mime = mimeMatch[1];
-    const bstr = atob(arr[1]);
-    let n = bstr.length;
-    const u8arr = new Uint8Array(n);
 
-    while (n--) {
-      u8arr[n] = bstr.charCodeAt(n);
-    }
-
-    return new Blob([u8arr], { type: mime });
-  }
-
-
-  //добавление картинки из локального хранилища на место установки курсора
   const addImageFile = (file: File) => {
     console.log('adding file', file)
     if (file) {
       const reader = new FileReader();
       reader.onload = () => {
-        const imageDataUrl = reader.result as string;
-        // Сохранение файла в состоянии компонента
-        console.log("+++++++++image", imageDataUrl.length)
-        localStorage.setItem(`${file.name}`, imageDataUrl);
-        const imageDataLocal = localStorage.getItem(`${file.name}`);
+        const fileName = `${file.name}${new Date().getTime()}`
+        const fileData = reader.result as string;
+        addImageDB({ uid, noteId, image: { fileName, fileData } })
 
-        if (imageDataLocal) {
-          const blob = dataURLtoBlob(imageDataUrl); // Преобразование Data URL в Blob
+        if (fileData) {
+          const blob = dataURLtoBlob(fileData);
           if (blob) {
-            const imageUrl = URL.createObjectURL(blob); // Создание URL из Blob
-            editor?.chain().focus().setImage({ src: imageUrl }).run()
+            const imageUrl = URL.createObjectURL(blob);
+            editor?.chain().focus().setImage({ src: imageUrl, alt: "local", title: fileName }).run()
           }
         }
-
-
       };
       reader.readAsDataURL(file);
-      // const fileLocal = localStorage.getItem(`${file.name}`)
-      // const image = fileLocal && URL.createObjectURL(fileLocal)
     }
   }
 
 
   return (
     <>
-      {/* Отображение даты и времени на странице редактора */}
       <Text size={'sm'} align="center">
         {moment().format('DD MMMM YYYY, h:mm:a')}
       </Text>
 
-      {/* редактор */}
       <RichTextEditor autoFocus editor={editor}>
         <RichTextEditor.Toolbar sticky stickyOffset={60}>
           <RichTextEditor.ControlsGroup>
@@ -200,21 +177,13 @@ export const TextEditor: FC<TextEditorProps> = ({ content, updatedContent }) => 
                 >
                   Выбрать файл
                 </Menu.Item>
-
               </Menu.Dropdown>
             </Menu>
-
           </RichTextEditor.ControlsGroup>
         </RichTextEditor.Toolbar>
 
         <RichTextEditor.Content />
       </RichTextEditor >
-
-      {/* кнопка добавления картинки по URL */}
-
-
-      {/* кнопка добавления картинки из локального хранилища */}
-
     </>
   )
 }

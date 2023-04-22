@@ -5,12 +5,12 @@ import { IconLogout, IconSearch } from '@tabler/icons-react'
 import { Dispatch, SetStateAction } from 'react'
 import moment from 'moment'
 import { NoteProps } from './../interfaces/NoteProps'
-import { db } from '../store/action/NotesDB'
-import { addNote } from '../store/action/actionslDB'
+import { db } from '../store/action/indexDB'
+import { addNote } from '../store/action/notesDB'
 import {
   deleteNoteFromFirebase,
   setNoteToFirebase,
-} from '../store/action/firebaseExchange'
+} from '../store/action/fbDataBaseExchange'
 import { useAuth } from '../context/AuthProvider'
 import { createStyles, Header, Group, rem } from '@mantine/core'
 

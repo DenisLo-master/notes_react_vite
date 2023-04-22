@@ -13,21 +13,15 @@ export interface NoteProps extends Note {
   onClick?: () => void
 }
 
-export type UpdateNote = {
+export interface UpdateNote {
   id: number
   title?: string
   body?: string
   updated_at: string
   sync?: boolean
 }
-export type UpdateNoteTitle = {
+export interface UpdateNoteTitle {
   id: number
   title: string
 }
 
-export interface IAuth {
-  id: number
-  token: string
-  expirationTime: string
-  timeLeft: string
-}
