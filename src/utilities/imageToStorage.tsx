@@ -5,8 +5,8 @@ import { deleteImageDB, getImageDB } from '../store/action/imageDB';
 import { updateNoteDB } from '../store/action/noteDB';
 
 interface ImageToStorageProps {
-    uid: string
-    note: Note
+  uid: string
+  note: Note
 }
 
 export async function imageToStorage({ uid, note }: ImageToStorageProps): Promise<boolean> {
@@ -44,6 +44,7 @@ export async function imageToStorage({ uid, note }: ImageToStorageProps): Promis
                     }
                 }
             }
+          }
         }
         note.body = newBody.innerHTML
         await updateNoteDB({ ...note, sync: false })
@@ -51,21 +52,20 @@ export async function imageToStorage({ uid, note }: ImageToStorageProps): Promis
     })
 }
 
-
 export function dataURLtoBlob(dataURL: string): Blob | null {
-    const arr = dataURL.split(',');
-    const mimeMatch = arr[0].match(/:(.*?);/);
-    if (!mimeMatch) {
-        return null
-    }
-    const mime = mimeMatch[1];
-    const bstr = atob(arr[1]);
-    let n = bstr.length;
-    const u8arr = new Uint8Array(n);
+  const arr = dataURL.split(',')
+  const mimeMatch = arr[0].match(/:(.*?);/)
+  if (!mimeMatch) {
+    return null
+  }
+  const mime = mimeMatch[1]
+  const bstr = atob(arr[1])
+  let n = bstr.length
+  const u8arr = new Uint8Array(n)
 
-    while (n--) {
-        u8arr[n] = bstr.charCodeAt(n);
-    }
+  while (n--) {
+    u8arr[n] = bstr.charCodeAt(n)
+  }
 
-    return new Blob([u8arr], { type: mime });
+  return new Blob([u8arr], { type: mime })
 }

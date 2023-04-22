@@ -1,7 +1,9 @@
-const staticCacheName = 'ststic-site-v4'
-const dinamicCacheName = 'dinamic-site-v4'
+const staticCacheName = 'ststic-site-v8'
+const dinamicCacheName = 'dinamic-site-v8'
 
-const ASSETS = ['/', '/index.html', 'offline.html', '/assets/index-e6689b31.css', '/assets/index-af037430.js']
+const firebaseKey = 'AIzaSyAEaOGPrYjbM0k'
+
+const ASSETS = ['/', '/index.html', 'offline.html']
 
 self.addEventListener('install', async (event) => {
   const cache = await caches.open(staticCacheName)
@@ -17,8 +19,10 @@ self.addEventListener('activate', async (event) => {
 })
 
 //fetch
-self.addEventListener('fetch', (event) => {
-  event.respondWith(cacheFirst(event.request))
+self.addEventListener('fetch', async (event) => {
+  if (!event.request.url.includes(firebaseKey)) {
+    await event.respondWith(cacheFirst(event.request))
+  }
 })
 
 async function cacheFirst(request) {
@@ -39,10 +43,12 @@ async function networkFirst(request) {
   const cache = await caches.open(dinamicCacheName)
   try {
     const response = await fetch(request)
-    await cache.put(request.url, response.clone())
+
+    await cache.put(request, response.clone())
+
     return response
   } catch (error) {
     const cached = await cache.match(request)
-    return cached ?? (await caches.match('/offline.html'))
+    return cached
   }
 }
