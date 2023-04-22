@@ -4,15 +4,10 @@ import { modals } from '@mantine/modals'
 import { IconLogout, IconSearch } from '@tabler/icons-react'
 import { Dispatch, SetStateAction } from 'react'
 import moment from 'moment'
-import { NoteProps } from './../interfaces/NoteProps'
-import { db } from '../store/action/indexDB'
-import { addNote } from '../store/action/notesDB'
-import {
-  deleteNoteFromFirebase,
-  setNoteToFirebase,
-} from '../store/action/fbDataBaseExchange'
+import { Note, NoteProps } from './../interfaces/NoteProps'
 import { useAuth } from '../context/AuthProvider'
 import { createStyles, Header, Group, rem } from '@mantine/core'
+import { createNoteDB, deleteNoteDB } from '../store/action/notesDB'
 
 const useStyles = createStyles((theme) => ({
   header: {
@@ -61,25 +56,22 @@ const useStyles = createStyles((theme) => ({
   },
 }))
 
-interface HeaderSearchProps {
-  links: { link: string; label: string }[]
-}
 
 type HeaderType = {
-  addItem: Dispatch<SetStateAction<NoteProps[]>>
-  currentUserId: string
+  setList: Dispatch<SetStateAction<NoteProps[]>>
+  uid: string
   searchText: (text: string) => void
 }
 
 export const HeaderSearch = ({
-  addItem,
+  setList,
   searchText,
-  currentUserId,
+  uid,
 }: HeaderType) => {
   const { classes } = useStyles()
 
   const { visible, toggleVisibleSidebar } = useLayoutContext()
-  const { activeNote } = useLayoutContext()
+  const { activeNote, setActiveNote } = useLayoutContext()
   const { signOutUser } = useAuth()
   const toggleVisibleHandle = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault()
@@ -89,37 +81,31 @@ export const HeaderSearch = ({
   const createNoteHandle = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault()
     event.stopPropagation()
-    const templateNote: NoteProps = {
-      id: new Date().getTime(),
-      body: '',
-      created_at: moment(new Date().getTime()).format('DD.MM.YYYY, HH:mm'),
-      updated_at: moment(new Date().getTime()).format('DD.MM.YYYY, HH:mm'),
-      title: '',
-      additionalText: '',
-      active: true,
-    }
-    localStorage.setItem('activeNote', templateNote.id.toString())
-    addItem((prev) => [...prev, templateNote])
     try {
-      const CreatedNote = {
-        id: templateNote.id,
-        body: templateNote.body,
-        created_at: templateNote.created_at,
-        updated_at: templateNote.created_at,
-        title: templateNote.title,
+      const createdNote: Note = {
+        id: new Date().getTime(),
+        body: '',
+        created_at: moment(new Date().getTime()).format('DD.MM.YYYY, HH:mm'),
+        updated_at: moment(new Date().getTime()).format('DD.MM.YYYY, HH:mm'),
+        title: '',
+        sync: false
       }
-      addNote(CreatedNote)
-      setNoteToFirebase({
-        uid: currentUserId,
-        noteId: CreatedNote.id,
-      })
+
+      createNoteDB({ uid, note: createdNote })
+      const activeNote: NoteProps = {
+        ...createdNote,
+        additionalText: '',
+        active: true,
+      }
+      setActiveNote(activeNote)
+      setList((prev) => [...prev, activeNote])
     } catch (error) {
       console.log(error)
     }
   }
 
   const deleteNoteHandler = () => {
-    if (!localStorage.getItem('activeNote')) return
+    if (!activeNote?.id) return
     modals.openConfirmModal({
       title: 'Delete your note',
       centered: true,
@@ -130,12 +116,8 @@ export const HeaderSearch = ({
       confirmProps: { color: 'red' },
       onCancel: () => console.log('Cancel'),
       onConfirm: () => {
-        db.deleteNote(Number(localStorage.getItem('activeNote')))
-        deleteNoteFromFirebase({
-          uid: currentUserId,
-          noteId: activeNote.id,
-        })
-        localStorage.setItem('activeNote', '')
+        deleteNoteDB({ uid, noteId: activeNote.id })
+        setActiveNote(null)
       },
     })
   }

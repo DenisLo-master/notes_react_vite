@@ -1,10 +1,12 @@
-export interface Note {
+export interface NoteFB {
   id: number
   title: string
   body: string
   created_at: string
   updated_at: string
-  sync?: boolean
+}
+export interface Note extends NoteFB {
+  sync: boolean
 }
 
 export interface NoteProps extends Note {
@@ -18,9 +20,9 @@ export interface UpdateNote {
   title?: string
   body?: string
   updated_at: string
-  sync?: boolean
+  sync: boolean
 }
-export interface UpdateNoteTitle {
+export interface NoteTitle {
   id: number
   title: string
 }

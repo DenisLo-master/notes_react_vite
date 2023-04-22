@@ -4,7 +4,6 @@ export interface ImageProps {
 }
 
 export interface ImageLocal extends ImageProps {
-  uid: string
   noteId: number
 }
 

@@ -1,8 +1,8 @@
 import React from 'react'
 import { Note } from '../interfaces/NoteProps'
 import { uploadFiles } from '../store/action/fbStorageExchange.ts';
-import { updateNote } from '../store/action/notesDB';
-import { deleteImageDB } from '../store/action/imageDB';
+import { deleteImageDB, getImageDB } from '../store/action/imageDB';
+import { updateNoteDB } from '../store/action/notesDB';
 
 interface ImageToStorageProps {
     uid: string
@@ -18,7 +18,12 @@ export async function imageToStorage({ uid, note }: ImageToStorageProps): Promis
             const image = imageArray[i];
             if (image) {
                 if (image.alt === "local" && image.title) {
-                    const fileData = localStorage.getItem(image.title)
+                    const fileData = await getImageDB(
+                        {
+                            noteId: note.id,
+                            fileName: image.title
+                        })
+                    console.log("fileData", fileData)
                     const fileBlob = fileData && dataURLtoBlob(fileData)
                     const link = fileBlob && await uploadFiles(
                         {
@@ -29,7 +34,8 @@ export async function imageToStorage({ uid, note }: ImageToStorageProps): Promis
                         })
                     if (link) {
                         image.src = link
-                        deleteImageDB({ uid, noteId: note.id, fileName: image.title })
+                        image.alt = "image"
+                        deleteImageDB({ noteId: note.id, fileName: image.title })
                     } else {
                         const imageUrl = fileBlob && URL.createObjectURL(fileBlob)
                         if (imageUrl) {
@@ -41,7 +47,7 @@ export async function imageToStorage({ uid, note }: ImageToStorageProps): Promis
             }
         }
         note.body = newBody.innerHTML
-        await updateNote(note)
+        await updateNoteDB({ ...note, sync: false })
         resolve(true)
     })
 }

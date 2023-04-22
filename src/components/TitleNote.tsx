@@ -1,18 +1,20 @@
 import { FC, useState, useRef } from 'react'
 import { NoteProps } from '../interfaces/NoteProps'
-import { updateNoteTitle } from '../store/action/notesDB'
+import { updateNoteTitleDB } from '../store/action/notesDB'
 import { setNoteToFirebase } from '../store/action/fbDataBaseExchange'
 import { useAuth } from '../context/AuthProvider'
 
-const Note: FC<NoteProps> = ({
+export const TitleNote: FC<NoteProps> = ({
   title,
   created_at,
   body,
+  sync,
+  additionalText,
   active,
   onClick,
   id,
 }) => {
-  const { currentUserId } = useAuth()
+  const { uid } = useAuth()
   const [noteTitle, setNoteTitle] = useState<string>(title)
   const inputRef = useRef<HTMLInputElement>(null)
 
@@ -25,20 +27,15 @@ const Note: FC<NoteProps> = ({
     setNoteTitle(value)
     if (inputRef.current) {
       const id = Number(inputRef.current.getAttribute('id'))
-      updateNoteTitle({ id, title: value })
-
-      setNoteToFirebase({
-        uid: currentUserId,
-        noteId: id,
-      })
+      updateNoteTitleDB(
+        {
+          uid,
+          noteTitle: { id, title: value }
+        }
+      )
     }
   }
 
-  const getTextFromHtml = (html: string) => {
-    var tempElement = document.createElement('div')
-    tempElement.innerHTML = html
-    return tempElement.textContent?.substring(0, 10)
-  }
 
   return (
     <div onClick={onClick} className={` ${active ? 'note-active' : ''}`}>
@@ -55,11 +52,10 @@ const Note: FC<NoteProps> = ({
           />
         </span>
         <div>
-          {created_at} <span>{getTextFromHtml(body)}</span>
+          {created_at} <span>{additionalText}</span>
         </div>
       </div>
     </div>
   )
 }
 
-export default Note

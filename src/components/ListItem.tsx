@@ -2,7 +2,7 @@ import { FC, useEffect, useState } from 'react'
 import { NoteProps } from '../interfaces/NoteProps'
 import { useLayoutContext } from '../hooks/useLayoutContext'
 
-import Note from './TitleNote'
+import { TitleNote } from './TitleNote'
 import { ScrollArea } from '@mantine/core'
 interface SidebarProps {
   visible: boolean
@@ -11,8 +11,7 @@ interface SidebarProps {
 
 const ListItem: FC<SidebarProps> = ({ visible, notesList }) => {
   const [notes, setNotes] = useState<NoteProps[]>(notesList)
-  const { setActive } = useLayoutContext()
-
+  const { activeNote, setActiveNote } = useLayoutContext()
   useEffect(() => {
     setNotes(notesList)
   }, [notesList])
@@ -22,21 +21,35 @@ const ListItem: FC<SidebarProps> = ({ visible, notesList }) => {
     display: visible ? '' : 'none',
   }
 
-  const noteClickHandle = (id: number) => {
+  const setActiveStyleNote = (id: number) => {
     const updateNote: NoteProps[] = []
-    notesList.map((note) => {
+    notesList.forEach((note) => {
       note.active = false
       if (note.id === id) {
         note.active = true
-        setActive(note)
-        localStorage.setItem('activeNote', id.toString())
+        setActiveNote(note)
       }
-
       updateNote.push(note)
     })
-
     setNotes(updateNote)
   }
+
+  const noteClickHandle = (id: number) => {
+    setActiveStyleNote(id)
+  }
+
+  useEffect(() => {
+    if (!activeNote && notesList.length) {
+      setActiveStyleNote(notesList[0].id)
+    }
+  }, [activeNote])
+
+  const getTextFromHtml = (html: string) => {
+    var tempElement = document.createElement('div')
+    tempElement.innerHTML = html
+    return tempElement.textContent?.substring(0, 10)
+  }
+
 
   if (notes.length === 0) {
     return (
@@ -50,20 +63,21 @@ const ListItem: FC<SidebarProps> = ({ visible, notesList }) => {
         <ScrollArea.Autosize mah="100%">
           {notes.length !== 0
             ? notes.map((note) => (
-                <Note
-                  key={note.id}
-                  id={note.id}
-                  created_at={note.created_at}
-                  updated_at={note.updated_at}
-                  title={note.title}
-                  additionalText={note.additionalText}
-                  active={
-                    note.id.toString() === localStorage.getItem('activeNote')
-                  }
-                  onClick={() => noteClickHandle(note.id)}
-                  body={note.body}
-                />
-              ))
+              <TitleNote
+                key={note.id}
+                id={note.id}
+                created_at={note.created_at}
+                updated_at={note.updated_at}
+                title={note.title}
+                additionalText={getTextFromHtml(note.body)}
+                active={
+                  note.id === activeNote?.id
+                }
+                onClick={() => noteClickHandle(note.id)}
+                body=""
+                sync={note.sync}
+              />
+            ))
             : 'Загрузка...'}
         </ScrollArea.Autosize>
       </div>
