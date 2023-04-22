@@ -25,8 +25,6 @@ export const Workspace = () => {
 
   async function initNotes() {
     const notesIDB = await getNotesListDB()
-    console.log("notesIDB", notesIDB)
-    console.log("uid", uid)
     if (notesIDB && notesIDB.length) {
       notesIDB.forEach(async (note, index) => {
         if (index === 0) {

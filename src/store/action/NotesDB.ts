@@ -45,8 +45,8 @@ export async function updateNoteTitleDB({ uid, noteTitle }: UpdateNoteTitle): Pr
 
 export async function deleteNoteDB({ uid, noteId }: DeleteNoteProps): Promise<void> {
   try {
-    db.deleteNote(noteId)
-    deleteNoteImagesDB(noteId)
+    await db.deleteNote(noteId)
+    await deleteNoteImagesDB(noteId)
     deleteNoteFromFirebase({
       uid,
       noteId
@@ -58,7 +58,7 @@ export async function deleteNoteDB({ uid, noteId }: DeleteNoteProps): Promise<vo
 
 export async function clearNotesDB(): Promise<void> {
   try {
-    deleteAllImagesDB()
+    await deleteAllImagesDB()
     await db.clearNotes()
   } catch (error) {
     console.log('ERROR clear notes', error)

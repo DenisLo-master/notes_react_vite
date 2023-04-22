@@ -9,8 +9,8 @@ import {
 } from 'firebase/database'
 import { firebaseApp } from '../firebase.config'
 import { Note, NoteFB } from '../../interfaces/NoteProps'
-import { db } from './indexDB'
-import { getNoteDB } from './notesDB'
+import { NotesDB, db } from './indexDB'
+import { getNoteDB, getNotesListDB } from './notesDB'
 import { imageToStorage } from '../../utilities/imageToStorage'
 import { deleteNoteImagesDB } from './imageDB'
 
@@ -109,5 +109,17 @@ export async function deleteNoteFromFirebase({
     deleteNoteImagesDB(noteId)
   } catch (err) {
     console.error('Error deleteNoteFromFirebase', uid, err)
+  }
+}
+
+
+export const setAllNotesToFirebase = async (uid: string) => {
+  const notes = await getNotesListDB()
+  if (notes?.length) {
+    notes.forEach(note => {
+      if (!note.sync) {
+        setNoteToFirebase({ uid, noteId: note.id })
+      }
+    });
   }
 }

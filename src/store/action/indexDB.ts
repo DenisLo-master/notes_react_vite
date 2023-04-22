@@ -1,8 +1,8 @@
 import { Dexie, Table } from 'dexie'
 import {
   Note,
+  NoteTitle,
   UpdateNote,
-  UpdateNoteTitle,
 } from '../../interfaces/NoteProps'
 import { IAuth } from '../../interfaces/LoginTypes'
 import { ImageLocal, ImageProps } from '../../interfaces/ImageProps'
@@ -21,79 +21,79 @@ export class NotesDB extends Dexie {
     })
   }
 
-  getAuthInfo() {
-    return this.auth.toArray()
+  async getAuthInfo() {
+    return await this.auth.toArray()
   }
 
-  addAuthInfo(auth: IAuth) {
-    return this.auth.add(auth)
+  async addAuthInfo(auth: IAuth) {
+    return await this.auth.add(auth)
   }
 
-  updateAuth(auth: IAuth) {
-    return this.auth.update(1, auth)
-  }
-
-
-  setNoteSync(noteId: number, sync: boolean = true) {
-    return this.notes.update(noteId, { sync })
-  }
-
-  updateNote(note: UpdateNote) {
-    return this.notes.update(note.id, note)
-  }
-
-  updateNoteTitle(note: UpdateNoteTitle) {
-    return this.notes.update(note.id, { title: note.title })
-  }
-
-  deleteNote(id: number) {
-    return this.notes.delete(id)
-  }
-
-  createNote(note: Note) {
-    return this.notes.add(note)
-  }
-
-  getNote(noteId: number) {
-    return this.notes.get(noteId)
-  }
-
-  getNotesList() {
-    return this.notes.toArray()
-  }
-
-  clearNotes() {
-    return this.notes.clear()
+  async updateAuth(auth: IAuth) {
+    return await this.auth.update(1, auth)
   }
 
 
-
-  addImage(noteId: number, image: ImageProps) {
-    return this.localImg.add({ noteId, ...image })
+  async setNoteSync(noteId: number, sync: boolean = true) {
+    return await this.notes.update(noteId, { sync })
   }
 
-  getImage(noteId: number, fileName: string) {
-    return this.localImg.where("noteId")
+  async updateNote(note: UpdateNote) {
+    return await this.notes.update(note.id, note)
+  }
+
+  async updateNoteTitle(note: NoteTitle) {
+    return await this.notes.update(note.id, { title: note.title })
+  }
+
+  async deleteNote(id: number) {
+    return await this.notes.delete(id)
+  }
+
+  async createNote(note: Note) {
+    return await this.notes.add(note)
+  }
+
+  async getNote(noteId: number) {
+    return await this.notes.get(noteId)
+  }
+
+  async getNotesList() {
+    return await this.notes.toArray()
+  }
+
+  async clearNotes() {
+    return await this.notes.clear()
+  }
+
+
+
+  async addImage(noteId: number, image: ImageProps) {
+    return await this.localImg.add({ noteId, ...image })
+  }
+
+  async getImage(noteId: number, fileName: string) {
+    return await this.localImg.where("noteId")
       .equals(noteId)
       .and((item) => item.fileName === fileName)
       .toArray()
   }
 
-  deleteImage(noteId: number, fileName: string) {
-    return this.localImg.where("noteId")
+  async deleteImage(noteId: number, fileName: string) {
+    return await this.localImg.where("noteId")
       .equals(noteId)
       .and((item) => item.fileName === fileName)
       .delete()
   }
 
-  deleteNoteImages(noteId: number) {
-    return this.localImg.where("noteId")
+  async deleteNoteImages(noteId: number) {
+    return await this.localImg.where("noteId")
       .equals(noteId)
       .delete()
   }
 
-  deleteAllImages() {
-    return this.localImg.clear()
+  async deleteAllImages() {
+    return await this.localImg.clear()
   }
 
 
