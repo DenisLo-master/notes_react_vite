@@ -7,7 +7,7 @@ import moment from 'moment'
 import { Note, NoteProps } from './../interfaces/NoteProps'
 import { useAuth } from '../context/AuthProvider'
 import { createStyles, Header, Group, rem } from '@mantine/core'
-import { createNoteDB, deleteNoteDB } from '../store/action/notesDB'
+import { createNoteDB, deleteNoteDB } from '../store/action/noteDB'
 
 const useStyles = createStyles((theme) => ({
   header: {

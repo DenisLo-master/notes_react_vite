@@ -13,7 +13,7 @@ import { useEffect, useState } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { db } from '../store/action/indexDB'
 import { useAuth } from '../context/AuthProvider'
-import { createNoteDB, getNotesListDB, updateNoteDB } from '../store/action/notesDB'
+import { createNoteDB, getNotesListDB, updateNoteDB } from '../store/action/noteDB'
 import { imageToStorage } from '../utilities/imageToStorage'
 
 

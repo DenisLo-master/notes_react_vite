@@ -2,7 +2,7 @@ import React from 'react'
 import { Note } from '../interfaces/NoteProps'
 import { uploadFiles } from '../store/action/fbStorageExchange.ts';
 import { deleteImageDB, getImageDB } from '../store/action/imageDB';
-import { updateNoteDB } from '../store/action/notesDB';
+import { updateNoteDB } from '../store/action/noteDB';
 
 interface ImageToStorageProps {
     uid: string

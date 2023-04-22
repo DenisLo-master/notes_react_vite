@@ -6,7 +6,7 @@ import { useLayoutContext } from '../hooks/useLayoutContext'
 import { IconEdit } from '@tabler/icons-react'
 import { setAllNotesToFirebase, setNoteToFirebase } from '../store/action/fbDataBaseExchange'
 import { useAuth } from '../context/AuthProvider'
-import { updateNoteDB } from '../store/action/notesDB'
+import { updateNoteDB } from '../store/action/noteDB'
 
 interface MainbarProps {
   visible: boolean
