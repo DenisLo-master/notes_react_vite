@@ -7,9 +7,9 @@ import { useAuth } from '../context/AuthProvider'
 export const AuthLayout = () => {
   const [register, setRegister] = useState(false)
 
-  const { currentUserId } = useAuth()
+  const { uid } = useAuth()
 
-  if (currentUserId) {
+  if (uid) {
     return <Navigate to='/workspace' />
   }
   return <>{register ?

@@ -1,28 +1,62 @@
 import { db } from './indexDB'
 import {
   Note,
+  NoteFB,
+  NoteTitle,
   UpdateNote,
-  UpdateNoteTitle,
 } from '../../interfaces/NoteProps'
-import { deleteAllImagesDB } from './imageDB'
+import { deleteAllImagesDB, deleteNoteImagesDB } from './imageDB'
+import { deleteNoteFromFirebase, setNoteToFirebase } from './fbDataBaseExchange'
 
-export async function updateNote(note: UpdateNote): Promise<void> {
+interface DeleteNoteProps {
+  uid: string
+  noteId: number
+}
+
+interface CreateNote {
+  uid: string
+  note: Note
+}
+
+interface UpdateNoteTitle {
+  uid: string
+  noteTitle: NoteTitle
+}
+
+export async function updateNoteDB(note: UpdateNote): Promise<void> {
   try {
-    //console.log('Updating notes-------', note)
     await db.updateNote(note)
   } catch (error) {
     console.log(error)
   }
 }
-export async function updateNoteTitle(note: UpdateNoteTitle): Promise<void> {
+export async function updateNoteTitleDB({ uid, noteTitle }: UpdateNoteTitle): Promise<void> {
   try {
-    await db.updateNoteTitle(note)
+    await db.updateNoteTitle(noteTitle)
+    setNoteToFirebase({
+      uid,
+      noteId: noteTitle.id,
+    })
   } catch (error) {
     console.log(error)
   }
 }
 
-export async function clearNotes(): Promise<void> {
+
+export async function deleteNoteDB({ uid, noteId }: DeleteNoteProps): Promise<void> {
+  try {
+    db.deleteNote(noteId)
+    deleteNoteImagesDB(noteId)
+    deleteNoteFromFirebase({
+      uid,
+      noteId
+    })
+  } catch (error) {
+    console.log('ERROR clear notes', error)
+  }
+}
+
+export async function clearNotesDB(): Promise<void> {
   try {
     deleteAllImagesDB()
     await db.clearNotes()
@@ -31,21 +65,20 @@ export async function clearNotes(): Promise<void> {
   }
 }
 
-export async function addNote(note: Note): Promise<void> {
+export async function createNoteDB({ uid, note }: CreateNote): Promise<void> {
   try {
-    await db.createNote({
-      id: note.id,
-      body: note.body,
-      title: note.title,
-      created_at: note.created_at,
-      updated_at: note.updated_at,
+    await db.createNote(note)
+    const noteFB: NoteFB = { ...note }
+    setNoteToFirebase({
+      uid,
+      noteId: noteFB.id,
     })
   } catch (error) {
     console.log(error)
   }
 }
 
-export async function getNote(noteId: number): Promise<Note | undefined> {
+export async function getNoteDB(noteId: number): Promise<Note | undefined> {
   try {
     return await db.getNote(noteId)
   } catch (error) {
@@ -53,7 +86,7 @@ export async function getNote(noteId: number): Promise<Note | undefined> {
   }
 }
 
-export async function getNotesList(): Promise<Note[] | undefined> {
+export async function getNotesListDB(): Promise<Note[] | undefined> {
   try {
     return await db.getNotesList()
   } catch (error) {

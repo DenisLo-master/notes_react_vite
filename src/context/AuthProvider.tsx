@@ -13,13 +13,12 @@ import {
   onAuthStateChanged,
   signOut,
 } from 'firebase/auth'
-import { getDatabase, ref, set } from 'firebase/database'
 import { useNavigate } from 'react-router-dom'
-import { clearNotes } from '../store/action/notesDB.js'
+import { clearNotesDB } from '../store/action/notesDB.js'
 import { addAuthInfoDB, clearAuthInfoDB, getAuthInfoDB, updateAuthInfoDB } from '../store/action/authDB.js'
 
 export interface IAuthValues {
-  currentUserId: string
+  uid: string
   signUp: (values: ISignUp) => void
   signIn: (values: ISignIn) => void
   signOutUser: () => void
@@ -52,10 +51,9 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
 
   const navigate = useNavigate()
 
-  const [currentUserId, setCurrentUserId] = useState<string>('')
+  const [uid, setUid] = useState<string>('')
   const [error, setError] = useState('')
 
-  const db = getDatabase()
   const auth = getAuth()
 
   const signUp = async ({ name, email, password }: ISignUp) => {
@@ -66,32 +64,20 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
         password,
       )
       const user = response.user as any
-
-      const userId: string = user.uid
-      const createdAt = user.metadata.creationTime
-
+      const uid = user.uid
       const expirationTime = new Date(user.stsTokenManager.expirationTime)
-
       const timeLeft = (expirationTime.getTime() - new Date().getTime()) / 1000
-      console.log(user)
 
       const authInfo: IAuth = {
         id: 1,
         token: user.accessToken,
-        expirationTime: expirationTime.toDateString(),
+        expirationTime: expirationTime.toISOString(),
         timeLeft: timeLeft.toString(),
       }
       addAuthInfoDB(authInfo)
 
-      setCurrentUserId(userId)
+      setUid(uid)
 
-      // запись в базу данных после регистрации
-      set(ref(db, 'users/' + userId), {
-        id: userId,
-        userName: name,
-        email,
-        createdAt,
-      })
       autoRefreshUserToken(timeLeft)
     } catch (error) {
       if (error instanceof Error) {
@@ -106,19 +92,18 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
     try {
       const response = await signInWithEmailAndPassword(auth, email, password)
       const user = response.user as any
-      const userId: string = user.uid
+      const uid = user.uid
       const expirationTime = new Date(user.stsTokenManager.expirationTime)
       const timeLeft = (expirationTime.getTime() - new Date().getTime()) / 1000
 
       const authInfo: IAuth = {
         id: 1,
         token: user.accessToken,
-        expirationTime: expirationTime.toDateString(),
+        expirationTime: expirationTime.toISOString(),
         timeLeft: timeLeft.toString(),
       }
-
       addAuthInfoDB(authInfo)
-      setCurrentUserId(userId)
+      setUid(uid)
       autoRefreshUserToken(timeLeft)
     } catch (error) {
       if (error instanceof Error) {
@@ -131,7 +116,7 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
     try {
       await signOut(auth).then(() => {
         navigate('/')
-        setCurrentUserId('')
+        setUid('')
         clearAuthInfoDB()
       })
     } catch (error) {
@@ -143,14 +128,15 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
     onAuthStateChanged(auth, (user) => {
       if (user) {
         const uid = user.uid
-        setCurrentUserId(uid)
+        setUid(uid)
       }
     })
   }
 
   const logoutFirebase = () => {
+    console.log('logout')
     clearAuthInfoDB()
-    clearNotes()
+    clearNotesDB()
   }
 
   const autoRefreshUserToken = (time: number) => {
@@ -164,6 +150,7 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
       ?.getIdTokenResult(/* forceRefresh */ true)
       .then(() => {
         const user = auth.currentUser as any
+        const uid = user.uid
         const expirationTime = new Date(user.stsTokenManager.expirationTime)
 
         const timeLeft =
@@ -172,11 +159,11 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
         const authInfo: IAuth = {
           id: 1,
           token: user.accessToken,
-          expirationTime: expirationTime.toDateString(),
+          expirationTime: expirationTime.toISOString(),
           timeLeft: timeLeft.toString(),
         }
         updateAuthInfoDB(authInfo)
-
+        setUid(uid)
         autoRefreshUserToken(timeLeft)
       })
       .catch(function (error) {
@@ -195,9 +182,7 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
     const authInfo = await getAuthInfoDB()
     const token = authInfo?.token
 
-    if (!token) {
-      logoutFirebase()
-    } else {
+    if (token) {
       const time = authInfo.expirationTime
       if (!time) {
         logoutFirebase()
@@ -215,7 +200,7 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
   }
 
   const value = {
-    currentUserId,
+    uid,
     getCurrentUser,
     signUp,
     signIn,
@@ -223,5 +208,9 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
     error,
   }
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
+  return (
+    <AuthContext.Provider value={value}>
+      {children}
+    </AuthContext.Provider>
+  )
 }

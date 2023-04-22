@@ -2,39 +2,43 @@ import { ImageProps } from '../../interfaces/ImageProps'
 import { db } from './indexDB'
 
 interface AddImageFile {
-    uid: string
     noteId: number
     image: ImageProps
 }
 
-interface DeleteImageFile extends DeleteNoteImage {
+interface ImageFileName {
+    noteId: number
     fileName: string
 }
 
-interface DeleteNoteImage {
-    uid: string
-    noteId: number
-}
-
-export async function addImageDB({ uid, noteId, image }: AddImageFile): Promise<void> {
+export async function addImageDB({ noteId, image }: AddImageFile): Promise<void> {
     try {
-        await db.addImage(uid, noteId, image)
+        await db.addImage(noteId, image)
     } catch (error) {
         console.log(error)
     }
 }
 
-export async function deleteImageDB({ uid, noteId, fileName }: DeleteImageFile): Promise<void> {
+export async function getImageDB({ noteId, fileName }: ImageFileName): Promise<string | undefined> {
     try {
-        await db.deleteImage(uid, noteId, fileName)
+        const result = await db.getImage(noteId, fileName)
+        return result[0].fileData
     } catch (error) {
         console.log(error)
     }
 }
 
-export async function deleteNoteImagesDB({ uid, noteId }: DeleteNoteImage): Promise<void> {
+export async function deleteImageDB({ noteId, fileName }: ImageFileName): Promise<void> {
     try {
-        await db.deleteNoteImages(uid, noteId)
+        await db.deleteImage(noteId, fileName)
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+export async function deleteNoteImagesDB(noteId: number): Promise<void> {
+    try {
+        await db.deleteNoteImages(noteId)
     } catch (error) {
         console.log(error)
     }

@@ -12,21 +12,18 @@ import Image from '@tiptap/extension-image'
 import { ActionIcon, Menu, Text, } from '@mantine/core'
 import { IconPhotoPlus, IconFileUpload, IconLink } from '@tabler/icons-react';
 import moment from 'moment'
-import { dataURLtoBlob } from '../utilities/saveImage';
+import { dataURLtoBlob } from '../utilities/imageToStorage';
 import { addImageDB } from '../store/action/imageDB';
 
 interface TextEditorProps {
-  uid: string
   noteId: number
   content: string
   updatedContent: Dispatch<React.SetStateAction<string>>
 }
 
-export const TextEditor: FC<TextEditorProps> = ({ uid, noteId, content, updatedContent }) => {
-  //для обновления времени на странице через 1 минуту
+export const TextEditor: FC<TextEditorProps> = ({ noteId, content, updatedContent }) => {
   const [, setDate] = useState<Date>()
 
-  //для обновления времени на странице через 1 минуту
   useEffect(() => {
     const interval = setInterval(() => {
       setDate(new Date())
@@ -36,7 +33,6 @@ export const TextEditor: FC<TextEditorProps> = ({ uid, noteId, content, updatedC
     }
   }, [])
 
-  //инициализация редактора Mantine
   const editor = useEditor({
     extensions: [
       StarterKit,
@@ -56,7 +52,6 @@ export const TextEditor: FC<TextEditorProps> = ({ uid, noteId, content, updatedC
     },
   });
 
-  //добавление картинки по URL на место установки курсора
   const addImageURL = () => {
     const url = window.prompt('image URL')
 
@@ -67,13 +62,12 @@ export const TextEditor: FC<TextEditorProps> = ({ uid, noteId, content, updatedC
 
 
   const addImageFile = (file: File) => {
-    console.log('adding file', file)
     if (file) {
       const reader = new FileReader();
       reader.onload = () => {
         const fileName = `${file.name}${new Date().getTime()}`
         const fileData = reader.result as string;
-        addImageDB({ uid, noteId, image: { fileName, fileData } })
+        addImageDB({ noteId, image: { fileName, fileData } })
 
         if (fileData) {
           const blob = dataURLtoBlob(fileData);
@@ -163,12 +157,10 @@ export const TextEditor: FC<TextEditorProps> = ({ uid, noteId, content, updatedC
                     color={'black'}
                   />}
                   onClick={() => {
-                    // Открыть окно выбора файла
                     const fileInput = document.createElement('input');
                     fileInput.type = 'file';
                     fileInput.accept = '.png,.jpeg,.svg,.jpg,.gif,.webp'; // Можно указать другие разрешенные типы файлов
                     fileInput.onchange = (e: any) => {
-                      // При выборе файла
                       const selected = e.target?.files[0];
                       addImageFile(selected);
                     };

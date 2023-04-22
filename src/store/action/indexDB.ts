@@ -17,16 +17,18 @@ export class NotesDB extends Dexie {
     this.version(1).stores({
       notes: 'id, title, body,created_at,updated_at,sync', // Primary key and indexed props
       auth: 'id, token, expirationTime, timeLeft',
-      localImg: '++id, uid, noteId, fileName,fileData',
+      localImg: '++id, noteId, fileName,fileData',
     })
   }
 
-  getAuthInfo(authId: number) {
-    return this.auth.get(authId)
+  getAuthInfo() {
+    return this.auth.toArray()
   }
-  createAuth(auth: IAuth) {
+
+  addAuthInfo(auth: IAuth) {
     return this.auth.add(auth)
   }
+
   updateAuth(auth: IAuth) {
     return this.auth.update(1, auth)
   }
@@ -36,9 +38,10 @@ export class NotesDB extends Dexie {
     return this.notes.update(noteId, { sync })
   }
 
-  updateNote(note: UpdateNote, sync: boolean = false) {
-    return this.notes.update(note.id, { ...note, sync })
+  updateNote(note: UpdateNote) {
+    return this.notes.update(note.id, note)
   }
+
   updateNoteTitle(note: UpdateNoteTitle) {
     return this.notes.update(note.id, { title: note.title })
   }
@@ -48,7 +51,7 @@ export class NotesDB extends Dexie {
   }
 
   createNote(note: Note) {
-    return this.notes.add({ ...note, sync: false })
+    return this.notes.add(note)
   }
 
   getNote(noteId: number) {
@@ -65,22 +68,27 @@ export class NotesDB extends Dexie {
 
 
 
-  addImage(uid: string, noteId: number, image: ImageProps) {
-    return this.localImg.add({ uid, noteId, ...image })
+  addImage(noteId: number, image: ImageProps) {
+    return this.localImg.add({ noteId, ...image })
   }
 
-  deleteImage(uid: string, noteId: number, fileName: string) {
-    return this.localImg.where("uid")
-      .equals(uid)
-      .and((item1) => item1.noteId === noteId)
-      .and((item2) => item2.fileName === fileName)
+  getImage(noteId: number, fileName: string) {
+    return this.localImg.where("noteId")
+      .equals(noteId)
+      .and((item) => item.fileName === fileName)
+      .toArray()
+  }
+
+  deleteImage(noteId: number, fileName: string) {
+    return this.localImg.where("noteId")
+      .equals(noteId)
+      .and((item) => item.fileName === fileName)
       .delete()
   }
 
-  deleteNoteImages(uid: string, noteId: number) {
-    return this.localImg.where("uid")
-      .equals(uid)
-      .and((item) => item.noteId === noteId)
+  deleteNoteImages(noteId: number) {
+    return this.localImg.where("noteId")
+      .equals(noteId)
       .delete()
   }
 

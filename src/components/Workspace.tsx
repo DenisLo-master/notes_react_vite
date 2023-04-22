@@ -13,49 +13,50 @@ import { useEffect, useState } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { db } from '../store/action/indexDB'
 import { useAuth } from '../context/AuthProvider'
-import { addNote, getNotesList, updateNote } from '../store/action/notesDB'
-import { imageToStorage } from '../utilities/saveImage'
+import { createNoteDB, getNotesListDB, updateNoteDB } from '../store/action/notesDB'
+import { imageToStorage } from '../utilities/imageToStorage'
 
 
-const Layout = () => {
-  const { currentUserId, getCurrentUser } = useAuth()
-  const { visible, setActive } = useLayoutContext()
-  //получаем записи из IndexedDB
+export const Workspace = () => {
+  const { uid } = useAuth()
+  const { visible, setActiveNote } = useLayoutContext()
   const notesListFromIDB = useLiveQuery(() => db.notes.toArray()) as Note[]
-  getCurrentUser()
-
 
 
   async function initNotes() {
-    const notesIDB = await getNotesList()
+    const notesIDB = await getNotesListDB()
+    console.log("notesIDB", notesIDB)
+    console.log("uid", uid)
     if (notesIDB && notesIDB.length) {
       notesIDB.forEach(async (note, index) => {
         if (index === 0) {
-          setActive(note)
+          setActiveNote(note)
         }
         if (!note.sync) {
-          await imageToStorage({ uid: currentUserId, note })
-          setNoteToFirebase({ uid: currentUserId, noteId: note.id })
+          await imageToStorage({ uid: uid, note })
+          setNoteToFirebase({ uid: uid, noteId: note.id })
         } else {
-          getNoteIdFromFirebase({ uid: currentUserId, noteId: note.id }).then(
-            (note) => {
-              note && updateNote(note)
+          getNoteIdFromFirebase({ uid: uid, noteId: note.id }).then(
+            async (note) => {
+              note && await updateNoteDB({ ...note, sync: false })
             },
           )
         }
       })
     } else {
-      getNotesFromFirebase(currentUserId).then((notes) => {
-        notes && notes.forEach((note) => addNote(note))
+      getNotesFromFirebase(uid).then((notes) => {
+        notes && notes.forEach((note) => {
+          createNoteDB({ uid, note: { ...note, sync: true } })
+        })
       })
     }
   }
 
   useEffect(() => {
-    initNotes()
-  }, [])
+    uid && initNotes()
+  }, [uid])
 
-  const [myNotesList, setMyNotesList] = useState<NoteProps[]>([])
+  const [myNotesList, setMyNotesList] = useState<NoteProps[] | []>([])
   const [searchedText, setSearchedText] = useState('')
 
   const searchedNotesList = searchedText
@@ -67,30 +68,17 @@ const Layout = () => {
     : myNotesList
 
   useEffect(() => {
-    const tempArray: NoteProps[] = []
-    notesListFromIDB &&
-      notesListFromIDB.forEach((note, index) => {
-        tempArray.push({
-          id: note.id,
-          title: note.title,
-          body: note.body,
-          additionalText: note.body.substring(0, 10),
-          created_at: note.created_at,
-          updated_at: note.updated_at,
-          sync: note.sync,
-          //active: index === 0 ? true : false, //показываем первую запись активной
-        })
-      })
-
-    setMyNotesList(tempArray)
+    if (notesListFromIDB?.length) {
+      setMyNotesList(notesListFromIDB)
+    }
   }, [notesListFromIDB])
 
   return (
     <Container size="xl">
       <HeaderSearch
-        addItem={setMyNotesList}
+        setList={setMyNotesList}
         searchText={setSearchedText}
-        currentUserId={currentUserId}
+        uid={uid}
       />
       <Box
         className="containerShadow"
@@ -107,4 +95,3 @@ const Layout = () => {
   )
 }
 
-export default Layout

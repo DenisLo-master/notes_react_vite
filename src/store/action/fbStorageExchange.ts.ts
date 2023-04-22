@@ -20,6 +20,8 @@ const storage = getStorage();
 
 export const uploadFiles = ({ uid, noteId, fileName, file }: UploadFilesProps): Promise<string> => {
     return new Promise((resolve) => {
+
+        console.log("++++", uid, noteId, fileName, file)
         if (!file) return;
         const storageRef = ref(storage, `/${uid}/${noteId}/${fileName}`);
         const uploadImg = uploadBytesResumable(storageRef, file);
@@ -36,25 +38,14 @@ export const uploadFiles = ({ uid, noteId, fileName, file }: UploadFilesProps): 
                     totalSize: Math.round(snapshot.totalBytes / 1024),
                     isUpload: true
                 };
-                // dispatch(setImageState(fileState));
             },
             (err) => {
                 if (err) {
                     console.log(err);
-                    //   dispatch(setSyncNoteError(imgName,err));
                 }
             },
             () =>
                 getDownloadURL(uploadImg.snapshot.ref).then((url) => {
-                    const fileState = {
-                        imgName: file.name,
-                        progress: 100,
-                        totalSize: Math.round(uploadImg.snapshot.totalBytes / 1024),
-                        url,
-                        isUpload: false
-                    };
-                    //  dispatch(setImageState(fileState));
-                    // dispatch(setImageUrl(imgName,url));
                     resolve(url)
                 })
         );
@@ -70,11 +61,7 @@ export async function deleteNoteImages({ uid, noteId }: UserNoteID) {
         const filesPromises = filesSnapshot.items.map((item) => {
             return deleteObject(item);
         });
-
         await Promise.all(filesPromises);
-
-        // await deleteObject(folderRef);
-
         console.log(`Файлы заметок успешно удалены.`);
     } catch (error) {
         console.error(`Ошибка при удалении файлов  заметки:`, error);
