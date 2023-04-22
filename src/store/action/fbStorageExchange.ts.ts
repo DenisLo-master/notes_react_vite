@@ -21,7 +21,6 @@ const storage = getStorage();
 export const uploadFiles = ({ uid, noteId, fileName, file }: UploadFilesProps): Promise<string> => {
     return new Promise((resolve) => {
 
-        console.log("++++", uid, noteId, fileName, file)
         if (!file) return;
         const storageRef = ref(storage, `/${uid}/${noteId}/${fileName}`);
         const uploadImg = uploadBytesResumable(storageRef, file);

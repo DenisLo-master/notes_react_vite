@@ -4,7 +4,7 @@ import { Container, ActionIcon, Text } from '@mantine/core'
 import { TextEditor } from './TextEditor'
 import { useLayoutContext } from '../hooks/useLayoutContext'
 import { IconEdit } from '@tabler/icons-react'
-import { setNoteToFirebase } from '../store/action/fbDataBaseExchange'
+import { setAllNotesToFirebase, setNoteToFirebase } from '../store/action/fbDataBaseExchange'
 import { useAuth } from '../context/AuthProvider'
 import { updateNoteDB } from '../store/action/notesDB'
 
@@ -30,11 +30,11 @@ const MainArea: FC<MainbarProps> = ({ visible }) => {
     if (activeNote) {
       setContent(activeNote.body)
       setIsEdit(false)
+      setAllNotesToFirebase(uid)
     }
   }, [activeNote])
 
   useEffect(() => {
-    console.log("activeNote", activeNote?.id)
     if (activeNote?.id) {
       !isEdit &&
         setNoteToFirebase({

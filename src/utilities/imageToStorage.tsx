@@ -23,7 +23,6 @@ export async function imageToStorage({ uid, note }: ImageToStorageProps): Promis
                             noteId: note.id,
                             fileName: image.title
                         })
-                    console.log("fileData", fileData)
                     const fileBlob = fileData && dataURLtoBlob(fileData)
                     const link = fileBlob && await uploadFiles(
                         {
@@ -35,7 +34,7 @@ export async function imageToStorage({ uid, note }: ImageToStorageProps): Promis
                     if (link) {
                         image.src = link
                         image.alt = "image"
-                        deleteImageDB({ noteId: note.id, fileName: image.title })
+                        await deleteImageDB({ noteId: note.id, fileName: image.title })
                     } else {
                         const imageUrl = fileBlob && URL.createObjectURL(fileBlob)
                         if (imageUrl) {
