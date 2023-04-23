@@ -5,6 +5,31 @@ import { useForm, yupResolver } from '@mantine/form'
 import { TextInput, Button, Group } from '@mantine/core'
 import { AuthProps, ISignIn } from '../../interfaces/LoginTypes'
 import { IAuthValues, useAuth } from '../../context/AuthProvider'
+import { createStyles, rem, em } from '@mantine/core'
+
+const useStyles = createStyles((theme) => ({
+  flex: {
+    [`@media (max-width: ${em(800)})`]: {
+      flexDirection: 'column',
+      gap: 0,
+    },
+  },
+  button: {
+    [`@media (max-width: ${em(800)})`]: {
+      width: '100%',
+    },
+  },
+  text: {
+    [`@media (max-width: ${em(800)})`]: {
+      fontSize: '2rem',
+    },
+  },
+  stack: {
+    [`@media (max-width: ${em(800)})`]: {
+      gap: 0,
+    },
+  },
+}))
 
 const schema = Yup.object().shape({
   email: Yup.string()
@@ -17,6 +42,8 @@ const schema = Yup.object().shape({
 })
 
 export const SignIn: FC<AuthProps> = ({ setRegister }) => {
+  const { classes } = useStyles()
+
   const { signIn, error }: IAuthValues = useAuth()
   const theme = useMantineTheme()
 
@@ -38,9 +65,11 @@ export const SignIn: FC<AuthProps> = ({ setRegister }) => {
 
   return (
     <Container mt='1rem'>
-      <Flex justify='center' gap='md'>
+      <Flex className={classes.flex} justify='center' gap='md'>
         <Stack
           pb='1.5rem'
+          pl={5}
+          pr={5}
           style={{
             background: theme.fn.linearGradient(45, 'red', 'blue'),
             flex: '1 1 50%',
@@ -61,8 +90,8 @@ export const SignIn: FC<AuthProps> = ({ setRegister }) => {
             Зарегистрироваться
           </Button>
         </Stack>
-        <Stack style={{ flex: '1 1 50%' }}>
-          <Text align='center' fz='1.2rem' fw='600'>
+        <Stack className={classes.stack} style={{ flex: '1 1 50%' }}>
+          <Text className={classes.text} align='center' fz='1.2rem' fw='600'>
             Войти
           </Text>
           {error && <div style={{ color: 'red', fontSize: '0.8rem', textAlign: 'center' }}>{error}</div>}
@@ -71,7 +100,9 @@ export const SignIn: FC<AuthProps> = ({ setRegister }) => {
             <PasswordInput withAsterisk label='Password' placeholder='Password' {...form.getInputProps('password')} />
 
             <Group position='right' mt='xl'>
-              <Button type='submit'>Войти</Button>
+              <Button className={classes.button} type='submit'>
+                Войти
+              </Button>
             </Group>
           </form>
         </Stack>
