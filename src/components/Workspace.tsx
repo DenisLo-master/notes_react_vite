@@ -1,5 +1,5 @@
 import { Container, Flex } from '@mantine/core'
-import { HeaderSearch } from './Header'
+import { HeaderSearch } from './HeaderSearch'
 import ListItem from './ListItem'
 import MainArea from './MainArea'
 import { useLayoutContext } from '../hooks/useLayoutContext'
@@ -28,9 +28,11 @@ export const Workspace = () => {
           await imageToStorage({ uid: uid, note })
           setNoteToFirebase({ uid: uid, noteId: note.id })
         } else {
-          getNoteIdFromFirebase({ uid: uid, noteId: note.id }).then(async (note) => {
-            note && (await updateNoteDB({ ...note, sync: false }))
-          })
+          getNoteIdFromFirebase({ uid: uid, noteId: note.id }).then(
+            async (note) => {
+              note && await updateNoteDB({ ...note, sync: true })
+            },
+          )
         }
       })
     } else {
@@ -52,8 +54,8 @@ export const Workspace = () => {
 
   const searchedNotesList = searchedText
     ? myNotesList.filter(
-        (note) => note.title.toLowerCase().includes(searchedText) || note.body.toLowerCase().includes(searchedText),
-      )
+      (note) => note.title.toLowerCase().includes(searchedText) || note.body.toLowerCase().includes(searchedText),
+    )
     : myNotesList
 
   useEffect(() => {
