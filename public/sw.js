@@ -20,8 +20,13 @@ self.addEventListener('activate', async (event) => {
 
 //fetch
 self.addEventListener('fetch', async (event) => {
+  console.log(event.request.url)
   if (!event.request.url.includes(firebaseKey)) {
-    if (!event.request.url.includes('chrome-extension')) await event.respondWith(cacheFirst(event.request))
+    if (!event.request.url.includes('chrome-extension')) {
+      if (!event.request.url.includes('firebasestorage')) {
+        await event.respondWith(cacheFirst(event.request))
+      }
+    }
   }
 })
 
