@@ -6,15 +6,19 @@ export interface LayoutContextProps {
   toggleVisibleSidebar: () => void
   activeNote: Note | null
   setActiveNote: (note: Note | null) => void
+  hiddenSidebar: () => void
+  visibleSidebar: () => void
 }
 
 // type LayoutContext = Partial<LayoutContextProps>
 
 const LayoutContext = createContext<LayoutContextProps>({
   visible: true,
-  toggleVisibleSidebar: () => { },
+  toggleVisibleSidebar: () => {},
   activeNote: null,
-  setActiveNote: (note: Note | null): void => { },
+  setActiveNote: (note: Note | null): void => {},
+  hiddenSidebar: () => {},
+  visibleSidebar: () => {},
 })
 
 export const useLayoutContext = () => {
@@ -28,16 +32,21 @@ export const LayoutProvider: FC<PropsWithChildren> = ({ children }) => {
     setVisible((prev) => !prev)
   }
 
+  const hiddenSidebar = () => {
+    setVisible(false)
+  }
+  const visibleSidebar = () => {
+    setVisible(true)
+  }
+
   const value = {
     visible,
     toggleVisibleSidebar,
     activeNote,
-    setActiveNote
+    setActiveNote,
+    hiddenSidebar,
+    visibleSidebar,
   }
 
-  return (
-    <LayoutContext.Provider value={value} >
-      {children}
-    </LayoutContext.Provider>
-  )
+  return <LayoutContext.Provider value={value}>{children}</LayoutContext.Provider>
 }

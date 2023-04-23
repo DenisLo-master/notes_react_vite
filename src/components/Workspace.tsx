@@ -1,13 +1,9 @@
-import { Container, Box } from '@mantine/core'
+import { Container, Flex } from '@mantine/core'
 import { HeaderSearch } from './Header'
 import ListItem from './ListItem'
 import MainArea from './MainArea'
 import { useLayoutContext } from '../hooks/useLayoutContext'
-import {
-  getNoteIdFromFirebase,
-  getNotesFromFirebase,
-  setNoteToFirebase,
-} from '../store/action/fbDataBaseExchange'
+import { getNoteIdFromFirebase, getNotesFromFirebase, setNoteToFirebase } from '../store/action/fbDataBaseExchange'
 import { Note, NoteProps } from '../interfaces/NoteProps'
 import { useEffect, useState } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
@@ -16,12 +12,10 @@ import { useAuth } from '../context/AuthProvider'
 import { createNoteDB, getNotesListDB, updateNoteDB } from '../store/action/noteDB'
 import { imageToStorage } from '../utilities/imageToStorage'
 
-
 export const Workspace = () => {
   const { uid } = useAuth()
   const { visible, setActiveNote } = useLayoutContext()
   const notesListFromIDB = useLiveQuery(() => db.notes.toArray()) as Note[]
-
 
   async function initNotes() {
     const notesIDB = await getNotesListDB()
@@ -34,18 +28,17 @@ export const Workspace = () => {
           await imageToStorage({ uid: uid, note })
           setNoteToFirebase({ uid: uid, noteId: note.id })
         } else {
-          getNoteIdFromFirebase({ uid: uid, noteId: note.id }).then(
-            async (note) => {
-              note && await updateNoteDB({ ...note, sync: false })
-            },
-          )
+          getNoteIdFromFirebase({ uid: uid, noteId: note.id }).then(async (note) => {
+            note && (await updateNoteDB({ ...note, sync: false }))
+          })
         }
       })
     } else {
       getNotesFromFirebase(uid).then((notes) => {
-        notes && notes.forEach((note) => {
-          createNoteDB({ uid, note: { ...note, sync: true } })
-        })
+        notes &&
+          notes.forEach((note) => {
+            createNoteDB({ uid, note: { ...note, sync: true } })
+          })
       })
     }
   }
@@ -59,10 +52,8 @@ export const Workspace = () => {
 
   const searchedNotesList = searchedText
     ? myNotesList.filter(
-      (note) =>
-        note.title.toLowerCase().includes(searchedText) ||
-        note.body.toLowerCase().includes(searchedText),
-    )
+        (note) => note.title.toLowerCase().includes(searchedText) || note.body.toLowerCase().includes(searchedText),
+      )
     : myNotesList
 
   useEffect(() => {
@@ -72,24 +63,12 @@ export const Workspace = () => {
   }, [notesListFromIDB])
 
   return (
-    <Container size="xl">
-      <HeaderSearch
-        setList={setMyNotesList}
-        searchText={setSearchedText}
-        uid={uid}
-      />
-      <Box
-        className="containerShadow"
-        sx={{
-          display: 'flex',
-          flexDirection: 'row',
-          justifyItems: 'flex-start',
-        }}
-      >
+    <Container size='xl'>
+      <HeaderSearch setList={setMyNotesList} searchText={setSearchedText} uid={uid} />
+      <Flex style={{ position: 'relative', boxShadow: '5px 5px 15px rgba(0,0,0,0.6)' }}>
         <ListItem visible={visible} notesList={searchedNotesList} />
         <MainArea visible={visible} />
-      </Box>
+      </Flex>
     </Container>
   )
 }
-
