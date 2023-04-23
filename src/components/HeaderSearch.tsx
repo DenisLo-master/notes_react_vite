@@ -4,7 +4,7 @@ import { modals } from '@mantine/modals'
 import { IconLogout, IconSearch } from '@tabler/icons-react'
 import { Dispatch, SetStateAction } from 'react'
 import moment from 'moment'
-import { Note, NoteProps } from './../interfaces/NoteProps'
+import { Note, NoteProps } from '../interfaces/NoteProps'
 import { useAuth } from '../context/AuthProvider'
 import { createStyles, Header, Group, rem, em } from '@mantine/core'
 import { createNoteDB, deleteNoteDB } from '../store/action/noteDB'
@@ -70,7 +70,7 @@ const useStyles = createStyles((theme) => ({
     },
   },
   button: {
-    [`@media (max-width: ${em(800)})`]: {
+    [`@media (max-width: ${em(900)})`]: {
       fontSize: '13px',
     },
   },

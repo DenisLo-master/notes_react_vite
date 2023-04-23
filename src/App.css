@@ -29,6 +29,7 @@
   height: 90vh;
   border-bottom-left-radius: 10px;
   background-color: rgba(255, 255, 255, 0.9);
+
   @media (max-width: 800px) {
     position: absolute;
     width: 100%;
@@ -55,22 +56,24 @@
 .header .searchNode {
   width: 300px;
   border-radius: 10px;
+
 }
 
 .note {
-  margin-left: 20px;
+  margin: 0 20px;
   border-bottom: 1px solid #e2e2e2;
 
   border-collapse: collapse;
   cursor: pointer;
-  padding: 10px;
+  padding: 20px;
 }
 
 .note-active {
-  border-top: 1px solid #e2e2e2;
-  margin-top: -1px;
-  border-collapse: collapse;
-  background-color: #e2e2e2;
+  padding: 0;
+  /* border-top: 1px solid #e2e2e2; */
+  /* margin-top: -1px; */
+  /* border-collapse: collapse; */
+  background-color: #c7e1f9;
 }
 
 .my-editor-image {

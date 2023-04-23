@@ -10,7 +10,6 @@ export default defineConfig({
       output: {
         manualChunks(id) {
           if (id.includes('node_modules')) {
-            // Создаем отдельный чанк для зависимостей из node_modules
             return 'vendor';
           }
         },

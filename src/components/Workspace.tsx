@@ -1,5 +1,5 @@
-import { Container, Flex } from '@mantine/core'
-import { HeaderSearch } from './Header'
+import { Container, Flex, Paper } from '@mantine/core'
+import { HeaderSearch } from './HeaderSearch'
 import ListItem from './ListItem'
 import MainArea from './MainArea'
 import { useLayoutContext } from '../hooks/useLayoutContext'
@@ -28,9 +28,11 @@ export const Workspace = () => {
           await imageToStorage({ uid: uid, note })
           setNoteToFirebase({ uid: uid, noteId: note.id })
         } else {
-          getNoteIdFromFirebase({ uid: uid, noteId: note.id }).then(async (note) => {
-            note && (await updateNoteDB({ ...note, sync: false }))
-          })
+          getNoteIdFromFirebase({ uid: uid, noteId: note.id }).then(
+            async (note) => {
+              note && await updateNoteDB({ ...note, sync: true })
+            },
+          )
         }
       })
     } else {
@@ -52,8 +54,8 @@ export const Workspace = () => {
 
   const searchedNotesList = searchedText
     ? myNotesList.filter(
-        (note) => note.title.toLowerCase().includes(searchedText) || note.body.toLowerCase().includes(searchedText),
-      )
+      (note) => note.title.toLowerCase().includes(searchedText) || note.body.toLowerCase().includes(searchedText),
+    )
     : myNotesList
 
   useEffect(() => {
@@ -64,10 +66,15 @@ export const Workspace = () => {
 
   return (
     <Container size='xl'>
-      <HeaderSearch setList={setMyNotesList} searchText={setSearchedText} uid={uid} />
-      <Flex style={{ position: 'relative', boxShadow: '5px 5px 15px rgba(0,0,0,0.6)' }}>
+      <Flex style={{ position: 'relative', }}>
         <ListItem visible={visible} notesList={searchedNotesList} />
-        <MainArea visible={visible} />
+        <Flex style={{ position: 'relative', flexDirection: "column", flex: 1, zIndex: 1 }}>
+          <HeaderSearch setList={setMyNotesList} searchText={setSearchedText} uid={uid} />
+          <Flex style={{ position: 'relative', boxShadow: '5px 5px 15px rgba(0,0,0,0.6)' }}>
+            <MainArea visible={visible} />
+          </Flex>
+        </Flex>
+
       </Flex>
     </Container>
   )
