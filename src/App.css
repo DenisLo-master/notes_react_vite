@@ -1,3 +1,80 @@
+.main {
+  display: flex;
+  justify-content: 'flex-start';
+  align-items: center;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  height: 100vh;
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+}
+
+.mainArea {
+  border: 1px solid #e2e2e2;
+  border-top: none;
+  height: 90vh;
+  border-bottom-right-radius: 10px;
+  padding: 10px;
+}
+
+.mainArea-edit {
+  display: flex;
+  justify-content: flex-end;
+  margin-right: 1rem;
+}
+
+.sidebarArea {
+  border: 1px solid #e2e2e2;
+  border-top: none;
+  height: 90vh;
+  border-bottom-left-radius: 10px;
+  background-color: rgba(255, 255, 255, 0.9);
+
+  @media (max-width: 800px) {
+    position: absolute;
+    width: 100%;
+    z-index: 2;
+  }
+}
+
+.header {
+  background-color: lightgray;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  border-bottom: 2px solid #c6c6c6;
+  padding: 15px 20px;
+  width: 90vw;
+  margin-top: 10px;
+  text-align: center;
+  position: 'relative';
+  top: 0;
+  display: flex;
+  justify-content: space-between;
+  padding-right: 20px;
+}
+
+.header .searchNode {
+  width: 300px;
+  border-radius: 10px;
+
+}
+
+.note {
+  margin: 0 20px;
+  border-bottom: 1px solid #e2e2e2;
+
+  border-collapse: collapse;
+  cursor: pointer;
+  padding: 20px;
+}
+
+.note-active {
+  padding: 0;
+  /* border-top: 1px solid #e2e2e2; */
+  /* margin-top: -1px; */
+  /* border-collapse: collapse; */
+  background-color: #c7e1f9;
+}
 
 .my-editor-image {
   max-height: 12rem;
