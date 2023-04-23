@@ -8,6 +8,7 @@ import { Note, NoteProps } from '../interfaces/NoteProps'
 import { useAuth } from '../context/AuthProvider'
 import { createStyles, Header, Group, rem, em } from '@mantine/core'
 import { createNoteDB, deleteNoteDB } from '../store/action/noteDB'
+import { deleteNoteFromFirebase } from '../store/action/fbDataBaseExchange'
 
 const useStyles = createStyles((theme) => ({
   header: {
@@ -130,8 +131,12 @@ export const HeaderSearch = ({ setList, searchText, uid }: HeaderType) => {
       confirmProps: { color: 'red' },
       onCancel: () => console.log('Cancel'),
       onConfirm: () => {
-        deleteNoteDB({ uid, noteId: activeNote.id })
+        deleteNoteDB(activeNote.id)
         setActiveNote(null)
+        deleteNoteFromFirebase({
+          uid,
+          noteId: activeNote.id
+        })
       },
     })
   }

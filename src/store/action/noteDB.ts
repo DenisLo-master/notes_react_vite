@@ -8,10 +8,7 @@ import {
 import { deleteAllImagesDB, deleteNoteImagesDB } from './imageDB'
 import { deleteNoteFromFirebase, setNoteToFirebase } from './fbDataBaseExchange'
 
-interface DeleteNoteProps {
-  uid: string
-  noteId: number
-}
+
 
 interface CreateNote {
   uid: string
@@ -43,14 +40,10 @@ export async function updateNoteTitleDB({ uid, noteTitle }: UpdateNoteTitle): Pr
 }
 
 
-export async function deleteNoteDB({ uid, noteId }: DeleteNoteProps): Promise<void> {
+export async function deleteNoteDB(noteId: number): Promise<void> {
   try {
     await db.deleteNote(noteId)
     await deleteNoteImagesDB(noteId)
-    deleteNoteFromFirebase({
-      uid,
-      noteId
-    })
   } catch (error) {
     console.log('ERROR clear notes', error)
   }

@@ -9,7 +9,7 @@ import { useEffect, useState } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { db } from '../store/action/indexDB'
 import { useAuth } from '../context/AuthProvider'
-import { createNoteDB, getNotesListDB, updateNoteDB } from '../store/action/noteDB'
+import { createNoteDB, deleteNoteDB, getNotesListDB, updateNoteDB } from '../store/action/noteDB'
 import { imageToStorage } from '../utilities/imageToStorage'
 
 export const Workspace = () => {
@@ -20,7 +20,7 @@ export const Workspace = () => {
   async function initNotes() {
     const notesIDB = await getNotesListDB()
     if (notesIDB && notesIDB.length) {
-      notesIDB.forEach(async (note, index) => {
+      const check = notesIDB.map(async (note, index) => {
         if (index === 0) {
           setActiveNote(note)
         }
@@ -28,18 +28,20 @@ export const Workspace = () => {
           await imageToStorage({ uid: uid, note })
           setNoteToFirebase({ uid: uid, noteId: note.id })
         } else {
-          await getNoteIdFromFirebase({ uid: uid, noteId: note.id }).then(
+          await deleteNoteDB(note.id)
+          getNoteIdFromFirebase({ uid: uid, noteId: note.id }).then(
             async (note) => {
               note && await updateNoteDB({ ...note, sync: true })
             },
           )
-          getNotesFromFirebase(uid).then((notes) => {
-            notes &&
-              notes.forEach((note) => {
-                createNoteDB({ uid, note: { ...note, sync: true } })
-              })
-          })
         }
+      })
+      await Promise.all(check)
+      await getNotesFromFirebase(uid).then((notes) => {
+        notes &&
+          notes.forEach((note) => {
+            createNoteDB({ uid, note: { ...note, sync: true } })
+          })
       })
     } else {
       getNotesFromFirebase(uid).then((notes) => {
