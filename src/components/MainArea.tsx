@@ -21,7 +21,7 @@ const MainArea: FC<MainbarProps> = ({ visible }) => {
   const { uid } = useAuth()
 
   const style = {
-    width: visible ? '70vw' : '90vw',
+    flex: '1 1 auto',
   }
   const [content, setContent] = useState<string>(initContent)
   const [isEdit, setIsEdit] = useState<boolean>(false)
@@ -52,41 +52,35 @@ const MainArea: FC<MainbarProps> = ({ visible }) => {
   }, [content])
 
   return (
-    <div className="mainArea" style={style}>
-      {activeNote?.id ?
+    <div className='mainArea' style={style}>
+      {activeNote?.id ? (
         <>
-          <div className="mainArea-edit">
-            <ActionIcon variant="light" onClick={() => setIsEdit((prev) => !prev)}>
-              <IconEdit
-                size={48}
-                strokeWidth={2}
-                color={isEdit ? '#06a4ee' : 'gray'}
-              />
+          <div className='mainArea-edit'>
+            <ActionIcon variant='light' onClick={() => setIsEdit((prev) => !prev)}>
+              <IconEdit size={48} strokeWidth={2} color={isEdit ? '#06a4ee' : 'gray'} />
             </ActionIcon>
           </div>
           <div>
             <Container mt={'md'}>
               {isEdit ? (
-                <TextEditor
-                  noteId={activeNote.id}
-                  content={content}
-                  updatedContent={setContent} />
+                <TextEditor noteId={activeNote.id} content={content} updatedContent={setContent} />
               ) : (
                 <div>
-                  <Text size={'sm'} align="center">
+                  <Text size={'sm'} align='center'>
                     {activeNote.updated_at}
                   </Text>
-                  {content ? <div dangerouslySetInnerHTML={{ __html: content }} /> :
-                    <span style={{ color: "gray" }}>Новая заметка</span>
-                  }
+                  {content ? (
+                    <div dangerouslySetInnerHTML={{ __html: content }} />
+                  ) : (
+                    <span style={{ color: 'gray' }}>Новая заметка</span>
+                  )}
                 </div>
               )}
             </Container>
           </div>
-        </> :
-        null}
+        </>
+      ) : null}
     </div>
-
   )
 }
 
