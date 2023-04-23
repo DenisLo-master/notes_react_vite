@@ -28,11 +28,17 @@ export const Workspace = () => {
           await imageToStorage({ uid: uid, note })
           setNoteToFirebase({ uid: uid, noteId: note.id })
         } else {
-          getNoteIdFromFirebase({ uid: uid, noteId: note.id }).then(
+          await getNoteIdFromFirebase({ uid: uid, noteId: note.id }).then(
             async (note) => {
               note && await updateNoteDB({ ...note, sync: true })
             },
           )
+          getNotesFromFirebase(uid).then((notes) => {
+            notes &&
+              notes.forEach((note) => {
+                createNoteDB({ uid, note: { ...note, sync: true } })
+              })
+          })
         }
       })
     } else {

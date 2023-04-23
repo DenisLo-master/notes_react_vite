@@ -6,6 +6,9 @@ const ASSETS = [
   "/",
   "/index.html",
   "/vite.svg",
+  "/index-3b375a38.js",
+  "/index-7152b513.css",
+  "/vendor-63ddff08.js"
 ];
 
 
