@@ -12,7 +12,7 @@ interface SidebarProps {
 
 const ListItem: FC<SidebarProps> = ({ visible, notesList }) => {
   const [notes, setNotes] = useState<NoteProps[]>(notesList)
-  const { activeNote, setActiveNote } = useLayoutContext()
+  const { activeNote, setActiveNote, hiddenSidebar } = useLayoutContext()
   useEffect(() => {
     setNotes(notesList)
   }, [notesList])
@@ -71,7 +71,10 @@ const ListItem: FC<SidebarProps> = ({ visible, notesList }) => {
                   title={note.title}
                   additionalText={getTextFromHtml(note.body)}
                   active={note.id === activeNote?.id}
-                  onClick={() => noteClickHandle(note.id)}
+                  onClick={() => {
+                    noteClickHandle(note.id)
+                    hiddenSidebar()
+                  }}
                   body=''
                   sync={note.sync}
                 />

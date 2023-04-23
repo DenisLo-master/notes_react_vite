@@ -85,7 +85,7 @@ type HeaderType = {
 export const HeaderSearch = ({ setList, searchText, uid }: HeaderType) => {
   const { classes } = useStyles()
 
-  const { visible, toggleVisibleSidebar } = useLayoutContext()
+  const { visible, toggleVisibleSidebar, visibleSidebar } = useLayoutContext()
   const { activeNote, setActiveNote } = useLayoutContext()
   const { signOutUser } = useAuth()
   const toggleVisibleHandle = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -96,6 +96,7 @@ export const HeaderSearch = ({ setList, searchText, uid }: HeaderType) => {
   const createNoteHandle = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault()
     event.stopPropagation()
+    visibleSidebar()
     try {
       const createdNote: Note = {
         id: new Date().getTime(),

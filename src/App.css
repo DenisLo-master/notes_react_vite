@@ -18,10 +18,9 @@
 }
 
 .mainArea-edit {
-  flex: 1 1 auto;
   display: flex;
   justify-content: flex-end;
-  margin-right: 20px;
+  margin-right: 1rem;
 }
 
 .sidebarArea {
@@ -32,6 +31,8 @@
   background-color: rgba(255, 255, 255, 0.9);
   @media (max-width: 800px) {
     position: absolute;
+    width: 100%;
+    z-index: 2;
   }
 }
 
