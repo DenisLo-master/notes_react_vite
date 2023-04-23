@@ -1,6 +1,6 @@
 import { FC, useEffect } from 'react'
 import { useState } from 'react'
-import { Container, ActionIcon, Text } from '@mantine/core'
+import { Container, ActionIcon, Text, Transition } from '@mantine/core'
 import { TextEditor } from './TextEditor'
 import { useLayoutContext } from '../hooks/useLayoutContext'
 import { IconEdit } from '@tabler/icons-react'
@@ -51,7 +51,10 @@ const MainArea: FC<MainbarProps> = ({ visible }) => {
     updateNoteDB({ ...updateCurrentNote, sync: false })
   }, [content])
 
+
+
   return (
+
     <div className='mainArea' style={style}>
       {activeNote?.id ? (
         <>

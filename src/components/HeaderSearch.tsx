@@ -70,7 +70,7 @@ const useStyles = createStyles((theme) => ({
     },
   },
   button: {
-    [`@media (max-width: ${em(800)})`]: {
+    [`@media (max-width: ${em(900)})`]: {
       fontSize: '13px',
     },
   },

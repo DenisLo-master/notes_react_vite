@@ -18,7 +18,6 @@ export async function imageToStorage({ uid, note }: ImageToStorageProps): Promis
             const image = imageArray[i]
             if (image) {
                 if (image.alt === 'local' && image.title) {
-                    console.log("--------------1-------------", image.src)
                     const fileData = await getImageDB({
                         noteId: note.id,
                         fileName: image.title,
@@ -38,7 +37,6 @@ export async function imageToStorage({ uid, note }: ImageToStorageProps): Promis
                         await deleteImageDB({ noteId: note.id, fileName: image.title })
                     } else {
                         const imageUrl = fileBlob && URL.createObjectURL(fileBlob)
-                        console.log("--------------2-------------", imageUrl)
                         if (imageUrl) {
                             image.src = imageUrl
                             resolve(false)

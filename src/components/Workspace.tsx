@@ -1,4 +1,4 @@
-import { Container, Flex } from '@mantine/core'
+import { Container, Flex, Paper } from '@mantine/core'
 import { HeaderSearch } from './HeaderSearch'
 import ListItem from './ListItem'
 import MainArea from './MainArea'
@@ -66,10 +66,15 @@ export const Workspace = () => {
 
   return (
     <Container size='xl'>
-      <HeaderSearch setList={setMyNotesList} searchText={setSearchedText} uid={uid} />
-      <Flex style={{ position: 'relative', boxShadow: '5px 5px 15px rgba(0,0,0,0.6)' }}>
+      <Flex style={{ position: 'relative', }}>
         <ListItem visible={visible} notesList={searchedNotesList} />
-        <MainArea visible={visible} />
+        <Flex style={{ position: 'relative', flexDirection: "column", flex: 1, zIndex: 1 }}>
+          <HeaderSearch setList={setMyNotesList} searchText={setSearchedText} uid={uid} />
+          <Flex style={{ position: 'relative', boxShadow: '5px 5px 15px rgba(0,0,0,0.6)' }}>
+            <MainArea visible={visible} />
+          </Flex>
+        </Flex>
+
       </Flex>
     </Container>
   )

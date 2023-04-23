@@ -14,11 +14,11 @@ export interface LayoutContextProps {
 
 const LayoutContext = createContext<LayoutContextProps>({
   visible: true,
-  toggleVisibleSidebar: () => {},
+  toggleVisibleSidebar: () => { },
   activeNote: null,
-  setActiveNote: (note: Note | null): void => {},
-  hiddenSidebar: () => {},
-  visibleSidebar: () => {},
+  setActiveNote: (note: Note | null): void => { },
+  hiddenSidebar: () => { },
+  visibleSidebar: () => { },
 })
 
 export const useLayoutContext = () => {
@@ -33,7 +33,9 @@ export const LayoutProvider: FC<PropsWithChildren> = ({ children }) => {
   }
 
   const hiddenSidebar = () => {
-    setVisible(false)
+    if (window.innerWidth < 600) {
+      setVisible(false)
+    }
   }
   const visibleSidebar = () => {
     setVisible(true)
